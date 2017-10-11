@@ -37,7 +37,7 @@
     
     <title>
         
-            engine | 
+            使用TensorFlow C++ API构建线上预测服务（高级篇） | 
         
         +1s
     </title>
@@ -49,7 +49,7 @@
     <meta name="theme-color" content="#0097A7">
     <meta name="author" content="formath">
     <meta name="description" itemprop="description" content="">
-    <meta name="keywords" content=",machine-learning,mxnet,deep-learning">
+    <meta name="keywords" content=",machine-learning,deep-learning,tensorflow">
 
     <!-- Import lsloader -->
     <script>(function(){window.lsloader={jsRunSequence:[],jsnamemap:{},cssnamemap:{}};lsloader.removeLS=function(key){try{localStorage.removeItem(key)}catch(e){}};lsloader.setLS=function(key,val){try{localStorage.setItem(key,val)}catch(e){}};lsloader.getLS=function(key){var val="";try{val=localStorage.getItem(key)}catch(e){val=""}return val};versionString="/*"+(window.materialVersion||"unknownVersion")+"*/";lsloader.clean=function(){try{var keys=[];for(var i=0;i<localStorage.length;i++){keys.push(localStorage.key(i))}keys.forEach(function(key){var data=lsloader.getLS(key);if(window.oldVersion){var remove=window.oldVersion.reduce(function(p,c){return p||data.indexOf("/*"+c+"*/")!==-1},false);if(remove){lsloader.removeLS(key)}}})}catch(e){}};lsloader.clean();lsloader.load=function(jsname,jspath,cssonload,isJs){if(typeof cssonload==="boolean"){isJs=cssonload;cssonload=undefined}isJs=isJs||false;cssonload=cssonload||function(){};var code;code=this.getLS(jsname);if(code&&code.indexOf(versionString)===-1){this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}if(code){var versionNumber=code.split(versionString)[0];if(versionNumber!=jspath){console.log("reload:"+jspath);this.removeLS(jsname);this.requestResource(jsname,jspath,cssonload,isJs);return}code=code.split(versionString)[1];if(isJs){this.jsRunSequence.push({name:jsname,code:code});this.runjs(jspath,jsname,code)}else{document.getElementById(jsname).appendChild(document.createTextNode(code));cssonload()}}else{this.requestResource(jsname,jspath,cssonload,isJs)}};lsloader.requestResource=function(name,path,cssonload,isJs){var that=this;if(isJs){this.iojs(path,name,function(path,name,code){that.setLS(name,path+versionString+code);that.runjs(path,name,code)})}else{this.iocss(path,name,function(code){document.getElementById(name).appendChild(document.createTextNode(code));that.setLS(name,path+versionString+code)},cssonload)}};lsloader.iojs=function(path,jsname,callback){var that=this;that.jsRunSequence.push({name:jsname,code:""});try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(path,jsname,xhr.response);return}}that.jsfallback(path,jsname)}};xhr.send(null)}catch(e){that.jsfallback(path,jsname)}};lsloader.iocss=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.iofonts=function(path,jsname,callback,cssonload){var that=this;try{var xhr=new XMLHttpRequest;xhr.open("get",path,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){callback(xhr.response);cssonload();return}}that.cssfallback(path,jsname,cssonload)}};xhr.send(null)}catch(e){that.cssfallback(path,jsname,cssonload)}};lsloader.runjs=function(path,name,code){if(!!name&&!!code){for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code=code}}}if(!!this.jsRunSequence[0]&&!!this.jsRunSequence[0].code&&this.jsRunSequence[0].status!="failed"){var script=document.createElement("script");script.appendChild(document.createTextNode(this.jsRunSequence[0].code));script.type="text/javascript";document.getElementsByTagName("head")[0].appendChild(script);this.jsRunSequence.shift();if(this.jsRunSequence.length>0){this.runjs()}}else if(!!this.jsRunSequence[0]&&this.jsRunSequence[0].status=="failed"){var that=this;var script=document.createElement("script");script.src=this.jsRunSequence[0].path;script.type="text/javascript";this.jsRunSequence[0].status="loading";script.onload=function(){that.jsRunSequence.shift();if(that.jsRunSequence.length>0){that.runjs()}};document.body.appendChild(script)}};lsloader.tagLoad=function(path,name){this.jsRunSequence.push({name:name,code:"",path:path,status:"failed"});this.runjs()};lsloader.jsfallback=function(path,name){if(!!this.jsnamemap[name]){return}else{this.jsnamemap[name]=name}for(var k in this.jsRunSequence){if(this.jsRunSequence[k].name==name){this.jsRunSequence[k].code="";this.jsRunSequence[k].status="failed";this.jsRunSequence[k].path=path}}this.runjs()};lsloader.cssfallback=function(path,name,cssonload){if(!!this.cssnamemap[name]){return}else{this.cssnamemap[name]=1}var link=document.createElement("link");link.type="text/css";link.href=path;link.rel="stylesheet";link.onload=link.onerror=cssonload;var root=document.getElementsByTagName("script")[0];root.parentNode.insertBefore(link,root)};lsloader.runInlineScript=function(scriptId,codeId){var code=document.getElementById(codeId).innerText;this.jsRunSequence.push({name:scriptId,code:code});this.runjs()};lsloader.loadCombo=function(jslist){var updateList="";var requestingModules={};for(var k in jslist){var LS=this.getLS(jslist[k].name);if(!!LS){var version=LS.split(versionString)[0];var code=LS.split(versionString)[1]}else{var version=""}if(version==jslist[k].path){this.jsRunSequence.push({name:jslist[k].name,code:code,path:jslist[k].path})}else{this.jsRunSequence.push({name:jslist[k].name,code:null,path:jslist[k].path,status:"comboloading"});requestingModules[jslist[k].name]=true;updateList+=(updateList==""?"":";")+jslist[k].path}}var that=this;if(!!updateList){var xhr=new XMLHttpRequest;xhr.open("get",combo+updateList,true);xhr.onreadystatechange=function(){if(xhr.readyState==4){if(xhr.status>=200&&xhr.status<300||xhr.status==304){if(xhr.response!=""){that.runCombo(xhr.response,requestingModules);return}}else{for(var i in that.jsRunSequence){if(requestingModules[that.jsRunSequence[i].name]){that.jsRunSequence[i].status="failed"}}that.runjs()}}};xhr.send(null)}this.runjs()};lsloader.runCombo=function(comboCode,requestingModules){comboCode=comboCode.split("/*combojs*/");comboCode.shift();for(var k in this.jsRunSequence){if(!!requestingModules[this.jsRunSequence[k].name]&&!!comboCode[0]){this.jsRunSequence[k].status="comboJS";this.jsRunSequence[k].code=comboCode[0];this.setLS(this.jsRunSequence[k].name,this.jsRunSequence[k].path+versionString+comboCode[0]);comboCode.shift()}}this.runjs()}})();</script>
@@ -231,18 +231,18 @@
     <!-- The Open Graph protocol -->
     <meta property="og:url" content="http://www.mathmach.com">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="engine | +1s">
+    <meta property="og:title" content="使用TensorFlow C++ API构建线上预测服务（高级篇） | +1s">
     <meta property="og:image" content="http://www.mathmach.com/img/favicon.png" />
     <meta property="og:description" content="">
-    <meta property="og:article:tag" content="machine-learning"> <meta property="og:article:tag" content="mxnet"> <meta property="og:article:tag" content="deep-learning"> 
+    <meta property="og:article:tag" content="machine-learning"> <meta property="og:article:tag" content="deep-learning"> <meta property="og:article:tag" content="tensorflow"> 
 
     
-        <meta property="article:published_time" content="Tue Aug 29 2017 15:45:05 GMT+0800" />
-        <meta property="article:modified_time" content="Mon Sep 18 2017 22:04:37 GMT+0800" />
+        <meta property="article:published_time" content="Wed Oct 11 2017 11:32:05 GMT+0800" />
+        <meta property="article:modified_time" content="Wed Oct 11 2017 23:22:34 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
-    <meta name="twitter:title" content="engine | +1s">
+    <meta name="twitter:title" content="使用TensorFlow C++ API构建线上预测服务（高级篇） | +1s">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="http://www.mathmach.com/img/favicon.png">
     <meta name="twitter:card" content="summary_large_image" />
@@ -250,7 +250,7 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="http://www.mathmach.com/2017/08/29/engine/index.html" />
+        <link rel="canonical" href="http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/index.html" />
     
 
     <!-- Structured-data for SEO -->
@@ -262,10 +262,10 @@
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "mainEntityOfPage": "http://www.mathmach.com/2017/08/29/engine/index.html",
-    "headline": "engine",
-    "datePublished": "Tue Aug 29 2017 15:45:05 GMT+0800",
-    "dateModified": "Mon Sep 18 2017 22:04:37 GMT+0800",
+    "mainEntityOfPage": "http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/index.html",
+    "headline": "使用TensorFlow C++ API构建线上预测服务（高级篇）",
+    "datePublished": "Wed Oct 11 2017 11:32:05 GMT+0800",
+    "dateModified": "Wed Oct 11 2017 23:22:34 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "formath",
@@ -283,7 +283,7 @@
             "url": "/img/favicon.png"
         }
     },
-    "keywords": ",machine-learning,mxnet,deep-learning",
+    "keywords": ",machine-learning,deep-learning,tensorflow",
     "description": "",
 }
 </script>
@@ -349,7 +349,7 @@
     </button>
 
     <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
-        <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ThreadedEngine"><span class="post-toc-number">1.</span> <span class="post-toc-text">ThreadedEngine</span></a></li></ol>
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#背景"><span class="post-toc-number">1.</span> <span class="post-toc-text">背景</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#稀疏数据下的数据预处理"><span class="post-toc-number">2.</span> <span class="post-toc-text">稀疏数据下的数据预处理</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#训练中保存模型和参数"><span class="post-toc-number">3.</span> <span class="post-toc-text">训练中保存模型和参数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#保存网络结构"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">保存网络结构</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#保存模型参数"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">保存模型参数</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#TensorFlow-C-API导入模型和参数"><span class="post-toc-number">4.</span> <span class="post-toc-text">TensorFlow C++ API导入模型和参数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分别导入网络结构和模型参数"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">分别导入网络结构和模型参数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#导入网络结构"><span class="post-toc-number">4.1.1.</span> <span class="post-toc-text">导入网络结构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#导入模型参数"><span class="post-toc-number">4.1.2.</span> <span class="post-toc-text">导入模型参数</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#网络结构和模型参数整合成一个文件"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">网络结构和模型参数整合成一个文件</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#TensorFlow-C-API构造Sparse-Tensor"><span class="post-toc-number">5.</span> <span class="post-toc-text">TensorFlow C++ API构造Sparse Tensor</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考</span></a></li></ol>
     </ul>
     
 
@@ -381,7 +381,7 @@
         
     
             <p class="article-headline-p">
-                engine
+                使用TensorFlow C++ API构建线上预测服务（高级篇）
             </p>
         </div>
 
@@ -400,7 +400,7 @@
     <!-- Author Name & Date -->
     <div>
         <strong>formath</strong>
-        <span>8月 29, 2017</span>
+        <span>10月 11, 2017</span>
     </div>
 
     <div class="section-spacer"></div>
@@ -424,7 +424,7 @@
     </button>
     <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-functions-viewtags-button">
         <li class="mdl-menu__item">
-        <a class="post_tag-link" href="/tags/deep-learning/">deep-learning</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/machine-learning/">machine-learning</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/mxnet/">mxnet</a>
+        <a class="post_tag-link" href="/tags/deep-learning/">deep-learning</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/machine-learning/">machine-learning</a></li><li class="mdl-menu__item"><a class="post_tag-link" href="/tags/tensorflow/">tensorflow</a>
     </ul>
     
 
@@ -440,7 +440,7 @@
 
     <!-- Share Weibo -->
     
-        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=engine&url=http://www.mathmach.com/2017/08/29/engine/index.html&pic=http://www.mathmach.com/img/favicon.png&searchPic=false&style=simple" target="_blank">
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=使用TensorFlow C++ API构建线上预测服务（高级篇）&url=http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/index.html&pic=http://www.mathmach.com/img/favicon.png&searchPic=false&style=simple" target="_blank">
             <li class="mdl-menu__item">
                 分享到微博
             </li>
@@ -449,7 +449,7 @@
 
     <!-- Share Twitter -->
     
-        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=engine&url=http://www.mathmach.com/2017/08/29/engine/index.html&via=formath" target="_blank">
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=使用TensorFlow C++ API构建线上预测服务（高级篇）&url=http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/index.html&via=formath" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Twitter
             </li>
@@ -458,7 +458,7 @@
 
     <!-- Share Facebook -->
     
-        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://www.mathmach.com/2017/08/29/engine/index.html" target="_blank">
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/index.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Facebook
             </li>
@@ -467,7 +467,7 @@
 
     <!-- Share Google+ -->
     
-        <a class="post_share-link" href="https://plus.google.com/share?url=http://www.mathmach.com/2017/08/29/engine/index.html" target="_blank">
+        <a class="post_share-link" href="https://plus.google.com/share?url=http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/index.html" target="_blank">
             <li class="mdl-menu__item">
                 分享到 Google+
             </li>
@@ -491,8 +491,64 @@
                 <!-- Post Content -->
                 <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
     
-        <h2 id="ThreadedEngine"><a href="#ThreadedEngine" class="headerlink" title="ThreadedEngine"></a>ThreadedEngine</h2><p>pending<em>write: 被阻塞（尚未执行）和正在执行的的写操作指针<br>num_pending_reads: 正在执行的写操作个数. num_pending_reads</em> = kWriteTriggered(-1),pending_write不为null时被设置</p>
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>之前的一篇文章中<a href="http://mathmach.com/2017/10/09/%E4%BD%BF%E7%94%A8TensorFlow%20C++%20API%E6%9E%84%E5%BB%BA%E7%BA%BF%E4%B8%8A%E9%A2%84%E6%B5%8B%E6%9C%8D%E5%8A%A1/" target="_blank" rel="external">使用TensorFlow C++ API构建线上预测服务（基础篇）</a>，详细讲解了怎样用TensorFlow C++ API导入模型做预测，但模型<code>c=a+b</code>比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数。本文使用一个复杂的模型讲解，包括以下几个方面：</p>
+<ul>
+<li>针对稀疏数据的数据预处理</li>
+<li>训练中保存模型和参数</li>
+<li>TensorFlow C++ API导入模型和参数</li>
+<li>TensorFlow C++ API构造Sparse Tensor做模型输入</li>
+</ul>
+<h1 id="稀疏数据下的数据预处理"><a href="#稀疏数据下的数据预处理" class="headerlink" title="稀疏数据下的数据预处理"></a>稀疏数据下的数据预处理</h1><p>稀疏数据下，一般会调用TensorFlow的<code>embedding_lookup_sparse</code>。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">embedding_variable = tf.Variable(tf.truncated_normal([input_size, embedding_size], stddev=<span class="number">0.05</span>), name=<span class="string">'emb'</span>)</div><div class="line">embedding = tf.nn.embedding_lookup_sparse(embedding_variable, sparse_id, sparse_value, <span class="string">"mod"</span>, combiner=<span class="string">"sum"</span>)</div></pre></td></tr></table></figure></p>
+<p>上面代码中，<code>embedding_variable</code>就是需要学习的参数，其中<code>input_size</code>是矩阵的行数，<code>embedding_size</code>是矩阵的列数，比如我们有100万个稀疏id，每个id要embedding到50维向量，那么矩阵的大小是<code>[1000000, 50]</code>。sparse_id是要做向量化的一组id，用<code>SparseTensor</code>表示，<code>sparse_value</code>是每个id对用的一个value，用作权重，也用<code>SparseTensor</code>表示。<br>这里要注意，如果id是用hash生成的，不保证id是<code>0,1,2,3, ...</code>这种连续表示，需要先把id排序后转成连续的，并且把<code>input_size</code>设成大于排序后最大的id，为了节省空间往往设成<code>排序后最大id+1</code>。因为用id去<code>embedding_variable</code>矩阵查询命中哪行的时候，使用<code>id mod Row(embedding_variable)</code>或其他策略作为命中的行数，如果不保证id连续，可能会出现多个id命中同一行的错误情况。另外，如果不把id排序后转成连续id，那<code>input_size</code>需要设成原始id中的最大id，如果是hash生成的那么最大id值非常大，做成矩阵非常大存不下和矩阵存在空间浪费，因为有些行肯定不会被命中。<br>另外一个点，目前TensorFlow不支持sparse方式的查询和参数更新，每次查询更新都要pull&amp;push一个矩阵全量数据，造成网络的堵塞，速度过慢，所以一般来说不要使用太大的embedding矩阵。</p>
+<h1 id="训练中保存模型和参数"><a href="#训练中保存模型和参数" class="headerlink" title="训练中保存模型和参数"></a>训练中保存模型和参数</h1><p>TensorFlow保存模型时分为两部分，网络结构和参数是分开保存的。</p>
+<h2 id="保存网络结构"><a href="#保存网络结构" class="headerlink" title="保存网络结构"></a>保存网络结构</h2><p>运行以下命令，成功后会看到一个名为<code>graph.pb</code>的pb二进制文件。后续如果使用TensorFlow官方提供的<code>freeze_graph.py</code>工具时必需这个文件，当然，如果对<code>freeze_graph.py</code>的代码比较熟悉，可以使用比较trick的方式，这样只需要参数文件，而不需要<code>graph.pb</code>了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tf.train.write_graph(sess.graph.as_graph_def(), FLAGS.model_dir, <span class="string">'graph.pb'</span>, as_text=<span class="keyword">False</span>)</div></pre></td></tr></table></figure></p>
+<h2 id="保存模型参数"><a href="#保存模型参数" class="headerlink" title="保存模型参数"></a>保存模型参数</h2><p>运行以下命令，会在<code>FLAGS.model_dir</code>目录下保存多个前缀为<code>model.checkpoint</code>的文件。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">saver = tf.train.Saver()</div><div class="line">saver.save(sess, FLAGS.model_dir + <span class="string">"/model.checkpoint"</span>)</div></pre></td></tr></table></figure></p>
+<p>比如，成功后在<code>FLAGS.model_dir</code>目录下会看到以下几个文件。其中，<code>model.checkpoint.meta</code>包含了网络结构和一些其他信息，所以也包含了上面提到的<code>graph.pb</code>；<code>model.checkpoint.data-00000-of-00001</code>保存了模型参数，其他两个文件辅助作用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-rw-r--r--  1 user  staff      89 10 11 11:32 checkpoint</div><div class="line">-rw-r--r--  1 user  staff  225136 10 11 11:32 model.checkpoint.data-00000-of-00001</div><div class="line">-rw-r--r--  1 user  staff    1506 10 11 11:32 model.checkpoint.index</div><div class="line">-rw-r--r--  1 user  staff  369379 10 11 11:32 model.checkpoint.meta</div></pre></td></tr></table></figure></p>
+<h1 id="TensorFlow-C-API导入模型和参数"><a href="#TensorFlow-C-API导入模型和参数" class="headerlink" title="TensorFlow C++ API导入模型和参数"></a>TensorFlow C++ API导入模型和参数</h1><p>主要有两种方法：</p>
+<ul>
+<li>分别导入网络结构和模型参数</li>
+<li>线下先把网络结构和模型参数整合成一个文件，只用导入这个文件即可</li>
+</ul>
+<h2 id="分别导入网络结构和模型参数"><a href="#分别导入网络结构和模型参数" class="headerlink" title="分别导入网络结构和模型参数"></a>分别导入网络结构和模型参数</h2><h3 id="导入网络结构"><a href="#导入网络结构" class="headerlink" title="导入网络结构"></a>导入网络结构</h3><p>以上文的graph.pb为例<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 导入网络结构</span></div><div class="line">GraphDef graph_def;</div><div class="line">status = ReadBinaryProto(Env::Default(), <span class="built_in">std</span>::<span class="built_in">string</span>(<span class="string">"graph.pb"</span>), &amp;graph_def);</div><div class="line"><span class="keyword">if</span> (!status.ok()) &#123;</div><div class="line">  <span class="keyword">throw</span> runtime_error(<span class="string">"Error loading graph: "</span> + status.ToString());</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 把网络设置到Session里</span></div><div class="line">status = session-&gt;Create(graph_def);</div><div class="line"><span class="keyword">if</span> (!status.ok()) &#123;</div><div class="line">  <span class="keyword">throw</span> runtime_error(<span class="string">"Error set graph to session: "</span> + status.ToString());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="导入模型参数"><a href="#导入模型参数" class="headerlink" title="导入模型参数"></a>导入模型参数</h3><p>这里注意要传入模型路径，既上文的<code>FLAGS.model_dir</code>。以<code>FLAGS.model_dir=&quot;your_checkpoint_path&quot;</code>为例<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 导入模型参数</span></div><div class="line">Tensor checkpointPathTensor(DT_STRING, TensorShape());</div><div class="line">checkpointPathTensor.scalar&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt;()() = <span class="built_in">std</span>::<span class="built_in">string</span>(<span class="string">"your_checkpoint_path"</span>);</div><div class="line">status = session-&gt;Run(</div><div class="line">          &#123;&#123; graph_def.saver_def().filename_tensor_name(), checkpointPathTensor &#125;,&#125;,</div><div class="line">          &#123;&#125;,</div><div class="line">          &#123;graph_def.saver_def().restore_op_name()&#125;,</div><div class="line">          <span class="literal">nullptr</span>);</div><div class="line"><span class="keyword">if</span> (!status.ok()) &#123;</div><div class="line">  <span class="keyword">throw</span> runtime_error(<span class="string">"Error loading checkpoint: "</span> + status.ToString());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="网络结构和模型参数整合成一个文件"><a href="#网络结构和模型参数整合成一个文件" class="headerlink" title="网络结构和模型参数整合成一个文件"></a>网络结构和模型参数整合成一个文件</h2><blockquote>
+<p> One confusing part about this is that the weights usually aren’t stored inside the file format during training. Instead, they’re held in separate checkpoint files, and there are Variable ops in the graph that load the latest values when they’re initialized. It’s often not very convenient to have separate files when you’re deploying to production, so there’s the freeze_graph.py script that takes a graph definition and a set of checkpoints and freezes them together into a single file.</p>
+</blockquote>
+<p>使用多个文件部署比较麻烦，如果能整个成一个独立文件会方便很多，因此，TensorFlow官方提供了<code>freeze_graph.py</code>工具。如果已经安装了TensorFlow，则在安装目录下可以找到，否则可以直接使用源码<code>tensorflow/python/tools</code>路径下<code>freeze_graph.py</code>。运行例子为：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">python <span class="variable">$&#123;TF_HOME&#125;</span>/tensorflow/python/tools/freeze_graph.py \</div><div class="line">    --input_graph=<span class="string">"graph.pb"</span> \</div><div class="line">    --input_checkpoint=<span class="string">"your_checkpoint_path/checkpoint_prefix"</span> \</div><div class="line">    --output_graph=<span class="string">"your_checkpoint_path/freeze_graph.pb"</span> \</div><div class="line">    --output_node_names=Softmax</div></pre></td></tr></table></figure></p>
+<p>其中，<code>input_graph</code>为网络结构pb文件，<code>input_checkpoint</code>为模型参数文件名前缀，<code>output_graph</code>为我们的目标文件，<code>output_node_names</code>为目标网络节点名称，因为网络包括前向和后向网络，在预测时后向网络其实是多余的，指定<code>output_node_names</code>后只保存从输入节点到这个节点的部分网络。如果不清楚自己想要的节点<code>output_node_names</code>是什么，可以用下面的代码把网络里的全部节点名字列出来，然后找到自己想要的那个就行了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> op <span class="keyword">in</span> tf.get_default_graph().get_operations():</div><div class="line">    print(op.name)</div></pre></td></tr></table></figure></p>
+<p>得到<code>freeze_graph.pb</code>后，只导入网络结构即可，不再需要另外导入模型参数。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">GraphDef graph_def;</div><div class="line">status = ReadBinaryProto(Env::Default(), <span class="built_in">std</span>::<span class="built_in">string</span>(<span class="string">"freeze_graph.pb"</span>), &amp;graph_def);</div></pre></td></tr></table></figure></p>
+<p><code>freeze_graph.py</code>的更多参数可以看它的代码。</p>
+<p>官方的<code>freeze_graph.py</code>工具需要在训练时同时调用<code>tf.train.write_graph</code>保存网络结构和<code>tf.train.Saver()</code>保存模型参数，之前讲过<code>tf.train.Saver()</code>保存的<code>meta</code>文件里其实已经包含了网络结构，所以就不用调用<code>tf.train.write_graph</code>保存网络结构，不过这时就不能直接调用官方的<code>freeze_graph.py</code>了，需要使用一点trick的方式将网络结构从<code>meta</code>文件里提取出来，具体代码可见<code>https://github.com/formath/deep-ctr/blob/master/python/freeze_graph.py</code>，使用例子如下，其中<code>model_dir</code>的即上文的<code>FLAGS.model_dir</code>目录，<code>output_node_names</code>和官方<code>freeze_graph.py</code>的意思一致。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># this freeze_graph.py is https://github.com/formath/deep-ctr/blob/master/python/freeze_graph.py</span></div><div class="line">python ../python/freeze_graph.py \</div><div class="line">    --model_dir=./model \</div><div class="line">    --output_node_names=Softmax</div></pre></td></tr></table></figure></p>
+<h1 id="TensorFlow-C-API构造Sparse-Tensor"><a href="#TensorFlow-C-API构造Sparse-Tensor" class="headerlink" title="TensorFlow C++ API构造Sparse Tensor"></a>TensorFlow C++ API构造Sparse Tensor</h1><p>以<code>LibFM</code>格式数据为例，<code>label fieldid:featureid:value ...</code>。假如一个batch中有以下4条样本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">0 1:384:1 8:734:1</div><div class="line">0 3:73:1</div><div class="line">1 2:449:1 0:31:1</div><div class="line">0 5:465:1</div></pre></td></tr></table></figure></p>
+<p>四个<code>label</code>可以表示成一个稠密<code>Tensor</code>，即<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> label_tensor = test::AsTensor&lt;float32&gt;(&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>&#125;);</div></pre></td></tr></table></figure></p>
+<p>剩余还有三个部分，分别是<code>fieldid</code>、<code>featureid</code>、<code>value</code>，每个部分都可以表示成一个<code>SparseTensor</code>，每个<code>SparseTensor</code>由3个<code>Tensor</code>组成。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Instance | SparseFieldId | SparseFeatureId |    SparseValue   |</div><div class="line"><span class="number">0</span>        |    <span class="number">1</span>, <span class="number">8</span>       |     <span class="number">384</span>, <span class="number">734</span>    |     <span class="number">1.0</span>, <span class="number">1.0</span>     |</div><div class="line"><span class="number">1</span>        |    <span class="number">3</span>          |     <span class="number">73</span>          |     <span class="number">1.0</span>          |</div><div class="line"><span class="number">2</span>        |    <span class="number">2</span>, <span class="number">0</span>       |     <span class="number">449</span>, <span class="number">31</span>     |     <span class="number">1.0</span>, <span class="number">1.0</span>     |</div><div class="line"><span class="number">3</span>        |    <span class="number">5</span>          |     <span class="number">465</span>         |     <span class="number">1.0</span>          |</div></pre></td></tr></table></figure></p>
+<p>以<code>SparseFieldId</code>部分为例，<code>SparseTensor</code>中的第一个<code>Tensor</code>表示每个id的行列坐标，比如<code>Instance=0</code>的<code>FieldId=1</code>为<0, 0="">，<code>Instance=0</code>的<code>FieldId=8</code>为<0, 1="">，<code>Instance=2</code>的<code>FieldId=0</code>为<2, 1="">，总共6对，每对是个二元组，所以第一个<code>Tensor</code>为<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> fieldid_tensor_indices =</div><div class="line">      test::AsTensor&lt;int64&gt;(&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">0</span>&#125;, &#123;<span class="number">6</span>, <span class="number">2</span>&#125;);</div></pre></td></tr></table></figure></2,></0,></0,></p>
+<p><code>SparseTensor</code>中的第二个<code>Tensor</code>表示id值，即<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> fieldid_tensor_values = test::AsTensor&lt;int64&gt;(&#123;<span class="number">1</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">5</span>&#125;);</div></pre></td></tr></table></figure></p>
+<p>第三个<code>Tensor</code>表示样本行数和每条样本里最多有多少个id，所以是<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> fieldid_tensor_shape = TensorShape(&#123;<span class="number">4</span>, <span class="number">2</span>&#125;);</div></pre></td></tr></table></figure></p>
+<p>最后，<code>fieldid</code>部分的<code>SparseTensor</code>表示为<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sparse::<span class="function">SparseTensor <span class="title">fieldid_sparse_tensor</span><span class="params">(</span></span></div><div class="line"><span class="function"><span class="params">      fieldid_tensor_indices, fieldid_tensor_values, fieldid_tensor_shape)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>其他两个部分，<code>featureid</code>和<code>value</code>同样可以用<code>SparseTensor</code>表示。最后，一个batch的libfm数据可以由4份数据来表示，这4份数据作为网络的<code>input</code>，运行<code>Session.run</code>即可得到输出。当然，线上预测时就没有<code>label</code>这一部分输入了。</p>
+<ul>
+<li>label的<code>Tensor</code></li>
+<li>fieldid的<code>SparseTensor</code></li>
+<li>featureid的<code>SparseTensor</code></li>
+<li>value的<code>SparseTensor</code></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://mathmach.com/2017/10/09/%E4%BD%BF%E7%94%A8TensorFlow%20C++%20API%E6%9E%84%E5%BB%BA%E7%BA%BF%E4%B8%8A%E9%A2%84%E6%B5%8B%E6%9C%8D%E5%8A%A1/" target="_blank" rel="external">使用TensorFlow C++ API构建线上预测服务（基础篇）</a></li>
+<li><a href="https://medium.com/@hamedmp/exporting-trained-tensorflow-models-to-c-the-right-way-cf24b609d183" target="_blank" rel="external">Exporting trained TensorFlow models to C++ the RIGHT way!</a></li>
+<li><a href="https://www.tensorflow.org/extend/tool_developers" target="_blank" rel="external">Freeze Graph</a></li>
+<li><a href="https://blog.metaflow.fr/tensorflow-how-to-freeze-a-model-and-serve-it-with-a-python-api-d4f3596b3adc" target="_blank" rel="external">TensorFlow: How to freeze a model and serve it with a python API</a></li>
+</ul>
+<p><div id="disqus_thread"></div></p>
+<script>
 
+<p>/**</p>
+<ul>
+<li>RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.</li>
+<li>LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: <a href="https://disqus.com/admin/universalcode/#configuration-variables*/">https://disqus.com/admin/universalcode/#configuration-variables*/</a><br>/<em><br>var disqus_config = function () {<br>this.page.url = PAGE_URL;  // Replace PAGE_URL with your page’s canonical URL variable<br>this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page’s unique identifier variable<br>};
+</em>/<br>(function() { // DON’T EDIT BELOW THIS LINE<br>var d = document, s = d.createElement(‘script’);<br>s.src = ‘<a href="https://mathmach.disqus.com/embed.js">https://mathmach.disqus.com/embed.js</a>‘;<br>s.setAttribute(‘data-timestamp’, +new Date());<br>(d.head || d.body).appendChild(s);<br>})();<br>&lt;/script&gt;<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></li>
+</ul>
+</script>
         
     
 
@@ -510,8 +566,8 @@
     <div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://www.mathmach.com/2017/08/29/engine/';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://www.mathmach.com/2017/08/29/engine/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 </script>
 <script type="text/ls-javascript" id="disqus-thread-script">
@@ -541,21 +597,13 @@
             <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
     <!-- Prev Nav -->
     
-        <a href="/2017/08/30/Sublime插件/" id="post_nav-newer" class="prev-content">
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
-                <i class="material-icons">arrow_back</i>
-            </button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            新篇
-        </a>
-    
 
     <!-- Section Spacer -->
     <div class="section-spacer"></div>
 
     <!-- Next Nav -->
     
-        <a href="/2017/08/16/nnvm/" id="post_nav-older" class="next-content">
+        <a href="/2017/10/09/tensorflow_c++_api_prediction_basic/" id="post_nav-older" class="next-content">
             旧篇
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
