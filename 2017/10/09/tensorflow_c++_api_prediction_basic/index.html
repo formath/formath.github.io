@@ -238,7 +238,7 @@
 
     
         <meta property="article:published_time" content="Mon Oct 09 2017 18:32:05 GMT+0800" />
-        <meta property="article:modified_time" content="Sat Oct 14 2017 16:07:22 GMT+0800" />
+        <meta property="article:modified_time" content="Thu Oct 19 2017 22:18:41 GMT+0800" />
     
 
     <!-- The Twitter Card protocol -->
@@ -265,7 +265,7 @@
     "mainEntityOfPage": "http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_basic/index.html",
     "headline": "使用TensorFlow C++ API构建线上预测服务（基础篇）",
     "datePublished": "Mon Oct 09 2017 18:32:05 GMT+0800",
-    "dateModified": "Sat Oct 14 2017 16:07:22 GMT+0800",
+    "dateModified": "Thu Oct 19 2017 22:18:41 GMT+0800",
     "author": {
         "@type": "Person",
         "name": "formath",
@@ -273,7 +273,7 @@
             "@type": "ImageObject",
             "url": "/img/avatar.png"
         },
-        "description": "Hi, nice to meet you"
+        "description": "评论需要翻墙"
     },
     "publisher": {
         "@type": "Organization",
@@ -521,16 +521,16 @@
 <h2 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="built_in">string</span>, tensorflow::Tensor&gt;&gt; inputs = &#123;</div><div class="line">  &#123; <span class="string">"a"</span>, a &#125;,</div><div class="line">  &#123; <span class="string">"b"</span>, b &#125;,</div><div class="line">&#125;; <span class="comment">// input</span></div><div class="line"></div><div class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;tensorflow::Tensor&gt; outputs; <span class="comment">// output</span></div><div class="line"></div><div class="line">Statuc status = session-&gt;Run(inputs, &#123;<span class="string">"c"</span>&#125;, &#123;&#125;, &amp;outputs);</div><div class="line"><span class="keyword">if</span> (!status.ok()) &#123;</div><div class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; status.ToString() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Run session successfully"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="查看预测结果"><a href="#查看预测结果" class="headerlink" title="查看预测结果"></a>查看预测结果</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">auto</span> c = outputs[<span class="number">0</span>].scalar&lt;<span class="keyword">float</span>&gt;();</div><div class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"output value: "</span> &lt;&lt; c() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div></pre></td></tr></table></figure>
 <h2 id="关闭Session"><a href="#关闭Session" class="headerlink" title="关闭Session"></a>关闭Session</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">session-&gt;Close();</div></pre></td></tr></table></figure>
-<p>完整的代码在<code>https://github.com/formath/tensorflow-predictor-cpp</code>，路径为<code>tensorflow-predictor-cpp/src/simple_model.cc</code>。 </p>
+<p>完整的代码在<code>https://github.com/formath/deep-ctr</code>，路径为<code>deep-ctr/src/simple_model.cc</code>。 </p>
 <h1 id="使用CMake构建预测代码"><a href="#使用CMake构建预测代码" class="headerlink" title="使用CMake构建预测代码"></a>使用CMake构建预测代码</h1><p>这里主要的问题是头文件和静态库的路径要正确，包括TensorFlow以及第三方依赖。 以macOS为例，其他平台路径会不一样。</p>
 <h2 id="头文件路径"><a href="#头文件路径" class="headerlink" title="头文件路径"></a>头文件路径</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">tensorflow // TensorFlow头文件</div><div class="line">tensorflow/tensorflow/contrib/makefile/gen/proto // TensorFlow PB文件生成的pb.h头文件</div><div class="line">tensorflow/tensorflow/contrib/makefile/gen/protobuf-host/include // ProtoBuf头文件</div><div class="line">tensorflow/tensorflow/contrib/makefile/downloads/eigen // eigen头文件</div><div class="line">tensorflow/tensorflow/contrib/makefile/downloads/nsync/public // nsync头文件</div></pre></td></tr></table></figure>
 <h2 id="静态库路径"><a href="#静态库路径" class="headerlink" title="静态库路径"></a>静态库路径</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">tensorflow/tensorflow/contrib/makefile/gen/lib/ios_X86_64 // TensorFlow x86_64静态库</div><div class="line">tensorflow/tensorflow/contrib/makefile/gen/protobuf-host/lib // ProtoBuf静态库</div><div class="line">tensorflow/tensorflow/contrib/makefile/gen/protobuf_ios/lib/iossim_x86_64/lib</div><div class="line">tensorflow/tensorflow/contrib/makefile/downloads/nsync/builds/x86_64.ios.c++11 // nsync静态库</div></pre></td></tr></table></figure>
 <p>编译时需要这些静态库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">libtensorflow-core-x86_64.a // TensorFlow x86_64静态库</div><div class="line">libprotobuf.a // ProtoBuf静态库</div><div class="line">libnsync.a // nsync静态库，注意，macOS上只生成nsync.a，需要手动把名字改成libnsync.a，否则CMake构建时可能提示找不到libnsync.a文件</div><div class="line">其他: pthread m z</div></pre></td></tr></table></figure></p>
-<h2 id="CMake构建"><a href="#CMake构建" class="headerlink" title="CMake构建"></a>CMake构建</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/formath/tensorflow-predictor-cpp.git</div><div class="line"><span class="built_in">cd</span> tensorflow-predictor-cpp</div><div class="line">mkdir build &amp;&amp; <span class="built_in">cd</span> build</div><div class="line">cmake ..</div><div class="line">make</div></pre></td></tr></table></figure>
+<h2 id="CMake构建"><a href="#CMake构建" class="headerlink" title="CMake构建"></a>CMake构建</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/formath/deep-ctr.git</div><div class="line"><span class="built_in">cd</span> deep-ctr</div><div class="line">mkdir build &amp;&amp; <span class="built_in">cd</span> build</div><div class="line">cmake ..</div><div class="line">make</div></pre></td></tr></table></figure>
 <p>构建完成后在bin路径下会看到一个simple_model可执行文件，运行<code>./simple_model</code>即可看到输出<code>output value: 6</code>。 需要注意的时，编译选项里一定要加这些<code>-undefined dynamic_lookup -all_load</code>，否则在编译和运行时会报错，原因可见<a href="https://www.tensorflow.org/versions/r1.1/extend/adding_an_op" target="_blank" rel="external">dynamic_lookup</a>和<a href="https://github.com/tensorflow/tensorflow/issues/3308" target="_blank" rel="external">Error issues</a>。</p>
-<p>以上用<code>c=a+b</code>一个简单的网络来介绍整个流程，只要简单的修改即可应用到复杂模型中去，更复杂的一个例子可见<code>tensorflow-predictor-cpp/src/fnn.cc</code>。</p>
+<p>以上用<code>c = a * b</code>一个简单的网络来介绍整个流程，只要简单的修改即可应用到复杂模型中去，更复杂的一个例子可见<code>deep-ctr/src/fnn.cc</code>。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><a href="https://github.com/formath/tensorflow-predictor-cpp" target="_blank" rel="external">TensorFlow Predictor using its C++ API</a></li>
+<li><a href="https://github.com/formath/deep-ctr" target="_blank" rel="external">deep models for click through rate prediction</a></li>
 <li><a href="https://github.com/formath/tensorflow-models" target="_blank" rel="external">Various Models implemented in TensorFlow</a></li>
 <li><a href="https://medium.com/jim-fleming/loading-a-tensorflow-graph-with-the-c-api-4caaff88463f" target="_blank" rel="external">Loading a TensorFlow graph with the C++ API</a></li>
 <li><a href="http://jackytung8085.blogspot.jp/2016/06/loading-tensorflow-graph-with-c-api-by.html" target="_blank" rel="external">Loading a tensorflow graph with the C++ API by using Mnist</a></li>
