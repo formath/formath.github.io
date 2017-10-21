@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_basic/</loc>
-    <lastmod>2017-10-21T11:02:35.000Z</lastmod>
+    <lastmod>2017-10-21T14:33:14.000Z</lastmod>
     <data>
         <display>
         <title>使用TensorFlow C++ API构建线上预测服务（基础篇）</title>
@@ -129,31 +129,6 @@
     
     
   <url>
-    <loc>http://www.mathmach.com/2017/08/15/Variants-of-SGD/</loc>
-    <lastmod>2017-10-19T16:03:55.000Z</lastmod>
-    <data>
-        <display>
-        <title>Variants of SGD</title>
-        <pubTime>2017-08-15T07:45:05.000Z</pubTime>
-        
-        <tag>numerical optimization</tag>
-         
-        <tag>machine learning</tag>
-         
-         
-           
-             
-              <breadCrumb title="numerical optimization" url="http://www.mathmach.com/categories/numerical-optimization/"/>
-          
-             
-              <breadCrumb title="machine learning" url="http://www.mathmach.com/categories/numerical-optimization/machine-learning/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.mathmach.com/2017/08/30/Sublime%E6%8F%92%E4%BB%B6/</loc>
     <lastmod>2017-10-19T16:03:55.000Z</lastmod>
     <data>
@@ -171,6 +146,31 @@
            
              
               <breadCrumb title="tools" url="http://www.mathmach.com/categories/tools/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.mathmach.com/2017/08/15/Variants-of-SGD/</loc>
+    <lastmod>2017-10-19T16:03:55.000Z</lastmod>
+    <data>
+        <display>
+        <title>Variants of SGD</title>
+        <pubTime>2017-08-15T07:45:05.000Z</pubTime>
+        
+        <tag>machine learning</tag>
+         
+        <tag>numerical optimization</tag>
+         
+         
+           
+             
+              <breadCrumb title="numerical optimization" url="http://www.mathmach.com/categories/numerical-optimization/"/>
+          
+             
+              <breadCrumb title="machine learning" url="http://www.mathmach.com/categories/numerical-optimization/machine-learning/"/>
           
         </display>
     </data>
