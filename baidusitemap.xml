@@ -4,18 +4,18 @@
 
     
   <url>
-    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
-    <lastmod>2017-10-22T05:48:35.000Z</lastmod>
+    <loc>http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_first/</loc>
+    <lastmod>2017-10-22T13:04:21.000Z</lastmod>
     <data>
         <display>
-        <title>使用TensorFlow C++ API构建线上预测服务 - 第二篇</title>
-        <pubTime>2017-10-11T03:32:05.000Z</pubTime>
+        <title>使用TensorFlow C++ API构建线上预测服务 - 第一篇</title>
+        <pubTime>2017-10-09T10:32:05.000Z</pubTime>
         
+        <tag>tensorflow</tag>
+         
         <tag>machine learning</tag>
          
         <tag>deep learning</tag>
-         
-        <tag>tensorflow</tag>
          
         <tag>tensorflow c++</tag>
          
@@ -37,11 +37,11 @@
         <title>使用TensorFlow C++ API构建线上预测服务 - 第三篇</title>
         <pubTime>2017-10-22T03:32:05.000Z</pubTime>
         
+        <tag>tensorflow</tag>
+         
         <tag>machine learning</tag>
          
         <tag>deep learning</tag>
-         
-        <tag>tensorflow</tag>
          
         <tag>tensorflow c++</tag>
          
@@ -56,18 +56,18 @@
 
     
   <url>
-    <loc>http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_first/</loc>
-    <lastmod>2017-10-22T05:43:51.000Z</lastmod>
+    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
+    <lastmod>2017-10-22T05:48:35.000Z</lastmod>
     <data>
         <display>
-        <title>使用TensorFlow C++ API构建线上预测服务 - 第一篇</title>
-        <pubTime>2017-10-09T10:32:05.000Z</pubTime>
+        <title>使用TensorFlow C++ API构建线上预测服务 - 第二篇</title>
+        <pubTime>2017-10-11T03:32:05.000Z</pubTime>
         
+        <tag>tensorflow</tag>
+         
         <tag>machine learning</tag>
          
         <tag>deep learning</tag>
-         
-        <tag>tensorflow</tag>
          
         <tag>tensorflow c++</tag>
          
@@ -81,6 +81,30 @@
     </url>
 
     
+    
+  <url>
+    <loc>http://www.mathmach.com/2017/09/14/mxnet%E7%9A%84%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B/</loc>
+    <lastmod>2017-10-21T10:55:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>mxnet的训练流程</title>
+        <pubTime>2017-09-14T09:13:05.000Z</pubTime>
+        
+        <tag>machine learning</tag>
+         
+        <tag>deep learning</tag>
+         
+        <tag>mxnet</tag>
+         
+         
+           
+             
+              <breadCrumb title="mxnet" url="http://www.mathmach.com/categories/mxnet/"/>
+          
+        </display>
+    </data>
+    </url>
+
     
   <url>
     <loc>http://www.mathmach.com/2017/08/16/nnvm/</loc>
@@ -92,9 +116,9 @@
         
         <tag>machine learning</tag>
          
-        <tag>mxnet</tag>
-         
         <tag>deep learning</tag>
+         
+        <tag>mxnet</tag>
          
          
            
@@ -116,33 +140,9 @@
         
         <tag>machine learning</tag>
          
-        <tag>mxnet</tag>
-         
         <tag>deep learning</tag>
          
-         
-           
-             
-              <breadCrumb title="mxnet" url="http://www.mathmach.com/categories/mxnet/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.mathmach.com/2017/09/14/mxnet%E7%9A%84%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B/</loc>
-    <lastmod>2017-10-21T10:55:31.000Z</lastmod>
-    <data>
-        <display>
-        <title>mxnet的训练流程</title>
-        <pubTime>2017-09-14T09:13:05.000Z</pubTime>
-        
-        <tag>machine learning</tag>
-         
         <tag>mxnet</tag>
-         
-        <tag>deep learning</tag>
          
          
            
