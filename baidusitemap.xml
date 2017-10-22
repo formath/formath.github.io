@@ -3,10 +3,9 @@
 
 
     
-    
   <url>
     <loc>http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_basic/</loc>
-    <lastmod>2017-10-21T14:33:14.000Z</lastmod>
+    <lastmod>2017-10-22T02:46:20.000Z</lastmod>
     <data>
         <display>
         <title>使用TensorFlow C++ API构建线上预测服务（基础篇）</title>
@@ -29,6 +28,7 @@
     </data>
     </url>
 
+    
     
   <url>
     <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_advance/</loc>
@@ -136,9 +136,9 @@
         <title>Variants of SGD</title>
         <pubTime>2017-08-15T07:45:05.000Z</pubTime>
         
-        <tag>numerical optimization</tag>
-         
         <tag>machine learning</tag>
+         
+        <tag>numerical optimization</tag>
          
          
            
