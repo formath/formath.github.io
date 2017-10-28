@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>http://www.mathmach.com/2017/08/29/engine/</loc>
+    <lastmod>2017-10-24T12:54:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>engine</title>
+        <pubTime>2017-08-29T07:45:05.000Z</pubTime>
+        
+        <tag>machine learning</tag>
+         
+        <tag>mxnet</tag>
+         
+        <tag>deep learning</tag>
+         
+         
+           
+             
+              <breadCrumb title="mxnet" url="http://www.mathmach.com/categories/mxnet/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.mathmach.com/2017/08/30/Sublime%E6%8F%92%E4%BB%B6/</loc>
     <lastmod>2017-10-24T12:54:31.000Z</lastmod>
     <data>
@@ -28,12 +52,38 @@
 
     
   <url>
-    <loc>http://www.mathmach.com/2017/08/29/engine/</loc>
+    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
     <lastmod>2017-10-24T12:54:31.000Z</lastmod>
     <data>
         <display>
-        <title>engine</title>
-        <pubTime>2017-08-29T07:45:05.000Z</pubTime>
+        <title>使用TensorFlow C++ API构建线上预测服务 - 第二篇</title>
+        <pubTime>2017-10-11T03:32:05.000Z</pubTime>
+        
+        <tag>machine learning</tag>
+         
+        <tag>deep learning</tag>
+         
+        <tag>tensorflow</tag>
+         
+        <tag>tensorflow c++</tag>
+         
+         
+           
+             
+              <breadCrumb title="tensorflow" url="http://www.mathmach.com/categories/tensorflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.mathmach.com/2017/08/16/nnvm/</loc>
+    <lastmod>2017-10-24T12:54:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>nnvm</title>
+        <pubTime>2017-08-16T07:45:05.000Z</pubTime>
         
         <tag>machine learning</tag>
          
@@ -76,62 +126,12 @@
 
     
   <url>
-    <loc>http://www.mathmach.com/2017/08/16/nnvm/</loc>
-    <lastmod>2017-10-24T12:54:31.000Z</lastmod>
-    <data>
-        <display>
-        <title>nnvm</title>
-        <pubTime>2017-08-16T07:45:05.000Z</pubTime>
-        
-        <tag>machine learning</tag>
-         
-        <tag>mxnet</tag>
-         
-        <tag>deep learning</tag>
-         
-         
-           
-             
-              <breadCrumb title="mxnet" url="http://www.mathmach.com/categories/mxnet/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_first/</loc>
     <lastmod>2017-10-24T12:54:31.000Z</lastmod>
     <data>
         <display>
         <title>使用TensorFlow C++ API构建线上预测服务 - 第一篇</title>
         <pubTime>2017-10-09T10:32:05.000Z</pubTime>
-        
-        <tag>machine learning</tag>
-         
-        <tag>deep learning</tag>
-         
-        <tag>tensorflow</tag>
-         
-        <tag>tensorflow c++</tag>
-         
-         
-           
-             
-              <breadCrumb title="tensorflow" url="http://www.mathmach.com/categories/tensorflow/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
-    <lastmod>2017-10-24T12:54:31.000Z</lastmod>
-    <data>
-        <display>
-        <title>使用TensorFlow C++ API构建线上预测服务 - 第二篇</title>
-        <pubTime>2017-10-11T03:32:05.000Z</pubTime>
         
         <tag>machine learning</tag>
          
