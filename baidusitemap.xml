@@ -26,30 +26,6 @@
 
     
   <url>
-    <loc>http://www.mathmach.com/2017/10/28/mxnet_code/</loc>
-    <lastmod>2017-10-31T13:48:21.000Z</lastmod>
-    <data>
-        <display>
-        <title>MXNet代码详解</title>
-        <pubTime>2017-10-28T13:13:05.000Z</pubTime>
-        
-        <tag>machine learning</tag>
-         
-        <tag>mxnet</tag>
-         
-        <tag>deep learning</tag>
-         
-         
-           
-             
-              <breadCrumb title="mxnet" url="http://www.mathmach.com/categories/mxnet/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://www.mathmach.com/2017/08/30/Sublime%E6%8F%92%E4%BB%B6/</loc>
     <lastmod>2017-10-24T12:54:31.000Z</lastmod>
     <data>
@@ -81,37 +57,11 @@
         <title>使用TensorFlow C++ API构建线上预测服务 - 第一篇</title>
         <pubTime>2017-10-09T10:32:05.000Z</pubTime>
         
-        <tag>machine learning</tag>
-         
         <tag>deep learning</tag>
          
         <tag>tensorflow</tag>
          
-        <tag>tensorflow c++</tag>
-         
-         
-           
-             
-              <breadCrumb title="tensorflow" url="http://www.mathmach.com/categories/tensorflow/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
-    <lastmod>2017-10-24T12:54:31.000Z</lastmod>
-    <data>
-        <display>
-        <title>使用TensorFlow C++ API构建线上预测服务 - 第二篇</title>
-        <pubTime>2017-10-11T03:32:05.000Z</pubTime>
-        
         <tag>machine learning</tag>
-         
-        <tag>deep learning</tag>
-         
-        <tag>tensorflow</tag>
          
         <tag>tensorflow c++</tag>
          
@@ -133,11 +83,37 @@
         <title>使用TensorFlow C++ API构建线上预测服务 - 第三篇</title>
         <pubTime>2017-10-22T03:32:05.000Z</pubTime>
         
-        <tag>machine learning</tag>
-         
         <tag>deep learning</tag>
          
         <tag>tensorflow</tag>
+         
+        <tag>machine learning</tag>
+         
+        <tag>tensorflow c++</tag>
+         
+         
+           
+             
+              <breadCrumb title="tensorflow" url="http://www.mathmach.com/categories/tensorflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
+    <lastmod>2017-10-24T12:54:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>使用TensorFlow C++ API构建线上预测服务 - 第二篇</title>
+        <pubTime>2017-10-11T03:32:05.000Z</pubTime>
+        
+        <tag>deep learning</tag>
+         
+        <tag>tensorflow</tag>
+         
+        <tag>machine learning</tag>
          
         <tag>tensorflow c++</tag>
          
