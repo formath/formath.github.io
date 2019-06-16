@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.mathmach.com/2018/09/06/dnn_trick_for_ctr/</loc>
+    
+    <lastmod>2019-06-16T13:03:57.552Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.mathmach.com/about/resume.html</loc>
+    
+    <lastmod>2019-06-16T10:07:22.346Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.mathmach.com/about/index.html</loc>
     
     <lastmod>2019-06-16T09:47:55.796Z</lastmod>
@@ -9,21 +23,14 @@
   </url>
   
   <url>
-    <loc>http://www.mathmach.com/about/resume.html</loc>
-    
-    <lastmod>2019-06-16T09:38:45.919Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.mathmach.com/2018/08/13/tfrecord_on_hadoop/</loc>
+    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
     
     <lastmod>2019-06-16T09:38:45.917Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://www.mathmach.com/2017/10/11/tensorflow_c++_api_prediction_second/</loc>
+    <loc>http://www.mathmach.com/2018/08/13/tfrecord_on_hadoop/</loc>
     
     <lastmod>2019-06-16T09:38:45.917Z</lastmod>
     
@@ -37,14 +44,14 @@
   </url>
   
   <url>
-    <loc>http://www.mathmach.com/2018/09/25/tensorflow_barrier/</loc>
+    <loc>http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_first/</loc>
     
     <lastmod>2019-06-16T09:38:45.916Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://www.mathmach.com/2017/10/09/tensorflow_c++_api_prediction_first/</loc>
+    <loc>http://www.mathmach.com/2018/09/25/tensorflow_barrier/</loc>
     
     <lastmod>2019-06-16T09:38:45.916Z</lastmod>
     
@@ -61,13 +68,6 @@
     <loc>http://www.mathmach.com/2017/08/16/nnvm/</loc>
     
     <lastmod>2019-06-16T09:38:45.915Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.mathmach.com/2018/09/06/dnn_trick_for_ctr/</loc>
-    
-    <lastmod>2019-06-16T09:38:45.914Z</lastmod>
     
   </url>
   
