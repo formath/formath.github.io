@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html class="no-js" lang="zh-CN">
-<head><meta name="generator" content="Hexo 3.9.0">
-    <!--[if lte IE 9]>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
 <meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
 <![endif]-->
 <meta charset="utf-8">
@@ -21,7 +21,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
 <meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
 <meta name="author" content="formath(https://www.mathmach.com)">
+
 <link rel="stylesheet" href="/css/JSimple.css">
+
 
 <link rel="shortcut icon" href="/images/6040127.jpeg">
 
@@ -46,9 +48,9 @@
 
     
 
-</head>
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 <body>
-<div id="nav">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
     <nav class="nav-menu">
         <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
         <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
@@ -99,22 +101,25 @@
         <li><a href="/">最近</a></li>
         
             
-                <li class>
+                <li class="">
                     <a href="/categories/tech" data-name="技术">技术</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/life" data-name="生活">生活</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/others" data-name="其他">其他</a>
                 </li>
             
         
         <li class="page-search">
     <form id="search" class="search-form">
-        <input type="text" readonly="readonly" id="local-search-input-tip" placeholder="读物检索~">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
         <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
     </form>
 </li>
@@ -125,23 +130,25 @@
     <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
         <div class="post-header">
             <div class="post-author clearfix">
-                <a class="avatar fleft" href="https://www.mathmach.com" target="_blank">
-                    <img width="48" src="/images/6040127.jpeg" alt="avatar">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
                 </a>
                 <p><span class="label">作者</span>
-                    <a href="https://www.mathmach.com" target="_blank">formath</a>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
                     <span title="最后编辑于&nbsp;2019-08-15">2019-08-15</span>
                 </p>
                 <p>程序员</p>
             </div>
             <h2 class="post-title">SGD优化算法的各种变体</h2>
             <div class="post-meta">
-                本文共计6012个字 |
+                本文共计6033个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
         <div class="post-content markdown-body">
-            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>2017年前，公司内部的算法团队还都是使用<code>XGBoost</code>来训练模型，手动构造的特征已经几百个，特征迭代效果微弱，但在搜索推荐场景下，有大规模的离散特征，这类特征记忆效果非常好，如果加入模型训练会获得不错的效果提升，但树模型并不适合大规模离散特征，所以我开发了一个基于<code>Parameter Server</code>架构的分布式机器学习框架，主要支持大规模离散的浅层模型，比如<code>Logistic Regression</code>、<code>Factorization Machine</code>、<code>Field-aware Factorization Machine</code>分类模型以及对应的回归模型和<code>SVD分解</code>。这个机器学习框架使用<code>Yarn</code>调度在公司的大数据集群上，在线上取得了非常不错的收益，框架后续又开始朝着深度模型和在线学习演化，目前公司算法团队已经基本往大规模离散DNN迁移完毕。这里主要记录一下训练框架支持的一些优化算法，公式脑子只能记个大概，还是写下来方便以后查阅。<br><figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">窄的深度模型 -&gt; 宽的浅层模型 -&gt; 又宽又深的模型</span><br></pre></td></tr></table></figure></p>
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>2017年前，公司内部的算法团队还都是使用<code>XGBoost</code>来训练模型，手动构造的特征已经几百个，特征迭代效果微弱，但在搜索推荐场景下，有大规模的离散特征，这类特征记忆效果非常好，如果加入模型训练会获得不错的效果提升，但树模型并不适合大规模离散特征，所以我开发了一个基于<code>Parameter Server</code>架构的分布式机器学习框架，主要支持大规模离散的浅层模型，比如<code>Logistic Regression</code>、<code>Factorization Machine</code>、<code>Field-aware Factorization Machine</code>分类模型以及对应的回归模型和<code>SVD分解</code>。这个机器学习框架使用<code>Yarn</code>调度在公司的大数据集群上，在线上取得了非常不错的收益，框架后续又开始朝着深度模型和在线学习演化，目前公司算法团队已经基本往大规模离散DNN迁移完毕。这里主要记录一下训练框架支持的一些优化算法，公式脑子只能记个大概，还是写下来方便以后查阅。<br><figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">窄的深度模型 -&gt; 宽的浅层模型 -&gt; 又宽又深的模型 -&gt; 秒级在线更新的又宽又深的模型</span><br></pre></td></tr></table></figure></p>
 <h2 id="优化算法"><a href="#优化算法" class="headerlink" title="优化算法"></a>优化算法</h2><ul>
 <li>SGD with Momentum</li>
 <li>Nesterov accelerated gradient</li>
@@ -247,7 +254,7 @@
     
         <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
         <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
-        <script src="/js/md5.min.js" "></script>
+        <script src="/js/md5.min.js""></script>
         <div id="gitalk-container"></div>
         <script type="text/javascript">
             var gitalk = new Gitalk({
@@ -265,7 +272,9 @@
 
 
 </div>
+
 <script src="/js/busuanzi.pure.mini.js"></script>
+
 
 
         </div><!-- end #main-->
@@ -273,14 +282,14 @@
     <footer class="footer">
     <div class="footer-inner" style="text-align: center">
         <p>
-            <a href="/about" title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <!-- 自定义链接 -->
-            <a href="/help" title="帮助">帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/sitemap.xml" title="地图">地图</a>
         </p>
         <p>
-            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
             ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
             ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
             ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
@@ -288,7 +297,9 @@
         </p>
     </div>
 </footer>
+
 <script src="/js/SimpleCore.js"></script>
+
 
 </div>
 <!-- search pop -->
@@ -301,7 +312,11 @@
             <i class="fa fa-times-circle"></i>
         </span>
         <div class="local-search-input-wrapper">
-            <input id="local-search-input" spellcheck="false" type="text" autocomplete="off" placeholder="请输入查询关键词">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
         </div>
     </div>
     <div id="local-search-result"></div>
@@ -355,6 +370,6 @@
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

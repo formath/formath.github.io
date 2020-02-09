@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html class="no-js" lang="zh-CN">
-<head><meta name="generator" content="Hexo 3.9.0">
-    <!--[if lte IE 9]>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
 <meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
 <![endif]-->
 <meta charset="utf-8">
@@ -21,7 +21,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
 <meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
 <meta name="author" content="formath(https://www.mathmach.com)">
+
 <link rel="stylesheet" href="/css/JSimple.css">
+
 
 <link rel="shortcut icon" href="/images/6040127.jpeg">
 
@@ -46,9 +48,9 @@
 
     
 
-</head>
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 <body>
-<div id="nav">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
     <nav class="nav-menu">
         <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
         <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
@@ -99,22 +101,25 @@
         <li><a href="/">最近</a></li>
         
             
-                <li class>
+                <li class="">
                     <a href="/categories/tech" data-name="技术">技术</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/life" data-name="生活">生活</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/others" data-name="其他">其他</a>
                 </li>
             
         
         <li class="page-search">
     <form id="search" class="search-form">
-        <input type="text" readonly="readonly" id="local-search-input-tip" placeholder="读物检索~">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
         <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
     </form>
 </li>
@@ -125,11 +130,13 @@
     <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
         <div class="post-header">
             <div class="post-author clearfix">
-                <a class="avatar fleft" href="https://www.mathmach.com" target="_blank">
-                    <img width="48" src="/images/6040127.jpeg" alt="avatar">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
                 </a>
                 <p><span class="label">作者</span>
-                    <a href="https://www.mathmach.com" target="_blank">formath</a>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
                     <span title="最后编辑于&nbsp;2018-09-25">2018-09-25</span>
                 </p>
                 <p>程序员</p>
@@ -153,8 +160,8 @@
 </ul>
 <p>最优的方式应该是这样：<br><figure class="highlight gauss"><table><tr><td class="code"><pre><span class="line">epoch = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> epoch &lt; max_epoch:</span><br><span class="line">  train_one_epoch <span class="meta"># 跑一轮数据</span></span><br><span class="line">  barrier <span class="meta"># 卡在这里，等所有worker都跑完一轮数据</span></span><br><span class="line">  <span class="keyword">save</span> checkpoint <span class="meta"># 保存这一轮的模型</span></span><br><span class="line">  <span class="keyword">do</span> evaluation <span class="meta"># 跑一遍验证集数据</span></span><br><span class="line">  epoch++ <span class="meta"># 进入下一轮</span></span><br></pre></td></tr></table></figure></p>
 <p>那怎样实现barrier机制呢？</p>
-<h2 id="Barrier机制实现"><a href="#Barrier机制实现" class="headerlink" title="Barrier机制实现"></a>Barrier机制实现</h2><p>具体原理就是在<code>PS:0</code>节点上添加和worker数目一样的一组计数变量<code>counter_vars</code>，初始化时为0，每当worker结束一轮训练后，将自己的worker_index对应的<code>counter_var</code>增加1，然后依次遍历其他worker对应的<code>counter_var</code>，直到所有worker的<code>counter_var</code>都等于1说明所有worker都完成这一轮训练了，然后就可以进入下一轮训练。当然，barrier也可以用于其他任意同步的方式，比如退出时也可以加个barrier，等所有worker都结束后保存模型再退出。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Barrier</span><span class="params">(object)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, worker_num, barrier_num, sleep_time_ms=<span class="number">10</span>)</span>:</span></span><br><span class="line">    self._worker_num = worker_num</span><br><span class="line">    self._barrier_num = barrier_num</span><br><span class="line">    self._sleep_time_ms = sleep_time_ms</span><br><span class="line">    self._counter_vars = []</span><br><span class="line">    self._counter_add_ops = []</span><br><span class="line">    self._counter_reset_ops = []</span><br><span class="line">    ps_device = <span class="string">'/job:ps/task:0/cpu:0'</span></span><br><span class="line">    <span class="keyword">with</span> tf.device(ps_device):</span><br><span class="line">      <span class="keyword">for</span> i <span class="keyword">in</span> range(self._barrier_num):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(self._worker_num):</span><br><span class="line">          counter_var = tf.get_variable(</span><br><span class="line">            <span class="string">'counter-&#123;&#125;_&#123;&#125;'</span>.format(i, j),</span><br><span class="line">            (),</span><br><span class="line">            tf.int32,</span><br><span class="line">            initializer=tf.zeros_initializer</span><br><span class="line">          )</span><br><span class="line">          self._counter_vars.append(counter_var)</span><br><span class="line">          self._counter_add_ops.append(counter_var.assign_add(<span class="number">1</span>, use_locking=<span class="literal">True</span>))</span><br><span class="line">          self._counter_reset_ops.append(counter_var.assign(<span class="number">0</span>, use_locking=<span class="literal">True</span>))</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">barrier_reset</span><span class="params">(self, session, worker_index, barrier_index)</span>:</span></span><br><span class="line">    index = barrier_index * self._worker_num + worker_index</span><br><span class="line">    session.run(self._counter_reset_ops[index])</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">barrier</span><span class="params">(self, session, worker_index, barrier_index, epoch)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> task_index <span class="keyword">in</span> range(self._worker_num):</span><br><span class="line">      <span class="keyword">if</span> task_index == worker_index:</span><br><span class="line">        session.run(self._counter_add_ops[barrier_index * self._worker_num + worker_index])</span><br><span class="line">      index = barrier_index * self._worker_num + task_index</span><br><span class="line">      count = session.run(self._counter_vars[index])</span><br><span class="line">      retry_num = <span class="number">0</span></span><br><span class="line">      <span class="keyword">while</span> count &lt; epoch:</span><br><span class="line">        time.sleep(self._sleep_time_ms)</span><br><span class="line">        retry_num += <span class="number">1</span></span><br><span class="line">        count = session.run(self._counter_vars[index])</span><br><span class="line">        <span class="keyword">if</span> retry_num == <span class="number">1</span>:</span><br><span class="line">          tf.logging.info(<span class="string">"&#123;&#125; wait for &#123;&#125;_&#123;&#125; to be completed"</span>.format(time.strftime(<span class="string">"%Y-%m-%d %H:%M:%S"</span>, time.localtime()), task_index))</span><br></pre></td></tr></table></figure></p>
-<h2 id="训练代码"><a href="#训练代码" class="headerlink" title="训练代码"></a>训练代码</h2><p>首先不能使用QueueRunner读数据，因为它无法实现按轮次读取，需要使用DataSet来读取数据，保证worker知道每轮数据读完了。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_parse_function</span><span class="params">(example_proto)</span>:</span></span><br><span class="line">  features = &#123;&#125;</span><br><span class="line">  features[<span class="string">'label'</span>] = tf.FixedLenFeature([], tf.float32)</span><br><span class="line">  features[<span class="string">'feature'</span>] = tf.FixedLenFeature([<span class="number">100</span>], tf.int64)</span><br><span class="line">  instance = tf.parse_example(example_proto, features)</span><br><span class="line">  label = instance[<span class="string">'label'</span>]</span><br><span class="line">  feature = instance[<span class="string">'feature'</span>]</span><br><span class="line">  <span class="keyword">return</span> label, feature</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> job_name == <span class="string">'ps'</span>:</span><br><span class="line">  <span class="keyword">with</span> tf.device(<span class="string">'/cpu:0'</span>):</span><br><span class="line">    server.join()</span><br><span class="line"><span class="keyword">elif</span> job_name == <span class="string">'worker'</span>:</span><br><span class="line">  <span class="keyword">with</span> tf.device(param_server_device):</span><br><span class="line">    <span class="comment"># dataset input</span></span><br><span class="line">    dataset = tf.data.TFRecordDataset(file_name)</span><br><span class="line">    dataset = dataset.prefetch(buffer_size=batch_size*<span class="number">100</span>)</span><br><span class="line">    dataset = dataset.shuffle(buffer_size=batch_size*<span class="number">10</span>)</span><br><span class="line">    dataset = dataset.batch(batch_size)</span><br><span class="line">    dataset = dataset.map(_parse_function, num_parallel_calls=<span class="number">4</span>)</span><br><span class="line">    train_iterator = dataset.make_initializable_iterator()</span><br><span class="line">    train_label, train_feature = train_iterator.get_next()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># forward pass</span></span><br><span class="line">    model = ...</span><br><span class="line">    train_logits = model.forward(train_feature)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># loss</span></span><br><span class="line">    train_label = tf.to_int64(train_label)</span><br><span class="line">    train_cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(</span><br><span class="line">            logits=train_logits, labels=train_label)</span><br><span class="line">    train_loss = tf.reduce_mean(train_cross_entropy, name=<span class="string">'loss'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># optimizer</span></span><br><span class="line">    opt = tf.train.AdamOptimizer()</span><br><span class="line">    train_op = opt.minimize(train_loss)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># barrier</span></span><br><span class="line">    barrier_op = barrier.Barrier(self.num_worker, <span class="number">2</span>) <span class="comment"># 下面需要两处做barrier，所以为2</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># job process</span></span><br><span class="line">    <span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">      <span class="comment"># init</span></span><br><span class="line">      sess.run([tf.global_variables_initializer(), tf.local_variables_initializer()])</span><br><span class="line"></span><br><span class="line">      <span class="comment"># training process</span></span><br><span class="line">      epoch_num = <span class="number">0</span></span><br><span class="line">      barrier_op.barrier(sess, self.task_index, <span class="number">0</span>, epoch_num) <span class="comment"># 等所有worker都启动再开始训练</span></span><br><span class="line">      <span class="keyword">while</span> epoch_num &lt; max_epoch:</span><br><span class="line">        sess.run(train_iterator.initializer) <span class="comment"># 每轮开始先初始化数据</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">          <span class="keyword">try</span>:</span><br><span class="line">            sess.run(train_op)</span><br><span class="line">          <span class="keyword">except</span> tf.errors.OutOfRangeError:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        barrier_op.barrier(sess, self.task_index, <span class="number">1</span>, epoch_num) <span class="comment"># 等所有worker结束这轮训练</span></span><br><span class="line">        <span class="comment">#保存这一轮的checkpoint</span></span><br><span class="line">        epoch_num += <span class="number">1</span> <span class="comment"># 进入下一轮</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Barrier机制实现"><a href="#Barrier机制实现" class="headerlink" title="Barrier机制实现"></a>Barrier机制实现</h2><p>具体原理就是在<code>PS:0</code>节点上添加和worker数目一样的一组计数变量<code>counter_vars</code>，初始化时为0，每当worker结束一轮训练后，将自己的worker_index对应的<code>counter_var</code>增加1，然后依次遍历其他worker对应的<code>counter_var</code>，直到所有worker的<code>counter_var</code>都等于1说明所有worker都完成这一轮训练了，然后就可以进入下一轮训练。当然，barrier也可以用于其他任意同步的方式，比如退出时也可以加个barrier，等所有worker都结束后保存模型再退出。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Barrier</span><span class="params">(object)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, worker_num, barrier_num, sleep_time_ms=<span class="number">10</span>)</span>:</span></span><br><span class="line">    self._worker_num = worker_num</span><br><span class="line">    self._barrier_num = barrier_num</span><br><span class="line">    self._sleep_time_ms = sleep_time_ms</span><br><span class="line">    self._counter_vars = []</span><br><span class="line">    self._counter_add_ops = []</span><br><span class="line">    self._counter_reset_ops = []</span><br><span class="line">    ps_device = <span class="string">'/job:ps/task:0/cpu:0'</span></span><br><span class="line">    <span class="keyword">with</span> tf.device(ps_device):</span><br><span class="line">      <span class="keyword">for</span> i <span class="keyword">in</span> range(self._barrier_num):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(self._worker_num):</span><br><span class="line">          counter_var = tf.get_variable(</span><br><span class="line">            <span class="string">'counter-&#123;&#125;_&#123;&#125;'</span>.format(i, j),</span><br><span class="line">            (),</span><br><span class="line">            tf.int32,</span><br><span class="line">            initializer=tf.zeros_initializer</span><br><span class="line">          )</span><br><span class="line">          self._counter_vars.append(counter_var)</span><br><span class="line">          self._counter_add_ops.append(counter_var.assign_add(<span class="number">1</span>, use_locking=<span class="keyword">True</span>))</span><br><span class="line">          self._counter_reset_ops.append(counter_var.assign(<span class="number">0</span>, use_locking=<span class="keyword">True</span>))</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">barrier_reset</span><span class="params">(self, session, worker_index, barrier_index)</span>:</span></span><br><span class="line">    index = barrier_index * self._worker_num + worker_index</span><br><span class="line">    session.run(self._counter_reset_ops[index])</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">barrier</span><span class="params">(self, session, worker_index, barrier_index, epoch)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> task_index <span class="keyword">in</span> range(self._worker_num):</span><br><span class="line">      <span class="keyword">if</span> task_index == worker_index:</span><br><span class="line">        session.run(self._counter_add_ops[barrier_index * self._worker_num + worker_index])</span><br><span class="line">      index = barrier_index * self._worker_num + task_index</span><br><span class="line">      count = session.run(self._counter_vars[index])</span><br><span class="line">      retry_num = <span class="number">0</span></span><br><span class="line">      <span class="keyword">while</span> count &lt; epoch:</span><br><span class="line">        time.sleep(self._sleep_time_ms)</span><br><span class="line">        retry_num += <span class="number">1</span></span><br><span class="line">        count = session.run(self._counter_vars[index])</span><br><span class="line">        <span class="keyword">if</span> retry_num == <span class="number">1</span>:</span><br><span class="line">          tf.logging.info(<span class="string">"&#123;&#125; wait for &#123;&#125;_&#123;&#125; to be completed"</span>.format(time.strftime(<span class="string">"%Y-%m-%d %H:%M:%S"</span>, time.localtime()), task_index))</span><br></pre></td></tr></table></figure></p>
+<h2 id="训练代码"><a href="#训练代码" class="headerlink" title="训练代码"></a>训练代码</h2><p>首先不能使用QueueRunner读数据，因为它无法实现按轮次读取，需要使用DataSet来读取数据，保证worker知道每轮数据读完了。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_parse_function</span><span class="params">(example_proto)</span>:</span></span><br><span class="line">  features = &#123;&#125;</span><br><span class="line">  features[<span class="string">'label'</span>] = tf.FixedLenFeature([], tf.float32)</span><br><span class="line">  features[<span class="string">'feature'</span>] = tf.FixedLenFeature([<span class="number">100</span>], tf.int64)</span><br><span class="line">  instance = tf.parse_example(example_proto, features)</span><br><span class="line">  label = instance[<span class="string">'label'</span>]</span><br><span class="line">  feature = instance[<span class="string">'feature'</span>]</span><br><span class="line">  <span class="keyword">return</span> label, feature</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> job_name == <span class="string">'ps'</span>:</span><br><span class="line">  <span class="keyword">with</span> tf.device(<span class="string">'/cpu:0'</span>):</span><br><span class="line">    server.join()</span><br><span class="line"><span class="keyword">elif</span> job_name == <span class="string">'worker'</span>:</span><br><span class="line">  <span class="keyword">with</span> tf.device(param_server_device):</span><br><span class="line">    <span class="comment"># dataset input</span></span><br><span class="line">    dataset = tf.data.TFRecordDataset(file_name)</span><br><span class="line">    dataset = dataset.prefetch(buffer_size=batch_size*<span class="number">100</span>)</span><br><span class="line">    dataset = dataset.shuffle(buffer_size=batch_size*<span class="number">10</span>)</span><br><span class="line">    dataset = dataset.batch(batch_size)</span><br><span class="line">    dataset = dataset.map(_parse_function, num_parallel_calls=<span class="number">4</span>)</span><br><span class="line">    train_iterator = dataset.make_initializable_iterator()</span><br><span class="line">    train_label, train_feature = train_iterator.get_next()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># forward pass</span></span><br><span class="line">    model = ...</span><br><span class="line">    train_logits = model.forward(train_feature)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># loss</span></span><br><span class="line">    train_label = tf.to_int64(train_label)</span><br><span class="line">    train_cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(</span><br><span class="line">            logits=train_logits, labels=train_label)</span><br><span class="line">    train_loss = tf.reduce_mean(train_cross_entropy, name=<span class="string">'loss'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># optimizer</span></span><br><span class="line">    opt = tf.train.AdamOptimizer()</span><br><span class="line">    train_op = opt.minimize(train_loss)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># barrier</span></span><br><span class="line">    barrier_op = barrier.Barrier(self.num_worker, <span class="number">2</span>) <span class="comment"># 下面需要两处做barrier，所以为2</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># job process</span></span><br><span class="line">    <span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">      <span class="comment"># init</span></span><br><span class="line">      sess.run([tf.global_variables_initializer(), tf.local_variables_initializer()])</span><br><span class="line"></span><br><span class="line">      <span class="comment"># training process</span></span><br><span class="line">      epoch_num = <span class="number">0</span></span><br><span class="line">      barrier_op.barrier(sess, self.task_index, <span class="number">0</span>, epoch_num) <span class="comment"># 等所有worker都启动再开始训练</span></span><br><span class="line">      <span class="keyword">while</span> epoch_num &lt; max_epoch:</span><br><span class="line">        sess.run(train_iterator.initializer) <span class="comment"># 每轮开始先初始化数据</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">          <span class="keyword">try</span>:</span><br><span class="line">            sess.run(train_op)</span><br><span class="line">          <span class="keyword">except</span> tf.errors.OutOfRangeError:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        barrier_op.barrier(sess, self.task_index, <span class="number">1</span>, epoch_num) <span class="comment"># 等所有worker结束这轮训练</span></span><br><span class="line">        <span class="comment">#保存这一轮的checkpoint</span></span><br><span class="line">        epoch_num += <span class="number">1</span> <span class="comment"># 进入下一轮</span></span><br></pre></td></tr></table></figure></p>
 
             
                 
@@ -184,7 +191,7 @@
     
         <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
         <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
-        <script src="/js/md5.min.js" "></script>
+        <script src="/js/md5.min.js""></script>
         <div id="gitalk-container"></div>
         <script type="text/javascript">
             var gitalk = new Gitalk({
@@ -202,7 +209,9 @@
 
 
 </div>
+
 <script src="/js/busuanzi.pure.mini.js"></script>
+
 
 
         </div><!-- end #main-->
@@ -210,14 +219,14 @@
     <footer class="footer">
     <div class="footer-inner" style="text-align: center">
         <p>
-            <a href="/about" title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <!-- 自定义链接 -->
-            <a href="/help" title="帮助">帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/sitemap.xml" title="地图">地图</a>
         </p>
         <p>
-            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
             ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
             ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
             ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
@@ -225,7 +234,9 @@
         </p>
     </div>
 </footer>
+
 <script src="/js/SimpleCore.js"></script>
+
 
 </div>
 <!-- search pop -->
@@ -238,7 +249,11 @@
             <i class="fa fa-times-circle"></i>
         </span>
         <div class="local-search-input-wrapper">
-            <input id="local-search-input" spellcheck="false" type="text" autocomplete="off" placeholder="请输入查询关键词">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
         </div>
     </div>
     <div id="local-search-result"></div>
@@ -292,6 +307,6 @@
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html class="no-js" lang="zh-CN">
-<head><meta name="generator" content="Hexo 3.9.0">
-    <!--[if lte IE 9]>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
 <meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
 <![endif]-->
 <meta charset="utf-8">
@@ -21,7 +21,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
 <meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
 <meta name="author" content="formath(https://www.mathmach.com)">
+
 <link rel="stylesheet" href="/css/JSimple.css">
+
 
 <link rel="shortcut icon" href="/images/6040127.jpeg">
 
@@ -46,9 +48,9 @@
 
     
 
-</head>
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 <body>
-<div id="nav">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
     <nav class="nav-menu">
         <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
         <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
@@ -99,22 +101,25 @@
         <li><a href="/">最近</a></li>
         
             
-                <li class>
+                <li class="">
                     <a href="/categories/tech" data-name="技术">技术</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/life" data-name="生活">生活</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/others" data-name="其他">其他</a>
                 </li>
             
         
         <li class="page-search">
     <form id="search" class="search-form">
-        <input type="text" readonly="readonly" id="local-search-input-tip" placeholder="读物检索~">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
         <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
     </form>
 </li>
@@ -125,11 +130,13 @@
     <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
         <div class="post-header">
             <div class="post-author clearfix">
-                <a class="avatar fleft" href="https://www.mathmach.com" target="_blank">
-                    <img width="48" src="/images/6040127.jpeg" alt="avatar">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
                 </a>
                 <p><span class="label">作者</span>
-                    <a href="https://www.mathmach.com" target="_blank">formath</a>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
                     <span title="最后编辑于&nbsp;2018-09-06">2018-09-06</span>
                 </p>
                 <p>程序员</p>
@@ -144,18 +151,18 @@
             <h2 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h2><h3 id="DNN需要组合特征"><a href="#DNN需要组合特征" class="headerlink" title="DNN需要组合特征"></a>DNN需要组合特征</h3><p>LR模型的时候，我们需要构造许多组合特征，比如UserID与ItemID的组合，许多做DNN的都宣称简化了特征工程，由隐层学习特征交叉，但是隐层进行特征组合的方式并没有明确的理论解释，并且通过隐层参数学习的方式进行隐式的特征组合并不能保证收敛到最优解，通过显示的构造组合特征能给DNN提供一些先验信息，从实战来看，DNN加上显示的组合特征效果会好很多。</p>
 <h3 id="稀疏特征过滤"><a href="#稀疏特征过滤" class="headerlink" title="稀疏特征过滤"></a>稀疏特征过滤</h3><p>训练数据中出现频次过少的离散特征往往容易引起过拟合，需要统计频次并做过滤。效果比较好的一种方法是，比如生成<code>day</code>这一天的特征时，使用 <code>[day-delta_day_num, day-1]</code>之间的特征统计值来过滤<code>day</code>这一天的稀疏特征，相比使用<code>[day-delta_day_num, day]</code>之间的统计值，auc明显提升。<code>delta_day_num</code>可以设成14天，过滤阈值20，具体数据可以根据业务场景和实验效果来定。</p>
 <h3 id="DNN特征划分Group"><a href="#DNN特征划分Group" class="headerlink" title="DNN特征划分Group"></a>DNN特征划分Group</h3><p>和FFM类似，需要把特征划分成多个Group，每个Group里的特征做Embedding后Sum起来。划分方法，可以根据特征语义层面（用户、Item、组合）和数量、粒度进行划分。比如把用户相关特征划分成下面几个Group：<br><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">用户细粒度<span class="string">Id:</span> UserId</span><br><span class="line">用户画像：Age，Gender，收入，职业</span><br><span class="line">用户行为：近期浏览的ItemIds</span><br></pre></td></tr></table></figure></p>
-<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><h3 id="每类特征设置不同Embedding-Size"><a href="#每类特征设置不同Embedding-Size" class="headerlink" title="每类特征设置不同Embedding Size"></a>每类特征设置不同<code>Embedding Size</code></h3><p>特征包含的信息越丰富，越需要更大的<code>Embedding Size</code>来描述，特征包含信息的丰富程度可以通过特征的粒度和数量表现出来，具体的一个划分方式可以看下图。<br>特征粒度方面，单特征相对算粗粒度，组合特征相对较细，组合的层次越深，粒度越细。比如<code>UserId#ItemId</code>的组合特征刻画了用户对商品的倾向，<code>UserId#ItemId#Hour</code>刻画了用户在某个时间对某个商品的倾向【比如外卖，举个例子，实际一般不会这么组合】。特征刻画的粒度越细，说明指代的越具体，包含的信息非常明确却单一，这类特征一般不需要再和其他特征进行组合，所以<code>Embedding Size</code>会更小。<br>特征数量方面，一般数量越大，包含的信息越多，比如<code>UserId</code>和<code>ItemId</code>可以达到上亿，一个<code>UserId</code>可以描述这个用户的很多信息，像<code>Age</code>和<code>Gender</code>这类特征规模很小的特征所包含的信息相对有限。<br><img src="/images/dnn_embedding_size.png" alt></p>
-<h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p>Wide&amp;Deep最靠谱，DeepFM、DCN、DIN之类的效果都不大行。在Wide&amp;Deep模型的基础上，没有将Wide部分单独拿出来，而是和Deep在一起，通过特征划分Group后一起Embedding，效果可以超过Wide&amp;Deep，并且右边添加了一个基于离散特征统计的历史CTR的网络，可以降低模型的Variance，效果提升非常明显。总之，不要过分迷信一些灌水论文。<br><img src="/images/best_dnn.png" alt></p>
-<h3 id="减少多余训练参数"><a href="#减少多余训练参数" class="headerlink" title="减少多余训练参数"></a>减少多余训练参数</h3><p>二分类模型下，最后一层全连接的代码经常是下面这样：<br><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">layer</span> = ... <span class="comment"># 倒数第二层</span></span><br><span class="line"><span class="attr">weight</span> = tf.get_variable(<span class="string">'weight'</span>, [dim, <span class="number">2</span>], initializer=...)</span><br><span class="line"><span class="attr">bias</span> = tf.get_variable(<span class="string">'bias'</span>, [<span class="number">2</span>], initializer=...)</span><br><span class="line"><span class="attr">logits</span> = tf.matmul(layer, weight) + bias</span><br></pre></td></tr></table></figure></p>
-<p>因为是二分类，连接<code>label=0</code>的所有边其实不需要学习，<code>0</code>就是最优参数，如果加入学习的话，实际上多了一些冗余参数，而且梯度下降必定无法保障它们收敛到这个最优解。改成下面这样，<code>auc</code>可以较大提升。<br><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">layer</span> = ... <span class="comment"># 倒数第二层</span></span><br><span class="line"><span class="attr">weight_positive</span> = tf.get_variable(<span class="string">'weight_positive'</span>, [dim, <span class="number">1</span>], initializer=...)</span><br><span class="line"><span class="attr">bias_positive</span> = tf.get_variable(<span class="string">'bias_positive'</span>, [<span class="number">1</span>], initializer=...)</span><br><span class="line"><span class="attr">weight_neg</span> = tf.get_variable(<span class="string">'weight_negative'</span>, initializer=tf.constant(np.zeros((dim, <span class="number">1</span>), dtype=np.float32)), trainable=<span class="literal">False</span>)</span><br><span class="line"><span class="attr">logits_positive</span> = tf.matmul(layer, weight_positive) + bias_positive</span><br><span class="line"><span class="attr">logits_negative</span> = tf.matmul(layer, weight_negative)</span><br><span class="line"><span class="attr">logits</span> = tf.concat([logits_negative, logits_positive], <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><h3 id="每类特征设置不同Embedding-Size"><a href="#每类特征设置不同Embedding-Size" class="headerlink" title="每类特征设置不同Embedding Size"></a>每类特征设置不同<code>Embedding Size</code></h3><p>特征包含的信息越丰富，越需要更大的<code>Embedding Size</code>来描述，特征包含信息的丰富程度可以通过特征的粒度和数量表现出来，具体的一个划分方式可以看下图。<br>特征粒度方面，单特征相对算粗粒度，组合特征相对较细，组合的层次越深，粒度越细。比如<code>UserId#ItemId</code>的组合特征刻画了用户对商品的倾向，<code>UserId#ItemId#Hour</code>刻画了用户在某个时间对某个商品的倾向【比如外卖，举个例子，实际一般不会这么组合】。特征刻画的粒度越细，说明指代的越具体，包含的信息非常明确却单一，这类特征一般不需要再和其他特征进行组合，所以<code>Embedding Size</code>会更小。<br>特征数量方面，一般数量越大，包含的信息越多，比如<code>UserId</code>和<code>ItemId</code>可以达到上亿，一个<code>UserId</code>可以描述这个用户的很多信息，像<code>Age</code>和<code>Gender</code>这类特征规模很小的特征所包含的信息相对有限。<br><img src="/images/dnn_embedding_size.png" alt=""></p>
+<h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p>Wide&amp;Deep最靠谱，DeepFM、DCN、DIN之类的效果都不大行。在Wide&amp;Deep模型的基础上，没有将Wide部分单独拿出来，而是和Deep在一起，通过特征划分Group后一起Embedding，效果可以超过Wide&amp;Deep，并且右边添加了一个基于离散特征统计的历史CTR的网络，可以降低模型的Variance，效果提升非常明显。总之，不要过分迷信一些灌水论文。<br><img src="/images/best_dnn.png" alt=""></p>
+<h3 id="减少多余训练参数"><a href="#减少多余训练参数" class="headerlink" title="减少多余训练参数"></a>减少多余训练参数</h3><p>二分类模型下，最后一层全连接的代码经常是下面这样：<br><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">layer</span> = ... # 倒数第二层</span><br><span class="line"><span class="attr">weight</span> = tf.get_variable(<span class="string">'weight'</span>, [dim, <span class="number">2</span>], initializer=...)</span><br><span class="line"><span class="attr">bias</span> = tf.get_variable(<span class="string">'bias'</span>, [<span class="number">2</span>], initializer=...)</span><br><span class="line"><span class="attr">logits</span> = tf.matmul(layer, weight) + bias</span><br></pre></td></tr></table></figure></p>
+<p>因为是二分类，连接<code>label=0</code>的所有边其实不需要学习，<code>0</code>就是最优参数，如果加入学习的话，实际上多了一些冗余参数，而且梯度下降必定无法保障它们收敛到这个最优解。改成下面这样，<code>auc</code>可以较大提升。<br><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">layer</span> = ... # 倒数第二层</span><br><span class="line"><span class="attr">weight_positive</span> = tf.get_variable(<span class="string">'weight_positive'</span>, [dim, <span class="number">1</span>], initializer=...)</span><br><span class="line"><span class="attr">bias_positive</span> = tf.get_variable(<span class="string">'bias_positive'</span>, [<span class="number">1</span>], initializer=...)</span><br><span class="line"><span class="attr">weight_neg</span> = tf.get_variable(<span class="string">'weight_negative'</span>, initializer=tf.constant(np.zeros((dim, <span class="number">1</span>), dtype=np.float32)), trainable=<span class="literal">False</span>)</span><br><span class="line"><span class="attr">logits_positive</span> = tf.matmul(layer, weight_positive) + bias_positive</span><br><span class="line"><span class="attr">logits_negative</span> = tf.matmul(layer, weight_negative)</span><br><span class="line"><span class="attr">logits</span> = tf.concat([logits_negative, logits_positive], <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="选一个好的基线模型"><a href="#选一个好的基线模型" class="headerlink" title="选一个好的基线模型"></a>选一个好的基线模型</h3><p>这些年DNN火起来后，大家都往DNN方向发展，很多团队宣称切换到了DNN，宣传文章写的也不错，但是从实际来看，真正把DNN用好的团队并不多。比如从GBDT切换到DNN的一些组，其实整个特征流程还是沿用的GBDT思路，用几百维连续特征来做DNN，或者简单加几个小规模离散特征，少数技术强悍的团队其实做的是百亿千亿特征、模型规模TGB级别的超大DNN，所以同样是Wide&amp;Deep模型，不同的规模下其实天壤之别。DNN相对于GBDT来说，是非常容易做出成果的，主要还是把GBDT作为基线模型有点太简单了，其实在搜索推荐这类个性化很强的场景下把GBDT换成百亿千亿级别特征的超大规模LR或者FFM也会获得很大提升，所以如果要做DNN的话，推荐用FFM来做基线，实战来看DNN相对FFM要做出成果并没有那么简单。</p>
-<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><h3 id="大规模离散特征Embedding"><a href="#大规模离散特征Embedding" class="headerlink" title="大规模离散特征Embedding"></a>大规模离散特征<code>Embedding</code></h3><p>稀疏特征的id做embedding时，由于TensorFlow内部使用一个<code>shape=[id_num, embedding_size]</code>的Variable做参数，需要把id映射成[0, id_num)间的一个数字。如果id量非常小的话，可以在特征提取后把id排序一遍生成从0开始的连续id值，但在工业界场景下id往往是用<code>murmur hash</code>生成的<code>uint64 id</code>，量级往往是百万到千亿级别，很难做排序。TensorFlow内部有一个Hash Table可以将<code>uint64</code>映射成从0开始的连续id，但可能将不同的id映射到<code>embedding_variable</code>的同一行，所以建议把<code>embedding_variable</code>的行数和<code>num_oov_buckets</code>设置的大一点，减小一点冲突。当然，最优方案应该是使用Map结构来实现<code>Embedding Variable</code>，现在官方并没有人做，我已经修改TensorFlow底层代码实现了一个，支持千亿离散特征的embedding，在公司内已经应用，这一块也可以参考阿里发布的TensorFlowRS。<br><figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">embedding_variable = tf.get_variable(<span class="string">'emb_var'</span>,</span><br><span class="line">                                     [2*id_num+2, embedding_size],</span><br><span class="line">                                     <span class="attribute">initializer</span>=...)</span><br><span class="line">hash_table = tf.contrib.lookup.index_table_from_tensor(<span class="attribute">mapping</span>=tf.constant([0]),</span><br><span class="line">                                                       <span class="attribute">num_oov_buckets</span>=2*id_num,</span><br><span class="line">                                                       <span class="attribute">dtype</span>=tf.int64)</span><br><span class="line">sparse_ids = hash_table.lookup(origin_sparse_ids)</span><br><span class="line">embedding = tf.nn.embedding_lookup_sparse(embedding_variable,</span><br><span class="line">                                          sparse_ids,</span><br><span class="line">                                          None,</span><br><span class="line">                                          <span class="attribute">partition_strategy</span>=<span class="string">"mod"</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><h3 id="大规模离散特征Embedding"><a href="#大规模离散特征Embedding" class="headerlink" title="大规模离散特征Embedding"></a>大规模离散特征<code>Embedding</code></h3><p>稀疏特征的id做embedding时，由于TensorFlow内部使用一个<code>shape=[id_num, embedding_size]</code>的Variable做参数，需要把id映射成[0, id_num)间的一个数字。如果id量非常小的话，可以在特征提取后把id排序一遍生成从0开始的连续id值，但在工业界场景下id往往是用<code>murmur hash</code>生成的<code>uint64 id</code>，量级往往是百万到千亿级别，很难做排序。TensorFlow内部有一个Hash Table可以将<code>uint64</code>映射成从0开始的连续id，但可能将不同的id映射到<code>embedding_variable</code>的同一行，所以建议把<code>embedding_variable</code>的行数和<code>num_oov_buckets</code>设置的大一点，减小一点冲突。当然，最优方案应该是使用Map结构来实现<code>Embedding Variable</code>，现在官方并没有人做，我已经修改TensorFlow底层代码实现了一个，支持千亿离散特征的embedding，在公司内已经应用，这一块也可以参考阿里发布的TensorFlowRS。<br><figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">embedding_variable = tf.get_variable('emb_var',</span><br><span class="line">                                     [2*id_num+2, embedding_size],</span><br><span class="line">                                     initializer=...)</span><br><span class="line">hash_table = tf.contrib.lookup.index_table_from_tensor(mapping=tf.constant([0]),</span><br><span class="line">                                                       num_oov_buckets=2*id_num,</span><br><span class="line">                                                       dtype=tf.int64)</span><br><span class="line">sparse_ids = hash_table.lookup(origin_sparse_ids)</span><br><span class="line">embedding = tf.nn.embedding_lookup_sparse(embedding_variable,</span><br><span class="line">                                          sparse_ids,</span><br><span class="line">                                          None,</span><br><span class="line">                                          partition_strategy=<span class="string">"mod"</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="Sparse-Embedding性能"><a href="#Sparse-Embedding性能" class="headerlink" title="Sparse Embedding性能"></a><code>Sparse Embedding</code>性能</h3><p>使用<br><figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">def embedding_lookup_sparse_with_distributed_aggregation(params,</span><br><span class="line">                                                         sp_ids,</span><br><span class="line">                                                         sp_weights,</span><br><span class="line">                                                         <span class="attribute">partition_strategy</span>=<span class="string">"mod"</span>,</span><br><span class="line">                                                         <span class="attribute">name</span>=None,</span><br><span class="line">                                                         <span class="attribute">combiner</span>=None,</span><br><span class="line">                                                         <span class="attribute">max_norm</span>=None)</span><br></pre></td></tr></table></figure></p>
 <p>代替<br><figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">def embedding_lookup_sparse(params,</span><br><span class="line">                            sp_ids,</span><br><span class="line">                            sp_weights,</span><br><span class="line">                            <span class="attribute">partition_strategy</span>=<span class="string">"mod"</span>,</span><br><span class="line">                            <span class="attribute">name</span>=None,</span><br><span class="line">                            <span class="attribute">combiner</span>=None,</span><br><span class="line">                            <span class="attribute">max_norm</span>=None)</span><br></pre></td></tr></table></figure></p>
 <p>。后者在ps端lookup出许多embedding后传给worker，在worker端做聚合，前者在ps端做多个embedding的聚合后传给worker，通信量会小很多。</p>
 <h3 id="不要使用TensorFlow-Feature-Columns"><a href="#不要使用TensorFlow-Feature-Columns" class="headerlink" title="不要使用TensorFlow Feature Columns"></a>不要使用<code>TensorFlow Feature Columns</code></h3><p><code>TensorFlow Feature Columns</code>的性能很差，建议把特征相关的所有工作，包括离散化、组合等操作都放在单独的特征抽取工具里面，TensorFlow只包含模型部分代码。</p>
 <h3 id="QueueRunner批量读数据"><a href="#QueueRunner批量读数据" class="headerlink" title="QueueRunner批量读数据"></a><code>QueueRunner</code>批量读数据</h3><p>使用<code>read_up_to</code>接口批量读数据，性能提升非常大。<br><figure class="highlight gcode"><table><tr><td class="code"><pre><span class="line">reader = tf.TFRecordReader<span class="comment">()</span></span><br><span class="line">_, serialized_example = reader.read<span class="comment">(filename_queue)</span></span><br><span class="line">_, serialized_example = reader.read_up_to<span class="comment">(filename_queue, 1000)</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="使用DataSet接口读数据"><a href="#使用DataSet接口读数据" class="headerlink" title="使用DataSet接口读数据"></a>使用<code>DataSet</code>接口读数据</h3><p>QueueRunner读数据时不能精确一轮一轮的读，很难做worker之间的barrier，TensorFlow DataSet可以实现精确读取一轮，在worker精确同步时比较有用<a href="http://mathmach.com/2018/09/25/tensorflow_barrier/">TensorFlow实现Barrier</a>。而且DataSet的性能和QueueRunner差不多，主要是几个接口的使用顺序要注意。<br><figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">def _parse_function(examples_proto):</span><br><span class="line">    features = &#123;&#125;</span><br><span class="line">    features[<span class="string">'label'</span>] = tf.FixedLenFeature([], tf.float32)</span><br><span class="line">    features[<span class="string">'feature'</span>] = <span class="built_in">..</span>.</span><br><span class="line">   <span class="built_in"> instance </span>= tf.parse_example(examples_proto, features)</span><br><span class="line">    label = instance[<span class="string">'label'</span>]</span><br><span class="line">    feature = instance[<span class="string">'feature'</span>]</span><br><span class="line">    return label, feature</span><br><span class="line"></span><br><span class="line">dataset = tf.data.TFRecordDataset(file_name_list)</span><br><span class="line">dataset = dataset.prefetch(<span class="attribute">buffer_size</span>=batch_size*100)</span><br><span class="line">dataset = dataset.shuffle(<span class="attribute">buffer_size</span>=batch_size*10)</span><br><span class="line">dataset = dataset.batch(batch_size)</span><br><span class="line">dataset = dataset.map(_parse_function, <span class="attribute">num_parallel_calls</span>=4)</span><br><span class="line">iterator = dataset.make_initializable_iterator()</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用DataSet接口读数据"><a href="#使用DataSet接口读数据" class="headerlink" title="使用DataSet接口读数据"></a>使用<code>DataSet</code>接口读数据</h3><p>QueueRunner读数据时不能精确一轮一轮的读，很难做worker之间的barrier，TensorFlow DataSet可以实现精确读取一轮，在worker精确同步时比较有用<a href="http://mathmach.com/2018/09/25/tensorflow_barrier/">TensorFlow实现Barrier</a>。而且DataSet的性能和QueueRunner差不多，主要是几个接口的使用顺序要注意。<br><figure class="highlight maxima"><table><tr><td class="code"><pre><span class="line">def _parse_function(examples_proto):</span><br><span class="line">    <span class="built_in">features</span> = &#123;&#125;</span><br><span class="line">    <span class="built_in">features</span>['<span class="built_in">label</span>'] = tf.FixedLenFeature([], tf.float32)</span><br><span class="line">    <span class="built_in">features</span>['<span class="built_in">feature</span>'] = ...</span><br><span class="line">    instance = tf.parse_example(examples_proto, <span class="built_in">features</span>)</span><br><span class="line">    <span class="built_in">label</span> = instance['<span class="built_in">label</span>']</span><br><span class="line">    <span class="built_in">feature</span> = instance['<span class="built_in">feature</span>']</span><br><span class="line">    <span class="built_in">return</span> <span class="built_in">label</span>, <span class="built_in">feature</span></span><br><span class="line"></span><br><span class="line">dataset = tf.data.TFRecordDataset(file_name_list)</span><br><span class="line">dataset = dataset.prefetch(buffer_size=batch_size*<span class="number">100</span>)</span><br><span class="line">dataset = dataset.shuffle(buffer_size=batch_size*<span class="number">10</span>)</span><br><span class="line">dataset = dataset.<span class="built_in">batch</span>(batch_size)</span><br><span class="line">dataset = dataset.<span class="built_in">map</span>(_parse_function, num_parallel_calls=<span class="number">4</span>)</span><br><span class="line">iterator = dataset.make_initializable_iterator()</span><br></pre></td></tr></table></figure></p>
 <h3 id="GPU-vs-CPU"><a href="#GPU-vs-CPU" class="headerlink" title="GPU vs CPU"></a><code>GPU vs CPU</code></h3><p>CTR模型训练场景下，主要耗时操作是<code>Embedding Lookup</code>，不适合GPU，全连接层又很小，CPU足够应付。整体来看，<code>P40</code>比<code>Intel® Xeon® Processor E5-2650 v4 (30M Cache, 2.20 GHz)</code>快5%左右，但价格贵很多，性价比来看，推荐主频更快的CPU。</p>
 <h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>后续再单独讲</p>
 <h3 id="怎样训练千亿特征TGB级别参数的超大模型"><a href="#怎样训练千亿特征TGB级别参数的超大模型" class="headerlink" title="怎样训练千亿特征TGB级别参数的超大模型"></a>怎样训练千亿特征TGB级别参数的超大模型</h3><h3 id="怎样将单机无法加载的超大模型做线上预测服务"><a href="#怎样将单机无法加载的超大模型做线上预测服务" class="headerlink" title="怎样将单机无法加载的超大模型做线上预测服务"></a>怎样将单机无法加载的超大模型做线上预测服务</h3><h3 id="秒级在线深度学习架构"><a href="#秒级在线深度学习架构" class="headerlink" title="秒级在线深度学习架构"></a>秒级在线深度学习架构</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
@@ -178,7 +185,7 @@
             
             <a href="/tags/Machine-Learning/">Machine Learning</a>
             
-            <a href="/tags/点击率预估/">点击率预估</a>
+            <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/">点击率预估</a>
             
             <a href="/tags/CTR/">CTR</a>
             
@@ -193,7 +200,7 @@
     
         <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
         <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
-        <script src="/js/md5.min.js" "></script>
+        <script src="/js/md5.min.js""></script>
         <div id="gitalk-container"></div>
         <script type="text/javascript">
             var gitalk = new Gitalk({
@@ -211,7 +218,9 @@
 
 
 </div>
+
 <script src="/js/busuanzi.pure.mini.js"></script>
+
 
 
         </div><!-- end #main-->
@@ -219,14 +228,14 @@
     <footer class="footer">
     <div class="footer-inner" style="text-align: center">
         <p>
-            <a href="/about" title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <!-- 自定义链接 -->
-            <a href="/help" title="帮助">帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/sitemap.xml" title="地图">地图</a>
         </p>
         <p>
-            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
             ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
             ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
             ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
@@ -234,7 +243,9 @@
         </p>
     </div>
 </footer>
+
 <script src="/js/SimpleCore.js"></script>
+
 
 </div>
 <!-- search pop -->
@@ -247,7 +258,11 @@
             <i class="fa fa-times-circle"></i>
         </span>
         <div class="local-search-input-wrapper">
-            <input id="local-search-input" spellcheck="false" type="text" autocomplete="off" placeholder="请输入查询关键词">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
         </div>
     </div>
     <div id="local-search-result"></div>
@@ -301,6 +316,6 @@
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

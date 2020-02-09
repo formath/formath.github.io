@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html class="no-js" lang="zh-CN">
-<head><meta name="generator" content="Hexo 3.9.0">
-    <!--[if lte IE 9]>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
 <meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
 <![endif]-->
 <meta charset="utf-8">
@@ -21,7 +21,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
 <meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
 <meta name="author" content="formath(https://www.mathmach.com)">
+
 <link rel="stylesheet" href="/css/JSimple.css">
+
 
 <link rel="shortcut icon" href="/images/6040127.jpeg">
 
@@ -46,9 +48,9 @@
 
     
 
-</head>
+<meta name="generator" content="Hexo 4.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 <body>
-<div id="nav">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
     <nav class="nav-menu">
         <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
         <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
@@ -99,22 +101,25 @@
         <li><a href="/">最近</a></li>
         
             
-                <li class>
+                <li class="">
                     <a href="/categories/tech" data-name="技术">技术</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/life" data-name="生活">生活</a>
                 </li>
             
-                <li class>
+                <li class="">
                     <a href="/categories/others" data-name="其他">其他</a>
                 </li>
             
         
         <li class="page-search">
     <form id="search" class="search-form">
-        <input type="text" readonly="readonly" id="local-search-input-tip" placeholder="读物检索~">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
         <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
     </form>
 </li>
@@ -125,11 +130,13 @@
     <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
         <div class="post-header">
             <div class="post-author clearfix">
-                <a class="avatar fleft" href="https://www.mathmach.com" target="_blank">
-                    <img width="48" src="/images/6040127.jpeg" alt="avatar">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
                 </a>
                 <p><span class="label">作者</span>
-                    <a href="https://www.mathmach.com" target="_blank">formath</a>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
                     <span title="最后编辑于&nbsp;2017-08-30">2017-08-30</span>
                 </p>
                 <p>程序员</p>
@@ -187,7 +194,7 @@
     
         <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
         <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
-        <script src="/js/md5.min.js" "></script>
+        <script src="/js/md5.min.js""></script>
         <div id="gitalk-container"></div>
         <script type="text/javascript">
             var gitalk = new Gitalk({
@@ -205,7 +212,9 @@
 
 
 </div>
+
 <script src="/js/busuanzi.pure.mini.js"></script>
+
 
 
         </div><!-- end #main-->
@@ -213,14 +222,14 @@
     <footer class="footer">
     <div class="footer-inner" style="text-align: center">
         <p>
-            <a href="/about" title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <!-- 自定义链接 -->
-            <a href="/help" title="帮助">帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <a href="/sitemap.xml" title="地图">地图</a>
         </p>
         <p>
-            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
             ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
             ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
             ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
@@ -228,7 +237,9 @@
         </p>
     </div>
 </footer>
+
 <script src="/js/SimpleCore.js"></script>
+
 
 </div>
 <!-- search pop -->
@@ -241,7 +252,11 @@
             <i class="fa fa-times-circle"></i>
         </span>
         <div class="local-search-input-wrapper">
-            <input id="local-search-input" spellcheck="false" type="text" autocomplete="off" placeholder="请输入查询关键词">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
         </div>
     </div>
     <div id="local-search-result"></div>
@@ -295,6 +310,6 @@
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>
