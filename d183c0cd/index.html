@@ -142,7 +142,7 @@
         </div>
         <div class="post-content markdown-body">
             <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在一个C++项目中尝试<code>Bazel</code>编译，编译依赖方式确实写着比较舒服和直观，但最后链接出来的二进制文件在执行时报<code>Segment error</code>，但用<code>CMake</code>编译出来的二进制文件就可以成功执行，Bazel编译的问题无从下手。另外，Bazel无法从系统目录查找头文件，这就不能忍了，有人建议从<code>cc_toolchain_config.bzl</code>查找问题，但toolchain实在是有点麻烦，就暂时放弃Bazel，继续使用CMake了。Bazel里提供的<code>git_repositry</code>等从外部源自动下载编译依赖的方式很好用，所以就思考在CMake里是不是也有类似的东西呢。之前使用CMake时，第三方依赖都是手动先在本地安装好，后来查找到了CMake里提供了类似Bazel的命令，那就是<code>ExternalProject</code>，不过这个命令只管下载编译等操作，但<code>git_repositry</code>更好使一些，它可以根据依赖自动判断是不是下载，而<code>ExternalProject</code>就没这么丝滑了，所以本文记录下在CMake怎样基于<code>ExternalProject</code>打造<code>git_repositry</code>那种丝滑的体验。</p>
-<h2 id="FindPackageHandleStandardArgs"><a href="#FindPackageHandleStandardArgs" class="headerlink" title="FindPackageHandleStandardArgs"></a>FindPackageHandleStandardArgs</h2><p>在具体方案之前，先看一下CMake里提供的这个函数，在后面的实现中它可是非常重要哦。<br><figure class="highlight vhdl"><table><tr><td class="code"><pre><span class="line">This module provides a <span class="keyword">function</span> intended <span class="keyword">to</span> be used <span class="keyword">in</span> Find Modules implementing find_package(&lt;PackageName&gt;) calls. It handles the REQUIRED, QUIET <span class="keyword">and</span> version-related arguments <span class="keyword">of</span> find_package. It also sets the &lt;PackageName&gt;_FOUND <span class="keyword">variable</span>. The <span class="keyword">package</span> <span class="keyword">is</span> considered found <span class="keyword">if</span> <span class="keyword">all</span> variables listed contain valid results, e.g. valid filepaths.</span><br></pre></td></tr></table></figure></p>
+<h2 id="FindPackageHandleStandardArgs"><a href="#FindPackageHandleStandardArgs" class="headerlink" title="FindPackageHandleStandardArgs"></a>FindPackageHandleStandardArgs</h2><p>在具体方案之前，先看一下CMake里提供的这个函数，在后面的实现中它可是非常重要哦。<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">This</span> module provides a <span class="meta">function</span> intended to <span class="keyword">be </span>used in Find Modules implementing find_package(&lt;PackageName&gt;) calls. <span class="keyword">It </span>handles the REQUIRED, QUIET <span class="keyword">and </span>version-related arguments of find_package. <span class="keyword">It </span>also <span class="meta">sets</span> the &lt;PackageName&gt;_FOUND variable. The package is considered found <span class="meta">if</span> all variables listed contain valid results, e.g. valid filepaths.</span><br></pre></td></tr></table></figure></p>
 <p>我们在CMake里查找包时使用<code>find_package(&lt;PackageName&gt;)</code>，它判断一个包是否找到就是利用了<code>FindPackageHandleStandardArgs</code>。这个函数会判断几个关键变量是否有正确的值，如果都经过了验证，就设置<code>&lt;PackageName&gt;_FOUND</code>，既找到了包，否则就没找到。它有两个函数定义，一个简单的是这样滴：<br><figure class="highlight lisp"><table><tr><td class="code"><pre><span class="line">find_package_handle_standard_args(<span class="name">&lt;PackageName&gt;</span></span><br><span class="line">  (<span class="name">DEFAULT_MSG</span>|&lt;custom-failure-message&gt;)</span><br><span class="line">  &lt;required-var&gt;...</span><br><span class="line">  )</span><br></pre></td></tr></table></figure></p>
 <p>简单的例子，<br><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">FIND_PACKAGE_HANDLE_STANDARD_ARGS</span><span class="params">(Gflags DEFAULT_MSG GFLAGS_INCLUDE_DIR GFLAGS_LIBRARY)</span></span></span><br></pre></td></tr></table></figure></p>
 <p>通过判断<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>是否有正确值来断定<code>GFlags</code>是否找到，这里的<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>当然是我们自己设定喽，比如我们这么设定它们，如果搜到了头文件和库文件，就设置正确路径，否则就没值嘛。注意，这里我们最好不要用<code>GFLAGS_LIBIARIES</code>这种变量，这种我们是用来作为链接依赖库的变量的呀，同理，头文件那个变量也一样哦。<br><figure class="highlight crystal"><table><tr><td class="code"><pre><span class="line">find_path(GFLAGS_INCLUDE_DIR gflags/gflags.h /usr/local/<span class="keyword">include</span>)</span><br><span class="line">find_library(GFLAGS_LIBRARY gflags HINTS /usr/local/<span class="class"><span class="keyword">lib</span>)</span></span><br></pre></td></tr></table></figure></p>
@@ -287,5 +287,20 @@
         
     });
 </script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>

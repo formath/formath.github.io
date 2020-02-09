@@ -175,7 +175,7 @@
 <p>以<code>SparseFieldId</code>部分为例，<code>SparseTensor</code>中的第一个<code>Tensor</code>表示每个id的行列坐标，比如<code>Instance=0</code>的<code>FieldId=1</code>为<0, 0>，<code>Instance=0</code>的<code>FieldId=8</code>为<0, 1>，<code>Instance=2</code>的<code>FieldId=0</code>为<2, 1>，总共6对，每对是个二元组，所以第一个<code>Tensor</code>为<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> fieldid_tensor_indices =</span><br><span class="line">      test::AsTensor&lt;int64&gt;(&#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">0</span>&#125;, &#123;<span class="number">6</span>, <span class="number">2</span>&#125;);</span><br></pre></td></tr></table></figure></2,></0,></0,></p>
 <p><code>SparseTensor</code>中的第二个<code>Tensor</code>表示id值，即<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> fieldid_tensor_values = test::AsTensor&lt;int64&gt;(&#123;<span class="number">1</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">5</span>&#125;);</span><br></pre></td></tr></table></figure></p>
 <p>第三个<code>Tensor</code>表示样本行数和每条样本里最多有多少个id，所以是<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> fieldid_tensor_shape = TensorShape(&#123;<span class="number">4</span>, <span class="number">2</span>&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>最后，<code>fieldid</code>部分的<code>SparseTensor</code>表示为<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">sparse::<span class="function">SparseTensor <span class="title">fieldid_sparse_tensor</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">      fieldid_tensor_indices, fieldid_tensor_values, fieldid_tensor_shape)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>最后，<code>fieldid</code>部分的<code>SparseTensor</code>表示为<br><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">sparse::SparseTensor <span class="title">fieldid_sparse_tensor</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">      fieldid_tensor_indices, fieldid_tensor_values, fieldid_tensor_shape)</span></span>;</span><br></pre></td></tr></table></figure></p>
 <p>其他两个部分，<code>featureid</code>和<code>value</code>同样可以用<code>SparseTensor</code>表示。最后，一个batch的libfm数据可以由4份数据来表示，这4份数据作为网络的<code>input</code>，运行<code>Session.run</code>即可得到输出。当然，线上预测时就没有<code>label</code>这一部分输入了。</p>
 <ul>
 <li>label的<code>Tensor</code></li>
@@ -311,5 +311,20 @@
         
     });
 </script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>
