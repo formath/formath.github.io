@@ -1,1 +1,520 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>J.P.Liu's Blog | 程序员</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/7.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">J.P.Liu's Blog</h1><a id="logo" href="/.">J.P.Liu's Blog</a><p class="description">程序员</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title"><a href="/2018/09/25/tensorflow_barrier/">TensorFlow多Worker同步方案</a></h1><div class="post-meta">2018-09-25</div><div class="post-content">TensorFlow大部分使用方案都是异步SGD，而且使用global_step做停止条件，这样会导致一个问题，不能保证所有worker负责的数据训练相同的轮数，速度快的worker所负责的数据将会获得更多step。那怎样实现barrier机制呢？</div><p class="readmore"><a href="/2018/09/25/tensorflow_barrier/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2018/09/06/dnn_trick_for_ctr/">广告CTR预估场景下的DNN调优实战</a></h1><div class="post-meta">2018-09-06</div><div class="post-content">LR模型的时候，我们需要构造许多组合特征，比如UserID与ItemID的组合，许多做DNN的都宣称简化了特征工程，由隐层学习特征交叉，但是隐层进行特征组合的方式并没有明确的理论解释，并且通过隐层参数学习的方式进行隐式的特征组合并不能保证收敛到最优解，通过显示的构造组合特征能给DNN提供一些先验信息，从实战来看，DNN加上显示的组合特征效果会好很多。</div><p class="readmore"><a href="/2018/09/06/dnn_trick_for_ctr/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2018/08/13/tfrecord_on_hadoop/">Hadoop平台上生成TensorFlow TFRecord的错误问题</a></h1><div class="post-meta">2018-08-13</div><div class="post-content">使用MapReduce on Yarn或者Spark on Yarn来生成TFRecord的过程中，会发生Hadoop和TensorFlow依赖的Protobuf版本不一致导致冲突的问题，本文通过两种方案来解决这种问题。</div><p class="readmore"><a href="/2018/08/13/tfrecord_on_hadoop/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2018/06/07/install_gflags_glog/">安装GFlags和GLog的错误问题</a></h1><div class="post-meta">2018-06-07</div><div class="post-content">在安装GLog时会报错`undefined reference to 'FlagRegisterer::FlagRegisterer'`的原因及方案。</div><p class="readmore"><a href="/2018/06/07/install_gflags_glog/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/10/22/tensorflow_c++_api_prediction_third/">使用TensorFlow C++ API构建线上预测服务 - 篇3</a></h1><div class="post-meta">2017-10-22</div><div class="post-content">在线下训练时，为了效率考虑，我们经常把数据转成TFRecord格式，然后直接调用TensorFlow提供的Reader来读入TFRecord数据。这样在生成的`graph.pb`中，Reader会对应多个节点，如果在c++中直接导入这个`graph.pb`我们就不能使用`std::vector<std::pair<std::string, tensorflow::Tensor>>`作为`session.Run(...)`的输入了，本文讲解一下怎样处理这种情况。</div><p class="readmore"><a href="/2017/10/22/tensorflow_c++_api_prediction_third/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/10/11/tensorflow_c++_api_prediction_second/">使用TensorFlow C++ API构建线上预测服务 - 篇2</a></h1><div class="post-meta">2017-10-11</div><div class="post-content">之前的一篇文章中[使用TensorFlow C++ API构建线上预测服务 - 第一篇](http://mathmach.com/2017/10/09/tensorflow_c++_api_prediction_first/)，详细讲解了怎样用TensorFlow C++ API导入模型做预测，但模型`c = a * b`比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数，本文使用一个复杂的模型继续讲解。</div><p class="readmore"><a href="/2017/10/11/tensorflow_c++_api_prediction_second/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/10/09/tensorflow_c++_api_prediction_first/">使用TensorFlow C++ API构建线上预测服务 - 篇1</a></h1><div class="post-meta">2017-10-09</div><div class="post-content">目前，TensorFlow官方推荐使用Bazel编译源码和安装，但许多公司常用的构建工具是CMake。TensorFlow官方并没有提供CMake的编译示例，但提供了MakeFile文件，所以可以直接使用make进行编译安装。另一方面，模型训练成功后，官方提供了TensorFlow Servering进行预测的托管，但这个方案过于复杂。对于许多机器学习团队来说，一般都有自己的一套模型托管和预测服务，如果使用TensorFlow Servering对现存业务的侵入性太大，使用TensorFlow C++ API来导入模型并提供预测服务能方便的嵌入大部分已有业务方案，对这些团队来说比较合适。</div><p class="readmore"><a href="/2017/10/09/tensorflow_c++_api_prediction_first/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/08/30/sublime_plugin/">Sublime插件</a></h1><div class="post-meta">2017-08-30</div><div class="post-content">将Sublime打造成舒适的C++编辑器。</div><p class="readmore"><a href="/2017/08/30/sublime_plugin/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/08/16/nnvm/">MXNet之NNVM代码解析</a></h1><div class="post-meta">2017-08-16</div><div class="post-content">Symbol提供了许多图的接口，便于前端访问，而Graph里面没几个接口，主要就是有个indexed_graph，便于底层训练时快速访问。Symbol非常灵活，以后有可能支持动态图，但每次动态变化后都要先转成Graph，底层不太支持动态度，因为都是vector用index来索引node，不太适合中间插入一个node。</div><p class="readmore"><a href="/2017/08/16/nnvm/">阅读全文</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/08/15/Variants-of-SGD/">Variants of SGD</a></h1><div class="post-meta">2017-08-15</div><div class="post-content">SGD的各种变体公式：Momentum, Nesterov, Cumulative, AdaGrad, AdaDelta, AdaM, FTRL, FTML ...</div><p class="readmore"><a href="/2017/08/15/Variants-of-SGD/">阅读全文</a></p></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTR预估/">CTR预估</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MXNet/">MXNet</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Numerical-Optimization/">Numerical Optimization</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Numerical-Optimization/Machine-Learning/">Machine Learning</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/TensorFlow/">TensorFlow</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/分布式/" style="font-size: 15px;">分布式</a> <a href="/tags/Numerical-Optimization/" style="font-size: 15px;">Numerical Optimization</a> <a href="/tags/广告/" style="font-size: 15px;">广告</a> <a href="/tags/点击率/" style="font-size: 15px;">点击率</a> <a href="/tags/TensorFlow/" style="font-size: 15px;">TensorFlow</a> <a href="/tags/Deep-Learning/" style="font-size: 15px;">Deep Learning</a> <a href="/tags/CTR/" style="font-size: 15px;">CTR</a> <a href="/tags/GFlags/" style="font-size: 15px;">GFlags</a> <a href="/tags/GLog/" style="font-size: 15px;">GLog</a> <a href="/tags/Machine-Learning/" style="font-size: 15px;">Machine Learning</a> <a href="/tags/同步/" style="font-size: 15px;">同步</a> <a href="/tags/MXNet/" style="font-size: 15px;">MXNet</a> <a href="/tags/Sublime/" style="font-size: 15px;">Sublime</a> <a href="/tags/TensorFlow-C/" style="font-size: 15px;">TensorFlow C++</a> <a href="/tags/Hadoop/" style="font-size: 15px;">Hadoop</a> <a href="/tags/Spark/" style="font-size: 15px;">Spark</a> <a href="/tags/MapReduce/" style="font-size: 15px;">MapReduce</a> <a href="/tags/Yarn/" style="font-size: 15px;">Yarn</a> <a href="/tags/TFRecord/" style="font-size: 15px;">TFRecord</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/tensorflow_barrier/">TensorFlow多Worker同步方案</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/06/dnn_trick_for_ctr/">广告CTR预估场景下的DNN调优实战</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/13/tfrecord_on_hadoop/">Hadoop平台上生成TensorFlow TFRecord的错误问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/install_gflags_glog/">安装GFlags和GLog的错误问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/22/tensorflow_c++_api_prediction_third/">使用TensorFlow C++ API构建线上预测服务 - 篇3</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/11/tensorflow_c++_api_prediction_second/">使用TensorFlow C++ API构建线上预测服务 - 篇2</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/10/09/tensorflow_c++_api_prediction_first/">使用TensorFlow C++ API构建线上预测服务 - 篇1</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/30/sublime_plugin/">Sublime插件</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/16/nnvm/">MXNet之NNVM代码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/15/Variants-of-SGD/">Variants of SGD</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.github.com" title="Github" target="_blank">Github</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">J.P.Liu's Blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.1.20/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.1.20/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+<link rel="stylesheet" href="/css/JSimple.css">
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>J.P.Liu&#39;s Blog - IT博客</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="https://www.mathmach.com">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+</head>
+<body>
+<div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle">Work on ...</h3>
+        <p class="cover-siteDesc">Industrial Machine Learning Framework used in Meituan Inc. CTR, NLP, Graph Embedding, etc. in Advertisement, Search and Recommendation Systems. ...</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li class="active">
+            <a href="/" data-name="最近">最近</a>
+        </li>
+        
+        <li class>
+            <a href="/categories/tech" data-name="技术">技术</a>
+        </li>
+        
+        <li class>
+            <a href="/categories/life" data-name="生活">生活</a>
+        </li>
+        
+        <li class>
+            <a href="/categories/others" data-name="其他">其他</a>
+        </li>
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text" readonly="readonly" id="local-search-input-tip" placeholder="读物检索~">
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2020-01-19
+            
+        </div>
+        <a class="post-title" href="/d183c0cd/" target="_self" title="CMake管理第三方依赖">CMake管理第三方依赖</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/CMake/" target="_self">CMake</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        最近在一个C++项目中尝试`Bazel`编译，编译依赖方式确实写着比较舒服和直观，但最后链接出来的二进制文件在执行时报`Segment error`，但用`CMake`编译出来的二进制文件就可以成功执行，Bazel编译的问题无从下手。另外，Bazel无法从系统目录查找头文件，这就不能忍了，有人建议从`cc_toolchain_config.bzl`查找问题，但toolchain实在是有点麻烦，就暂时放弃Bazel，继续使用CMake了。Bazel里提供的`git_repositry`等从外部源自动下载编译依赖的方式很好用，所以就思考在CMake里是不是也有类似的东西呢。之前使用CMake时，第三方依赖都是手动先在本地安装好，后来查找到了CMake里提供了类似Bazel的命令，那就是`ExternalProject`，不过这个命令只管下载编译等操作，但`git_repositry`更好使一些，它可以根据依赖自动判断是不是下载，而`ExternalProject`就没这么丝滑了，所以本文记录下在CMake怎样基于`ExternalProject`打造`git_repositry`那种丝滑的体验。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2020-01-14
+            
+        </div>
+        <a class="post-title" href="/ddd6f979/" target="_self" title="VSCode下Markdown和LaTex混合编辑环境配置">VSCode下Markdown和LaTex混合编辑环境配置</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/latex/" target="_self">latex</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/markdown/" target="_self">markdown</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        最近在公司用Markdown写技术博客时，需要插入伪代码块，而Markdown里没有找到比较美观的实现方案，想到之前在学校写论文时一直用LaTex，里面的伪代码非常漂亮，所以就想在Markdown里混合使用LaTex，下面是从网上找到的解决方案汇总，方便自己以后查阅。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2019-08-15
+            
+        </div>
+        <a class="post-title" href="/f4f9dedd/" target="_self" title="SGD优化算法的各种变体">SGD优化算法的各种变体</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical Optimization</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        2017年前，公司内部的算法团队还都是使用`XGBoost`来训练模型，手动构造的特征已经几百个，特征迭代效果微弱，但在搜索推荐场景下，有大规模的离散特征，这类特征记忆效果非常好，如果加入模型训练会获得不错的效果提升，但树模型并不适合大规模离散特征，所以我开发了一个基于`Parameter Server`架构的分布式机器学习框架，主要支持大规模离散的浅层模型，比如`Logistic Regression`、`Factorization Machine`、`Field-aware Factorization Machine`分类模型以及对应的回归模型和`SVD分解`。这个机器学习框架使用`Yarn`调度在公司的大数据集群上，在线上取得了非常不错的收益，框架后续又开始朝着深度模型和在线学习演化，目前公司算法团队已经基本往大规模离散DNN迁移完毕。这里主要记录以下训练框架支持的一些优化算法，公式脑子只能记个大概，还是写下来方便以后查阅。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2018-09-25
+            
+        </div>
+        <a class="post-title" href="/b2f65b04/" target="_self" title="TensorFlow多Worker Barrier同步实现">TensorFlow多Worker Barrier同步实现</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        同步机制在TensorFlow等分布式机器学习框架中非常重要，比如TensorFlow有以下场景需要做同步：1) 当chief worker训练完一轮后，保存模型前需要等所有worker都完成再保存模型。 2) BSP方式的SGD训练，需要每个batch做同步。 如果不做同步可能会出现如下问题： 1) TensorFlow大部分使用方案都是异步SGD，而且使用global_step做停止条件，不能保证所有worker负责的数据训练相同的轮数，速度快的worker所负责的数据将会获得更多step。 2) chief worker结束时会保存模型参数，但还存在其他worker没结束，所以模型没有完全训练完整。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2018-09-06
+            
+        </div>
+        <a class="post-title" href="/2442aa9e/" target="_self" title="广告CTR预估场景下的DNN调优实战">广告CTR预估场景下的DNN调优实战</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/点击率预估/" target="_self">点击率预估</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/CTR/" target="_self">CTR</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        LR模型的时候，我们需要构造许多组合特征，比如UserID与ItemID的组合，许多做DNN的都宣称简化了特征工程，由隐层学习特征交叉，但是隐层进行特征组合的方式并没有明确的理论解释，并且通过隐层参数学习的方式进行隐式的特征组合并不能保证收敛到最优解，通过显示的构造组合特征能给DNN提供一些先验信息，从实战来看，DNN加上显示的组合特征效果会好很多。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2018-08-13
+            
+        </div>
+        <a class="post-title" href="/ca93562e/" target="_self" title="Hadoop平台上生成TensorFlow TFRecord的错误问题">Hadoop平台上生成TensorFlow TFRecord的错误问题</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Hadoop/" target="_self">Hadoop</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        使用MapReduce on Yarn或者Spark on Yarn来生成TFRecord的过程中，会发生Hadoop和TensorFlow依赖的Protobuf版本不一致导致冲突的问题，本文通过两种方案来解决这种问题。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2018-06-07
+            
+        </div>
+        <a class="post-title" href="/ee26f93c/" target="_self" title="安装GFlags和GLog的错误">安装GFlags和GLog的错误</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/GFlags/" target="_self">GFlags</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/GLog/" target="_self">GLog</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        在安装GLog时会报错`undefined reference to &#39;FlagRegisterer::FlagRegisterer&#39;`的原因及方案。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2017-10-22
+            
+        </div>
+        <a class="post-title" href="/832a0a1e/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇3">使用TensorFlow C++ API构建线上预测服务 - 篇3</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        在离线训练时，为了效率考虑，我们经常把数据转成TFRecord格式，然后直接调用TensorFlow提供的Reader来读入TFRecord数据。这样在生成的`graph.pb`中，Reader会对应多个节点，如果在c++中直接导入这个`graph.pb`我们就不能使用`std::vector&lt;std::pair&lt;std::string, tensorflow::Tensor&gt;&gt;`作为`session.Run(...)`的输入了，本文讲解一下怎样处理这种情况。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2017-10-11
+            
+        </div>
+        <a class="post-title" href="/f42d3a88/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇2">使用TensorFlow C++ API构建线上预测服务 - 篇2</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        之前的一篇文章中[使用TensorFlow C++ API构建线上预测服务 - 第一篇](http://mathmach.com/2017/10/09/tensorflow_c++_api_prediction_first/)，详细讲解了怎样用TensorFlow C++ API导入模型做预测，但模型`c = a * b`比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数，本文使用一个复杂的模型继续讲解。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2017-10-09
+            
+        </div>
+        <a class="post-title" href="/6d246b32/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇1">使用TensorFlow C++ API构建线上预测服务 - 篇1</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        目前，TensorFlow官方推荐使用Bazel编译源码和安装，但许多公司常用的构建工具是CMake。TensorFlow官方并没有提供CMake的编译示例，但提供了MakeFile文件，所以可以直接使用make进行编译安装。另一方面，模型训练成功后，官方提供了TensorFlow Servering进行预测的托管，但这个方案过于复杂。对于许多机器学习团队来说，一般都有自己的一套模型托管和预测服务，如果使用TensorFlow Servering对现存业务的侵入性太大，使用TensorFlow C++ API来导入模型并提供预测服务能方便的嵌入大部分已有业务方案，对这些团队来说比较合适。
+    </div>
+</article>
+
+
+
+        
+    
+</div>
+
+<div id="btn-pager">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+</div>
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: left">
+        <p>
+            <a href="/about" title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助">帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+<script src="/js/SimpleCore.js"></script>
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input" spellcheck="false" type="text" autocomplete="off" placeholder="请输入查询关键词">
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'auto',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+<link rel="stylesheet" href="/css/JSimple.css">
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>vscode下markdown和latex混合编辑环境配置 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="最近在公司用Markdown写技术博客时，需要插入伪代码块，而Markdown里没有找到比较美观的实现方案，想到之前在学校写论文时一直用LaTex，里面的伪代码非常漂亮，所以就想在Markdown里混合使用LaTex，下面是从网上找到的解决方案汇总，方便自己以后查阅。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+</head>
+<body>
+<div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle">Work on ...</h3>
+        <p class="cover-siteDesc">Industrial Machine Learning Framework used in Meituan Inc. CTR, NLP, Graph Embedding, etc. in Advertisement, Search and Recommendation Systems. ...</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class>
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class>
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class>
+                    <a href="/categories/others" data-name="其他">其他</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text" readonly="readonly" id="local-search-input-tip" placeholder="读物检索~">
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com" target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar">
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com" target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2020-01-14">2020-01-14</span>
+                </p>
+                <p>程序员</p>
+            </div>
+            <h2 class="post-title">VSCode下Markdown和LaTex混合编辑环境配置</h2>
+            <div class="post-meta">
+                本文共计9801个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在公司用Markdown写技术博客时，需要插入伪代码块，而Markdown里没有找到比较美观的实现方案，想到之前在学校写论文时一直用LaTex，里面的伪代码非常漂亮，所以就想在Markdown里混合使用LaTex，下面是从网上找到的解决方案汇总，方便自己以后查阅。</p>
+<h2 id="安装Tex环境"><a href="#安装Tex环境" class="headerlink" title="安装Tex环境"></a>安装Tex环境</h2><ul>
+<li>从以下网址下载Tex环境后安装，这个是MacOS下的Tex，Windows系统的是别的。<figure class="highlight avrasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">http:</span>//www.tug<span class="meta">.org</span>/mactex/mactex-download.html</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="VSCode配置"><a href="#VSCode配置" class="headerlink" title="VSCode配置"></a>VSCode配置</h2><ul>
+<li>安装<code>LaTeX Workshop</code>插件</li>
+<li><code>settings.json</code>增加以下配置<figure class="highlight prolog"><table><tr><td class="code"><pre><span class="line"><span class="string">"latex-workshop.latex.recipes"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"xelatex"</span>,</span><br><span class="line">            <span class="string">"tools"</span>: [</span><br><span class="line">                <span class="string">"xelatex"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"latexmk"</span>,</span><br><span class="line">            <span class="string">"tools"</span>: [</span><br><span class="line">                <span class="string">"latexmk"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"pdflatex -&gt; bibtex -&gt; pdflatex*2"</span>,</span><br><span class="line">            <span class="string">"tools"</span>: [</span><br><span class="line">                <span class="string">"pdflatex"</span>,</span><br><span class="line">                <span class="string">"bibtex"</span>,</span><br><span class="line">                <span class="string">"pdflatex"</span>,</span><br><span class="line">                <span class="string">"pdflatex"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"latex-workshop.latex.tools"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"latexmk"</span>,</span><br><span class="line">            <span class="string">"command"</span>: <span class="string">"latexmk"</span>,</span><br><span class="line">            <span class="string">"args"</span>: [</span><br><span class="line">                <span class="string">"-synctex=1"</span>,</span><br><span class="line">                <span class="string">"-interaction=nonstopmode"</span>,</span><br><span class="line">                <span class="string">"-file-line-error"</span>,</span><br><span class="line">                <span class="string">"-pdf"</span>,</span><br><span class="line">                <span class="string">"%DOC%"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"xelatex"</span>,</span><br><span class="line">            <span class="string">"command"</span>: <span class="string">"xelatex"</span>,</span><br><span class="line">            <span class="string">"args"</span>: [</span><br><span class="line">                <span class="string">"-synctex=1"</span>,</span><br><span class="line">                <span class="string">"-interaction=nonstopmode"</span>,</span><br><span class="line">                <span class="string">"-file-line-error"</span>,</span><br><span class="line">                <span class="string">"%DOC%"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"pdflatex"</span>,</span><br><span class="line">            <span class="string">"command"</span>: <span class="string">"pdflatex"</span>,</span><br><span class="line">            <span class="string">"args"</span>: [</span><br><span class="line">                <span class="string">"-synctex=1"</span>,</span><br><span class="line">                <span class="string">"-interaction=nonstopmode"</span>,</span><br><span class="line">                <span class="string">"-file-line-error"</span>,</span><br><span class="line">                <span class="string">"%DOC%"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"bibtex"</span>,</span><br><span class="line">            <span class="string">"command"</span>: <span class="string">"bibtex"</span>,</span><br><span class="line">            <span class="string">"args"</span>: [</span><br><span class="line">                <span class="string">"%DOCFILE%"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">"latex-workshop.view.pdf.viewer"</span>: <span class="string">"tab"</span>,</span><br><span class="line">    <span class="string">"latex-workshop.latex.clean.fileTypes"</span>: [</span><br><span class="line">        <span class="string">"*.aux"</span>,</span><br><span class="line">        <span class="string">"*.bbl"</span>,</span><br><span class="line">        <span class="string">"*.blg"</span>,</span><br><span class="line">        <span class="string">"*.idx"</span>,</span><br><span class="line">        <span class="string">"*.ind"</span>,</span><br><span class="line">        <span class="string">"*.lof"</span>,</span><br><span class="line">        <span class="string">"*.lot"</span>,</span><br><span class="line">        <span class="string">"*.out"</span>,</span><br><span class="line">        <span class="string">"*.toc"</span>,</span><br><span class="line">        <span class="string">"*.acn"</span>,</span><br><span class="line">        <span class="string">"*.acr"</span>,</span><br><span class="line">        <span class="string">"*.alg"</span>,</span><br><span class="line">        <span class="string">"*.glg"</span>,</span><br><span class="line">        <span class="string">"*.glo"</span>,</span><br><span class="line">        <span class="string">"*.gls"</span>,</span><br><span class="line">        <span class="string">"*.ist"</span>,</span><br><span class="line">        <span class="string">"*.fls"</span>,</span><br><span class="line">        <span class="string">"*.log"</span>,</span><br><span class="line">        <span class="string">"*.fdb_latexmk"</span></span><br><span class="line">    ],</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="中文字体支持"><a href="#中文字体支持" class="headerlink" title="中文字体支持"></a>中文字体支持</h2><p>完成上面工作后，就可以在VSCode下编辑和预览Tex文件了。不过中文支持不好，需要按下面操作兼容中文字体。</p>
+<ul>
+<li>打开<code>~/.pandoc/templates/default.latex</code>文件，把以下内容填进去。<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">documentclass</span><span class="string">[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$]</span><span class="string">&#123;$documentclass$&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;geometry&#125;</span></span>       <span class="comment">% 設定邊界</span></span><br><span class="line">    <span class="tag">\<span class="name">geometry</span><span class="string">&#123;</span></span></span><br><span class="line"><span class="tag"><span class="string">      top=1in,</span></span></span><br><span class="line"><span class="tag"><span class="string">      inner=1in,</span></span></span><br><span class="line"><span class="tag"><span class="string">      outer=1in,</span></span></span><br><span class="line"><span class="tag"><span class="string">      bottom=1in,</span></span></span><br><span class="line"><span class="tag"><span class="string">      headheight=3ex,</span></span></span><br><span class="line"><span class="tag"><span class="string">      headsep=2ex</span></span></span><br><span class="line"><span class="tag"><span class="string">    &#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">[T1]</span><span class="string">&#123;fontenc&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;lmodern&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;amssymb,amsmath&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;ifxetex,ifluatex&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;fixltx2e&#125;</span></span> <span class="comment">% provides \textsubscript</span></span><br><span class="line">    <span class="comment">% use upquote if available, for straight quotes in verbatim environments</span></span><br><span class="line">    <span class="tag">\<span class="name">IfFileExists</span><span class="string">&#123;upquote.sty&#125;</span><span class="string">&#123;\usepackage&#123;upquote&#125;</span></span>&#125;&#123;&#125;</span><br><span class="line">    <span class="tag">\<span class="name">ifnum</span></span> 0<span class="tag">\<span class="name">ifxetex</span></span> 1<span class="tag">\<span class="name">fi</span></span><span class="tag">\<span class="name">ifluatex</span></span> 1<span class="tag">\<span class="name">fi</span>=<span class="number">0</span></span> <span class="comment">% if pdftex</span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">[utf8]</span><span class="string">&#123;inputenc&#125;</span></span></span><br><span class="line">    <span class="formula">$if(euro)$</span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;eurosym&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="tag">\<span class="name">else</span></span> <span class="comment">% if luatex or xelatex</span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;fontspec&#125;</span></span>     <span class="comment">% 允許設定字體</span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;xeCJK&#125;</span></span>        <span class="comment">% 分開設置中英文字型</span></span><br><span class="line">      <span class="tag">\<span class="name">setCJKmainfont</span><span class="string">&#123;STSong&#125;</span></span>   <span class="comment">% 設定中文字型</span></span><br><span class="line">      <span class="tag">\<span class="name">setmainfont</span><span class="string">&#123;Georgia&#125;</span></span>     <span class="comment">% 設定英文字型</span></span><br><span class="line">      <span class="tag">\<span class="name">setromanfont</span><span class="string">&#123;Georgia&#125;</span></span>    <span class="comment">% 字型</span></span><br><span class="line">      <span class="tag">\<span class="name">setmonofont</span><span class="string">&#123;Courier New&#125;</span></span></span><br><span class="line">      <span class="tag">\<span class="name">linespread</span><span class="string">&#123;1.2&#125;</span></span><span class="tag">\<span class="name">selectfont</span></span>   <span class="comment">% 行距</span></span><br><span class="line">      <span class="tag">\<span class="name">XeTeXlinebreaklocale</span></span> "zh"    <span class="comment">% 針對中文自動換行</span></span><br><span class="line">      <span class="tag">\<span class="name">XeTeXlinebreakskip</span> = <span class="number">0pt</span></span> plus 1pt <span class="comment">% 字與字之間加入0pt至1pt的間距，確保左右對整齊</span></span><br><span class="line">      <span class="tag">\<span class="name">parindent</span></span> 0em        <span class="comment">% 段落縮進</span></span><br><span class="line">      <span class="tag">\<span class="name">setlength</span><span class="string">&#123;\parskip&#125;</span><span class="string">&#123;20pt&#125;</span></span>    <span class="comment">% 段落之間的距離</span></span><br><span class="line">      <span class="tag">\<span class="name">ifxetex</span></span></span><br><span class="line">        <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;xltxtra,xunicode&#125;</span></span></span><br><span class="line">      <span class="tag">\<span class="name">fi</span></span></span><br><span class="line">      <span class="tag">\<span class="name">defaultfontfeatures</span><span class="string">&#123;Mapping=tex-text,Scale=MatchLowercase&#125;</span></span></span><br><span class="line">      <span class="tag">\<span class="name">newcommand</span><span class="string">&#123;\euro&#125;</span><span class="string">&#123;€&#125;</span></span></span><br><span class="line">    <span class="formula">$if(mainfont)$</span></span><br><span class="line">        <span class="tag">\<span class="name">setmainfont</span><span class="string">&#123;$mainfont$&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(sansfont)$</span></span><br><span class="line">        <span class="tag">\<span class="name">setsansfont</span><span class="string">&#123;$sansfont$&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(monofont)$</span></span><br><span class="line">        <span class="tag">\<span class="name">setmonofont</span><span class="string">&#123;$monofont$&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(mathfont)$</span></span><br><span class="line">        <span class="tag">\<span class="name">setmathfont</span><span class="string">&#123;$mathfont$&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="tag">\<span class="name">fi</span></span></span><br><span class="line">    <span class="comment">% use microtype if available</span></span><br><span class="line">    <span class="tag">\<span class="name">IfFileExists</span><span class="string">&#123;microtype.sty&#125;</span><span class="string">&#123;\usepackage&#123;microtype&#125;</span></span>&#125;&#123;&#125;</span><br><span class="line">    <span class="formula">$if(geometry)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">[$for(geometry)$$geometry$$sep$,$endfor$]</span><span class="string">&#123;geometry&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(natbib)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;natbib&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">bibliographystyle</span><span class="string">&#123;plainnat&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(biblatex)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;biblatex&#125;</span></span></span><br><span class="line">    <span class="formula">$if(biblio-files)$</span></span><br><span class="line">    <span class="tag">\<span class="name">bibliography</span><span class="string">&#123;$biblio-files$&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(listings)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;listings&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(lhs)$</span></span><br><span class="line">    <span class="tag">\<span class="name">lstnewenvironment</span><span class="string">&#123;code&#125;</span><span class="string">&#123;\lstset&#123;language=Haskell,basicstyle=\small\ttfamily&#125;</span></span>&#125;&#123;&#125;</span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(highlighting-macros)$</span></span><br><span class="line">    <span class="formula">$highlighting-macros$</span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(verbatim-in-note)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;fancyvrb&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(tables)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;longtable&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(graphics)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;graphicx&#125;</span></span></span><br><span class="line">    <span class="comment">% We will generate all images so they have a width \maxwidth. This means</span></span><br><span class="line">    <span class="comment">% that they will get their normal width if they fit onto the page, but</span></span><br><span class="line">    <span class="comment">% are scaled down if they would overflow the margins.</span></span><br><span class="line">    <span class="tag">\<span class="name">makeatletter</span></span></span><br><span class="line">    <span class="tag">\<span class="name">def</span></span><span class="tag">\<span class="name">maxwidth</span><span class="string">&#123;\ifdim\Gin@nat@width&gt;\linewidth\linewidth</span></span></span><br><span class="line"><span class="tag"><span class="string">    \else\Gin@nat@width\fi&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">makeatother</span></span></span><br><span class="line">    <span class="tag">\<span class="name">let</span></span><span class="tag">\<span class="name">Oldincludegraphics</span></span><span class="tag">\<span class="name">includegraphics</span></span></span><br><span class="line">    <span class="tag">\<span class="name">renewcommand</span><span class="string">&#123;\includegraphics&#125;</span><span class="string">[1]</span><span class="string">&#123;\Oldincludegraphics[width=\maxwidth]&#123;#1&#125;</span></span>&#125;</span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="tag">\<span class="name">ifxetex</span></span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">[setpagesize=false, % page size defined by xetex</span></span></span><br><span class="line"><span class="tag"><span class="string">                  unicode=false, % unicode breaks when used with xetex</span></span></span><br><span class="line"><span class="tag"><span class="string">                  xetex]</span><span class="string">&#123;hyperref&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">else</span></span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">[unicode=true]</span><span class="string">&#123;hyperref&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">fi</span></span></span><br><span class="line">    <span class="tag">\<span class="name">hypersetup</span><span class="string">&#123;breaklinks=true,</span></span></span><br><span class="line"><span class="tag"><span class="string">                bookmarks=true,</span></span></span><br><span class="line"><span class="tag"><span class="string">                pdfauthor=&#123;$author-meta$&#125;</span></span>,</span><br><span class="line">                pdftitle=&#123;<span class="formula">$title-meta$</span>&#125;,</span><br><span class="line">                colorlinks=true,</span><br><span class="line">                urlcolor=<span class="formula">$if(urlcolor)$</span><span class="formula">$urlcolor$</span><span class="formula">$else$</span>blue<span class="formula">$endif$</span>,</span><br><span class="line">                linkcolor=<span class="formula">$if(linkcolor)$</span><span class="formula">$linkcolor$</span><span class="formula">$else$</span>magenta<span class="formula">$endif$</span>,</span><br><span class="line">                pdfborder=&#123;0 0 0&#125;&#125;</span><br><span class="line">    <span class="tag">\<span class="name">urlstyle</span><span class="string">&#123;same&#125;</span></span>  <span class="comment">% don't use monospace font for urls</span></span><br><span class="line">    <span class="formula">$if(links-as-notes)$</span></span><br><span class="line">    <span class="comment">% Make links footnotes instead of hotlinks:</span></span><br><span class="line">    <span class="tag">\<span class="name">renewcommand</span><span class="string">&#123;\href&#125;</span><span class="string">[2]</span><span class="string">&#123;#2\footnote&#123;\url&#123;#1&#125;</span></span>&#125;&#125;</span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(strikeout)$</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">[normalem]</span><span class="string">&#123;ulem&#125;</span></span></span><br><span class="line">    <span class="comment">% avoid problems with \sout in headers with hyperref:</span></span><br><span class="line">    <span class="tag">\<span class="name">pdfstringdefDisableCommands</span><span class="string">&#123;\renewcommand&#123;\sout&#125;</span><span class="string">&#123;&#125;</span></span>&#125;</span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="tag">\<span class="name">setlength</span><span class="string">&#123;\parindent&#125;</span><span class="string">&#123;0pt&#125;</span></span></span><br><span class="line">    <span class="comment">%\setlength&#123;\parskip&#125;&#123;6pt plus 2pt minus 1pt&#125;</span></span><br><span class="line">    <span class="tag">\<span class="name">setlength</span><span class="string">&#123;\emergencystretch&#125;</span><span class="string">&#123;3em&#125;</span></span>  <span class="comment">% prevent overfull lines</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">\<span class="name">title</span><span class="string">&#123;\huge 在OSX平台上的XeLaTeX中文測試&#125;</span></span> <span class="comment">% 設置標題，使用巨大字體</span></span><br><span class="line">    <span class="tag">\<span class="name">author</span><span class="string">&#123;FoolEgg.com&#125;</span></span>        <span class="comment">% 設置作者</span></span><br><span class="line">    <span class="tag">\<span class="name">date</span><span class="string">&#123;February 2013&#125;</span></span>        <span class="comment">% 設置日期</span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;titling&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">setlength</span><span class="string">&#123;\droptitle&#125;</span><span class="string">&#123;-8em&#125;</span></span>    <span class="comment">% 將標題移動至頁面的上面</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;fancyhdr&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;lastpage&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">pagestyle</span><span class="string">&#123;fancyplain&#125;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$if(numbersections)$</span></span><br><span class="line">    <span class="tag">\<span class="name">setcounter</span><span class="string">&#123;secnumdepth&#125;</span><span class="string">&#123;5&#125;</span></span></span><br><span class="line">    <span class="formula">$else$</span></span><br><span class="line">    <span class="tag">\<span class="name">setcounter</span><span class="string">&#123;secnumdepth&#125;</span><span class="string">&#123;0&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(verbatim-in-note)$</span></span><br><span class="line">    <span class="tag">\<span class="name">VerbatimFootnotes</span></span> <span class="comment">% allows verbatim text in footnotes</span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(lang)$</span></span><br><span class="line">    <span class="tag">\<span class="name">ifxetex</span></span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">&#123;polyglossia&#125;</span></span></span><br><span class="line">      <span class="tag">\<span class="name">setmainlanguage</span><span class="string">&#123;$mainlang$&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">else</span></span></span><br><span class="line">      <span class="tag">\<span class="name">usepackage</span><span class="string">[$lang$]</span><span class="string">&#123;babel&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">fi</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$for(header-includes)$</span></span><br><span class="line">    <span class="formula">$header-includes$</span></span><br><span class="line">    <span class="formula">$endfor$</span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$if(title)$</span></span><br><span class="line">    <span class="tag">\<span class="name">title</span><span class="string">&#123;$title$&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="tag">\<span class="name">author</span><span class="string">&#123;$for(author)$$author$$sep$ \and $endfor$&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">date</span><span class="string">&#123;$date$&#125;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="tag">\<span class="name">begin</span><span class="string">&#123;document&#125;</span></span></span><br><span class="line">    <span class="formula">$if(title)$</span></span><br><span class="line">    <span class="tag">\<span class="name">maketitle</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$for(include-before)$</span></span><br><span class="line">    <span class="formula">$include-before$</span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$endfor$</span></span><br><span class="line">    <span class="formula">$if(toc)$</span></span><br><span class="line">    &#123;</span><br><span class="line">    <span class="tag">\<span class="name">hypersetup</span><span class="string">&#123;linkcolor=black&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">setcounter</span><span class="string">&#123;tocdepth&#125;</span><span class="string">&#123;$toc-depth$&#125;</span></span></span><br><span class="line">    <span class="tag">\<span class="name">tableofcontents</span></span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$body$</span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$if(natbib)$</span></span><br><span class="line">    <span class="formula">$if(biblio-files)$</span></span><br><span class="line">    <span class="formula">$if(biblio-title)$</span></span><br><span class="line">    <span class="formula">$if(book-class)$</span></span><br><span class="line">    <span class="tag">\<span class="name">renewcommand</span></span><span class="tag">\<span class="name">bibname</span><span class="string">&#123;$biblio-title$&#125;</span></span></span><br><span class="line">    <span class="formula">$else$</span></span><br><span class="line">    <span class="tag">\<span class="name">renewcommand</span></span><span class="tag">\<span class="name">refname</span><span class="string">&#123;$biblio-title$&#125;</span></span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="tag">\<span class="name">bibliography</span><span class="string">&#123;$biblio-files$&#125;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$if(biblatex)$</span></span><br><span class="line">    <span class="tag">\<span class="name">printbibliography</span></span><span class="formula">$if(biblio-title)$</span>[title=<span class="formula">$biblio-title$</span>]<span class="formula">$endif$</span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$endif$</span></span><br><span class="line">    <span class="formula">$for(include-after)$</span></span><br><span class="line">    <span class="formula">$include-after$</span></span><br><span class="line"></span><br><span class="line">    <span class="formula">$endfor$</span></span><br><span class="line">    <span class="tag">\<span class="name">end</span><span class="string">&#123;document&#125;</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Markdown里使用LaTex"><a href="#Markdown里使用LaTex" class="headerlink" title="Markdown里使用LaTex"></a>Markdown里使用LaTex</h2><p>Markdown文件里可以插入LaTex片段，可以通过Pacdoc将md文件转成pdf或其他文件。</p>
+<ul>
+<li><p>新建一个<code>md</code>文件<code>test.md</code>，填入以下内容</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">## 背景</span><br><span class="line">MacOS LaTex环境配置</span><br><span class="line"></span><br><span class="line">## 嵌入latex算法伪代码</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">header-includes:</span><br><span class="line">  - <span class="tag">\<span class="name">usepackage</span><span class="string">[ruled,vlined,linesnumbered]</span><span class="string">&#123;algorithm2e&#125;</span></span></span><br><span class="line">---</span><br><span class="line"># Algorithm 1</span><br><span class="line">Just a sample algorithmn</span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;algorithm&#125;</span><span class="string">[H]</span></span></span><br><span class="line"><span class="tag">\<span class="name">DontPrintSemicolon</span></span></span><br><span class="line"><span class="tag">\<span class="name">SetAlgoLined</span></span></span><br><span class="line"><span class="tag">\<span class="name">KwResult</span><span class="string">&#123;Write here the result&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">SetKwInOut</span><span class="string">&#123;Input&#125;</span><span class="string">&#123;Input&#125;</span></span><span class="tag">\<span class="name">SetKwInOut</span><span class="string">&#123;Output&#125;</span><span class="string">&#123;Output&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">Input</span><span class="string">&#123;Write here the input&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">Output</span><span class="string">&#123;Write here the output&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">BlankLine</span></span></span><br><span class="line"><span class="tag">\<span class="name">While</span><span class="string">&#123;While condition&#125;</span><span class="string">&#123;</span></span></span><br><span class="line"><span class="tag"><span class="string">    instructions\;</span></span></span><br><span class="line"><span class="tag"><span class="string">    \eIf&#123;condition&#125;</span><span class="string">&#123;</span></span></span><br><span class="line"><span class="tag"><span class="string">        instructions1\;</span></span></span><br><span class="line"><span class="tag"><span class="string">        instructions2\;</span></span></span><br><span class="line"><span class="tag"><span class="string">    &#125;</span><span class="string">&#123;</span></span></span><br><span class="line"><span class="tag"><span class="string">        instructions3\;</span></span></span><br><span class="line"><span class="tag"><span class="string">    &#125;</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">\<span class="name">caption</span><span class="string">&#123;While loop with If/Else condition&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;algorithm&#125;</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>md生成pdf</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">pandoc --pdf-engine=xelatex <span class="keyword">test</span>.md -o <span class="keyword">test</span>.pdf</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>或者<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">pandoc --pdf-engine=xelatex --<span class="keyword">template</span>=[<span class="keyword">template</span>.latex的路径] test.md -o test.pdf</span><br></pre></td></tr></table></figure></p>
+<p>不配置<code>--template</code>时默认使用<code>~/.pandoc/templates/default.latex</code>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在VSCode里，如果Markdown文件里有LaTex片段的话，是无法完全预览的，所以只能用Pandoc转成pdf来看效果，如果你有更好的办法欢迎提供。</p>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/latex/">latex</a>
+            
+            <a href="/tags/markdown/">markdown</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js" "></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about" title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助">帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+<script src="/js/SimpleCore.js"></script>
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input" spellcheck="false" type="text" autocomplete="off" placeholder="请输入查询关键词">
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'auto',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script>
+</body>
+</html>

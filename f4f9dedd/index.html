@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+<link rel="stylesheet" href="/css/JSimple.css">
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>sgd优化算法的各种变体 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="2017年前，公司内部的算法团队还都是使用`XGBoost`来训练模型，手动构造的特征已经几百个，特征迭代效果微弱，但在搜索推荐场景下，有大规模的离散特征，这类特征记忆效果非常好，如果加入模型训练会获得不错的效果提升，但树模型并不适合大规模离散特征，所以我开发了一个基于`Parameter Server`架构的分布式机器学习框架，主要支持大规模离散的浅层模型，比如`Logistic Regression`、`Factorization Machine`、`Field-aware Factorization Machine`分类模型以及对应的回归模型和`SVD分解`。这个机器学习框架使用`Yarn`调度在公司的大数据集群上，在线上取得了非常不错的收益，框架后续又开始朝着深度模型和在线学习演化，目前公司算法团队已经基本往大规模离散DNN迁移完毕。这里主要记录以下训练框架支持的一些优化算法，公式脑子只能记个大概，还是写下来方便以后查阅。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+</head>
+<body>
+<div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle">Work on ...</h3>
+        <p class="cover-siteDesc">Industrial Machine Learning Framework used in Meituan Inc. CTR, NLP, Graph Embedding, etc. in Advertisement, Search and Recommendation Systems. ...</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class>
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class>
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class>
+                    <a href="/categories/others" data-name="其他">其他</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text" readonly="readonly" id="local-search-input-tip" placeholder="读物检索~">
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com" target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar">
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com" target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2019-08-15">2019-08-15</span>
+                </p>
+                <p>程序员</p>
+            </div>
+            <h2 class="post-title">SGD优化算法的各种变体</h2>
+            <div class="post-meta">
+                本文共计6012个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>2017年前，公司内部的算法团队还都是使用<code>XGBoost</code>来训练模型，手动构造的特征已经几百个，特征迭代效果微弱，但在搜索推荐场景下，有大规模的离散特征，这类特征记忆效果非常好，如果加入模型训练会获得不错的效果提升，但树模型并不适合大规模离散特征，所以我开发了一个基于<code>Parameter Server</code>架构的分布式机器学习框架，主要支持大规模离散的浅层模型，比如<code>Logistic Regression</code>、<code>Factorization Machine</code>、<code>Field-aware Factorization Machine</code>分类模型以及对应的回归模型和<code>SVD分解</code>。这个机器学习框架使用<code>Yarn</code>调度在公司的大数据集群上，在线上取得了非常不错的收益，框架后续又开始朝着深度模型和在线学习演化，目前公司算法团队已经基本往大规模离散DNN迁移完毕。这里主要记录以下训练框架支持的一些优化算法，公式脑子只能记个大概，还是写下来方便以后查阅。<br><figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">窄的深度模型 -&gt; 宽的浅层模型 -&gt; 又宽又深的模型</span><br></pre></td></tr></table></figure></p>
+<h2 id="优化算法"><a href="#优化算法" class="headerlink" title="优化算法"></a>优化算法</h2><ul>
+<li>SGD with Momentum</li>
+<li>Nesterov accelerated gradient</li>
+<li>SGD-L1(Cumulative)</li>
+<li>AdaGrad</li>
+<li>AdaDelta</li>
+<li>AdaM</li>
+<li>FTRL</li>
+<li>FTML</li>
+</ul>
+<p><br></p>
+<h3 id="SGD-with-Momentum"><a href="#SGD-with-Momentum" class="headerlink" title="SGD with Momentum"></a>SGD with Momentum</h3><p>超参数：</p>
+<ul>
+<li>学习率 $\eta \in (0, +\infty) \quad [default=0.001]$</li>
+<li>惯性项 $\rho \in (0, 1) \quad [default=0.9]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad \Delta w_0 = 0, \; t = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-1})</script><script type="math/tex; mode=display">\Delta w_t = \rho \cdot \Delta w_{t-1} + \eta \cdot g_t</script><script type="math/tex; mode=display">w_{t+1} = w_t - \Delta w_t</script><h3 id="Nesterov-accelerated-gradient"><a href="#Nesterov-accelerated-gradient" class="headerlink" title="Nesterov accelerated gradient"></a>Nesterov accelerated gradient</h3><p>超参数：</p>
+<ul>
+<li>学习率 $\eta \in (0, +\infty) \quad [default=0.001]$</li>
+<li>惯性项 $\rho \in (0, 1) \quad [default=0.9]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad \Delta w_0 = 0, \; t = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">w_{t-\frac{1}{2}} = w_t - \rho \cdot \Delta w_{t-1}</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-\frac{1}{2}})</script><script type="math/tex; mode=display">\Delta w_t = \rho \cdot \Delta w_{t-1} + \eta \cdot g_t</script><script type="math/tex; mode=display">w_{t+1} = w_t - \Delta w_t</script><h3 id="SGD-L1-Cumulative"><a href="#SGD-L1-Cumulative" class="headerlink" title="SGD-L1(Cumulative)"></a>SGD-L1(Cumulative)</h3><p>超参数：</p>
+<ul>
+<li>学习率 $\eta \in (0, +\infty) \quad [default=0.001]$</li>
+<li>学习率衰减 $\alpha \in (0, 1) \quad [default=0.9]$</li>
+<li>学习率衰减步长 $\tau \in (1, +\infty) \quad [default=100]$</li>
+<li>L1正则化项 $\lambda_1 \in [0, +\infty) \quad [default=0.001]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad q_0 = 0, \; u_0 = 0, \; t = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-1})</script><script type="math/tex; mode=display">\eta_t = \eta \cdot \alpha^\frac{t}{\tau}</script><script type="math/tex; mode=display">u_t = u_{t-1} + \eta_t \cdot \lambda_1</script><script type="math/tex; mode=display">w_{t-\frac{1}{2}} = w_{t-1} - \eta_t \cdot g_t</script><script type="math/tex; mode=display">w_t = max(0, w_{t-\frac{1}{2}}-(u_t + q_{t-1})) \quad if \quad w_{t-\frac{1}{2}}>0 \quad else \quad min(0, w_{t-\frac{1}{2}}+(u_t - q_{t-1}))</script><script type="math/tex; mode=display">q_t = q_{t-1} + (w_t - w_{t-\frac{1}{2}})</script><h3 id="AdaGrad"><a href="#AdaGrad" class="headerlink" title="AdaGrad"></a>AdaGrad</h3><p>超参数：</p>
+<ul>
+<li>学习率 $\eta \in (0, +\infty) \quad [default=0.001]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad q_0 = 0, \; t = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-1})</script><script type="math/tex; mode=display">q_t = q_{t-1} + g_t^2</script><script type="math/tex; mode=display">w_{t} = w_{t-1} - \frac{\eta}{\sqrt{q_t + \epsilon}} \cdot g_t</script><h3 id="AdaDelta"><a href="#AdaDelta" class="headerlink" title="AdaDelta"></a>AdaDelta</h3><p>超参数：</p>
+<ul>
+<li>惯性项 $\rho \in [0, 1) \quad [default=0.95]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad E[g^2]_0 = 0, \; E[\Delta w^2]_0 = 0, \; t = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-1})</script><script type="math/tex; mode=display">E[g^2]_t = \rho \cdot E[g^2]_{t-1} + (1 - \rho) \cdot g_t^2</script><script type="math/tex; mode=display">\Delta w_t = - \frac{\sqrt{E[\Delta w^2]_{t-1} + \epsilon}}{\sqrt{E[g^2]_t + \epsilon}} \cdot g_t</script><script type="math/tex; mode=display">E[\Delta w^2]_t = \rho \cdot E[\Delta w^2]_{t-1} + (1 - \rho) \cdot \Delta w_t^2</script><script type="math/tex; mode=display">w_{t} = w_{t-1} + \Delta w_t</script><h3 id="AdaM"><a href="#AdaM" class="headerlink" title="AdaM"></a>AdaM</h3><p>超参数：</p>
+<ul>
+<li>学习率 $\eta \in (0, +\infty) \quad [default=0.001]$</li>
+<li>惯性项 $\rho_1 \in [0, 1) \quad [default=0.9]$</li>
+<li>惯性项 $\rho_2 \in [0, 1) \quad [default=0.999]$</li>
+<li>衰减率 $\lambda \in [0, 1] \quad [default=1-10^{-8}]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad m_0 = 0, \; v_0 = 0, \; t = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">\rho_{1,t} = \rho_1 \cdot \lambda^{t-1}</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-1})</script><script type="math/tex; mode=display">m_t = \rho_{1,t} \cdot m_{t-1} + (1 - \rho_{1,t}) \cdot g_t</script><script type="math/tex; mode=display">v_t = \rho_2 \cdot v_{t-1} + (1 - \rho_2) \cdot g_t^2</script><script type="math/tex; mode=display">\widehat{m_t} = \frac{m_t}{(1 - \rho_1^t)}</script><script type="math/tex; mode=display">\widehat{v_t} = \frac{v_t}{(1 - \rho_2^t)}</script><script type="math/tex; mode=display">w_t = w_{t-1} - \eta \cdot \frac{\widehat{m_t}}{\sqrt{\widehat{v_t}} + \epsilon}</script><h3 id="FTRL"><a href="#FTRL" class="headerlink" title="FTRL"></a>FTRL</h3><p>超参数：</p>
+<ul>
+<li>L1正则化项 $\lambda_1 \in [0, +\infty) \quad [default=0.001]$</li>
+<li>L2正则化项 $\lambda_2 \in [0, +\infty) \quad [default=0.001]$</li>
+<li>学习率控制 $\alpha \in (0, +\infty) \quad [default=0.01]$</li>
+<li>学习率控制 $\beta \in [0, +\infty) \quad [default=1.0]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad q_0 = 0, \; z_0 = 0, \; t = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-1})</script><script type="math/tex; mode=display">\sigma_t = \frac{\sqrt{q_{t-1} + g_t^2}-\sqrt{q_{t-1}}}{\alpha}</script><script type="math/tex; mode=display">q_t = q_{t-1} + g_t^2</script><script type="math/tex; mode=display">z_t = z_{t-1} + g_t - \sigma_t \cdot w_{t-1}</script><script type="math/tex; mode=display">w_{t} = \frac{sign(z_t) \cdot \lambda_1 - z_t}{\lambda_2 + \frac{\beta + \sqrt{q_t}}{\alpha}} \quad if \quad z_t > \lambda_1 \quad else \quad 0</script><h3 id="FTML"><a href="#FTML" class="headerlink" title="FTML"></a>FTML</h3><p>超参数：</p>
+<ul>
+<li>惯性项控制 $\rho_1 \in [0, 1) \quad [default=0.6]$</li>
+<li>惯性项控制 $\rho_2 \in [0, 1) \quad [default=0.999]$</li>
+<li>学习率 $\eta \in (0, +\infty) \quad [default=0.001]$</li>
+</ul>
+<p>更新公式：</p>
+<script type="math/tex; mode=display">init: \quad d_0 = 0, \; v_0 = 0, \; z_0 = 0</script><script type="math/tex; mode=display">t = t + 1</script><script type="math/tex; mode=display">g_t = \nabla_w f_t(w_{t-1})</script><script type="math/tex; mode=display">v_t = \rho_2 \cdot v_{t-1} + (1 - \rho_2) \cdot g_t^2</script><script type="math/tex; mode=display">d_t = \frac{1 - \rho_1^t}{\eta} \cdot (\sqrt{\frac{v_t}{1 - \rho_2^t}} + \epsilon)</script><script type="math/tex; mode=display">\sigma_t = d_t - \rho_1 \cdot d_{t-1}</script><script type="math/tex; mode=display">z_t = \rho_1 \cdot z_{t-1} + (1 - \rho_1) \cdot g_t - \sigma_t \cdot w_{t-1}</script><script type="math/tex; mode=display">w_t = - \frac{z_t}{d_t}</script><h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ul>
+<li>Nesterov, Y. (1983). A method for unconstrained convex minimization problem with the rate of convergence o(1/k2). Doklady ANSSSR (translated as Soviet.Math.Docl.), vol. 269, pp. 543– 547.</li>
+<li>Qian, N. (1999). On the momentum term in gradient descent learning algorithms. Neural Networks : The Official Journal of the International Neural Network Society, 12(1), 145–151.</li>
+<li>Tsuruoka, Yoshimasa, Jun’ichi Tsujii, and Sophia Ananiadou. “Stochastic gradient descent training for l1-regularized log-linear models with cumulative penalty.” Proceedings of the Joint Conference of the 47th Annual Meeting of the ACL and the 4th International Joint Conference on Natural Language Processing of the AFNLP: Volume 1-Volume 1. Association for Computational Linguistics, 2009.</li>
+<li>Duchi, John, Elad Hazan, and Yoram Singer. “Adaptive subgradient methods for online learning and stochastic optimization.” Journal of Machine Learning Research 12.Jul (2011): 2121-2159.</li>
+<li>Zeiler, Matthew D. “ADADELTA: an adaptive learning rate method.” arXiv preprint arXiv:1212.5701 (2012).</li>
+<li>Kingma, Diederik, and Jimmy Ba. “Adam: A method for stochastic optimization.” arXiv preprint arXiv:1412.6980 (2014).</li>
+<li>H. Brendan McMahan &amp; M Streter. Adaptive Bound Optimization for Online Convex Optimization. In COLT, 2010</li>
+<li>H. Brendan McMahan. Follow-the-Regularized-Leader and Mirror Descent: Equivalence Theorems and L1 Regularization. In AISTATS, 2011</li>
+<li>H. Brendan McMahan, Gary Holt, D. Sculley, Michael Young, Dietmar Ebner, Julian Grady, Lan Nie, Todd Phillips, Eugene Davydov, Daniel Golovin, Sharat Chikkerur, Dan Liu, Martin Wattenberg, Arnar Mar Hrafnkelsson, Tom Boulos, Jeremy Kubica, Ad Click Prediction: a View from the Trenches. In ACM SIGKDD, 2013</li>
+<li>Shuai Zheng, James T. Kwok. Follow the Moving Leader in Deep Learning. The 34th International Conference on Machine Learning (ICML), Sydney, Australia, August 2017</li>
+</ul>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/Numerical-Optimization/">Numerical Optimization</a>
+            
+            <a href="/tags/Machine-Learning/">Machine Learning</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js" "></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about" title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助">帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+<script src="/js/SimpleCore.js"></script>
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input" spellcheck="false" type="text" autocomplete="off" placeholder="请输入查询关键词">
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'auto',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script>
+</body>
+</html>
