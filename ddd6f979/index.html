@@ -143,7 +143,7 @@
             </div>
             <h2 class="post-title">VSCode下Markdown和LaTex混合编辑环境配置</h2>
             <div class="post-meta">
-                本文共计9801个字 |
+                本文共计9802个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -169,11 +169,12 @@
 <figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">## 背景</span><br><span class="line">MacOS LaTex环境配置</span><br><span class="line"></span><br><span class="line">## 嵌入latex算法伪代码</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">header-includes:</span><br><span class="line">  - <span class="tag">\<span class="name">usepackage</span><span class="string">[ruled,vlined,linesnumbered]</span><span class="string">&#123;algorithm2e&#125;</span></span></span><br><span class="line">---</span><br><span class="line"># Algorithm 1</span><br><span class="line">Just a sample algorithmn</span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;algorithm&#125;</span><span class="string">[H]</span></span></span><br><span class="line"><span class="tag">\<span class="name">DontPrintSemicolon</span></span></span><br><span class="line"><span class="tag">\<span class="name">SetAlgoLined</span></span></span><br><span class="line"><span class="tag">\<span class="name">KwResult</span><span class="string">&#123;Write here the result&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">SetKwInOut</span><span class="string">&#123;Input&#125;</span><span class="string">&#123;Input&#125;</span></span><span class="tag">\<span class="name">SetKwInOut</span><span class="string">&#123;Output&#125;</span><span class="string">&#123;Output&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">Input</span><span class="string">&#123;Write here the input&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">Output</span><span class="string">&#123;Write here the output&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">BlankLine</span></span></span><br><span class="line"><span class="tag">\<span class="name">While</span><span class="string">&#123;While condition&#125;</span><span class="string">&#123;</span></span></span><br><span class="line"><span class="tag"><span class="string">    instructions\;</span></span></span><br><span class="line"><span class="tag"><span class="string">    \eIf&#123;condition&#125;</span><span class="string">&#123;</span></span></span><br><span class="line"><span class="tag"><span class="string">        instructions1\;</span></span></span><br><span class="line"><span class="tag"><span class="string">        instructions2\;</span></span></span><br><span class="line"><span class="tag"><span class="string">    &#125;</span><span class="string">&#123;</span></span></span><br><span class="line"><span class="tag"><span class="string">        instructions3\;</span></span></span><br><span class="line"><span class="tag"><span class="string">    &#125;</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">\<span class="name">caption</span><span class="string">&#123;While loop with If/Else condition&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;algorithm&#125;</span></span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>md生成pdf</p>
-<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">pandoc <span class="attribute">--pdf-engine</span>=xelatex test.md -o test.pdf</span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">pandoc --pdf-engine=xelatex <span class="keyword">test</span>.md -o <span class="keyword">test</span>.pdf</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">pandoc --pdf-engine=xelatex --<span class="keyword">template</span>=[<span class="keyword">template</span>.latex的路径] test.md -o test.pdf</span><br></pre></td></tr></table></figure>
+<p>不配置<code>--template</code>时默认使用<code>~/.pandoc/templates/default.latex</code>。</p>
 </li>
 </ul>
-<p>或者<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">pandoc --pdf-engine=xelatex --<span class="keyword">template</span>=[<span class="keyword">template</span>.latex的路径] test.md -o test.pdf</span><br></pre></td></tr></table></figure></p>
-<p>不配置<code>--template</code>时默认使用<code>~/.pandoc/templates/default.latex</code>。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在VSCode里，如果Markdown文件里有LaTex片段的话，是无法完全预览的，所以只能用Pandoc转成pdf来看效果，如果你有更好的办法欢迎提供。</p>
 
             
