@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>广告ctr预估场景下的dnn调优实战 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="DNN模型的特征构造，性能优化，以及训练TGB级别的超大模型及在线托管大模型服务，秒级在线更新的DNN模型...">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2021-09-06">2021-09-06</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">广告CTR预估场景下的DNN调优实战</h2>
+            <div class="post-meta">
+                本文共计5838个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#特征">特征</a></li>
+<li><a href="#模型">模型</a></li>
+<li><a href="#性能">性能</a></li>
+<li><a href="#其他">其他</a></li>
+<li><a href="#参考">参考</a></li>
+</ul>
+<!-- tocstop -->
+<h2><span id="特征">特征</span></h2>
+<ul>
+<li><p>DNN需要组合特征
+LR模型的时候，我们需要构造许多组合特征，比如UserID与ItemID的组合，许多做DNN的都宣称简化了特征工程，由隐层学习特征交叉，但是隐层进行特征组合的方式并没有明确的理论解释，并且通过隐层参数学习的方式进行隐式的特征组合并不能保证收敛到最优解，通过显示的构造组合特征能给DNN提供一些先验信息，从实战来看，DNN加上显示的组合特征效果会好很多。</p></li>
+<li><p>稀疏特征过滤
+训练数据中出现频次过少的离散特征往往容易引起过拟合，需要统计频次并做过滤。效果比较好的一种方法是，比如生成<code>day</code>这一天的特征时，使用
+<code>[day-delta_day_num, day-1]</code>之间的特征统计值来过滤<code>day</code>这一天的稀疏特征，相比使用<code>[day-delta_day_num, day]</code>之间的统计值，auc明显提升。<code>delta_day_num</code>可以设成14天，过滤阈值20，具体数据可以根据业务场景和实验效果来定。</p></li>
+<li><p>DNN特征划分Group
+和FFM类似，需要把特征划分成多个Group，每个Group里的特征做Embedding后Sum起来。划分方法，可以根据特征语义层面（用户、Item、组合）和数量、粒度进行划分。比如把用户相关特征划分成下面几个Group：
+<figure class="highlight inform7"><table><tr><td class="code"><pre><span class="line">用户细粒度Id: UserId</span><br><span class="line">用户画像：Age，<span class="keyword">Gender</span>，收入，职业</span><br><span class="line">用户行为：近期浏览的ItemIds</span><br></pre></td></tr></table></figure></p></li>
+</ul>
+<h2><span id="模型">模型</span></h2>
+<ul>
+<li><p>每类特征设置不同<code>Embedding Size</code>
+特征包含的信息越丰富，越需要更大的<code>Embedding Size</code>来描述，特征包含信息的丰富程度可以通过特征的粒度和数量表现出来，具体的一个划分方式可以看下图。
+特征粒度方面，单特征相对算粗粒度，组合特征相对较细，组合的层次越深，粒度越细。比如<code>UserId#ItemId</code>的组合特征刻画了用户对商品的倾向，<code>UserId#ItemId#Hour</code>刻画了用户在某个时间对某个商品的倾向【比如外卖，举个例子，实际一般不会这么组合】。特征刻画的粒度越细，说明指代的越具体，包含的信息非常明确却单一，这类特征一般不需要再和其他特征进行组合，所以<code>Embedding Size</code>会更小。
+特征数量方面，一般数量越大，包含的信息越多，比如<code>UserId</code>和<code>ItemId</code>可以达到上亿，一个<code>UserId</code>可以描述这个用户的很多信息，像<code>Age</code>和<code>Gender</code>这类特征规模很小的特征所包含的信息相对有限。</p>
+<div style="text-align: center">
+<p><img src="/images/dnn_embedding_size.png" alt="图片替换文本" width="400" height="400" align="middle"></p>
+</div></li>
+<li><p>模型结构
+Wide&amp;Deep最靠谱，DeepFM、DCN之类的效果都不大行。在Wide&amp;Deep模型的基础上，没有将Wide部分单独拿出来，而是和Deep在一起，通过特征划分Group后一起Embedding，效果可以超过Wide&amp;Deep，并且右边添加了一个基于离散特征统计的历史CTR的网络，可以降低模型的Variance，效果提升非常明显。总之，不要过分迷信一些灌水论文。</p>
+<div style="text-align: center">
+<p><img src="/images/best_dnn.png" alt="图片替换文本" width="500" height="400" align="middle"></p>
+</div></li>
+<li><p>减少多余训练参数
+二分类模型下，最后一层全连接的代码经常是下面这样： <figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">layer</span> = ... <span class="comment"># 倒数第二层</span></span><br><span class="line"><span class="attr">weight</span> = tf.get_variable(<span class="string">'weight'</span>, [dim, <span class="number">2</span>], initializer=...)</span><br><span class="line"><span class="attr">bias</span> = tf.get_variable(<span class="string">'bias'</span>, [<span class="number">2</span>], initializer=...)</span><br><span class="line"><span class="attr">logits</span> = tf.matmul(layer, weight) + bias</span><br></pre></td></tr></table></figure>
+因为是二分类，连接<code>label=0</code>的所有边其实不需要学习，<code>0</code>就是最优参数，如果加入学习的话，实际上多了一些冗余参数，而且梯度下降必定无法保障它们收敛到这个最优解。改成下面这样，<code>auc</code>可以较大提升。
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">layer</span> = ... <span class="comment"># 倒数第二层</span></span><br><span class="line"><span class="attr">weight_positive</span> = tf.get_variable(<span class="string">'weight_positive'</span>, [dim, <span class="number">1</span>], initializer=...)</span><br><span class="line"><span class="attr">bias_positive</span> = tf.get_variable(<span class="string">'bias_positive'</span>, [<span class="number">1</span>], initializer=...)</span><br><span class="line"><span class="attr">weight_neg</span> = tf.get_variable(<span class="string">'weight_negative'</span>, initializer=tf.constant(np.zeros((dim, <span class="number">1</span>), dtype=np.float32)), trainable=<span class="literal">False</span>)</span><br><span class="line"><span class="attr">logits_positive</span> = tf.matmul(layer, weight_positive) + bias_positive</span><br><span class="line"><span class="attr">logits_negative</span> = tf.matmul(layer, weight_negative)</span><br><span class="line"><span class="attr">logits</span> = tf.concat([logits_negative, logits_positive], <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p></li>
+<li><p>选一个好的基线模型
+这些年DNN火起来后，大家都往DNN方向发展，很多团队宣称切换到了DNN，宣传文章写的也不错，但是从实际来看，真正把DNN用好的团队并不多。比如从GBDT切换到DNN的一些组，其实整个特征流程还是沿用的GBDT思路，用几百维连续特征来做DNN，或者简单加几个小规模离散特征，少数技术强悍的团队其实做的是百亿千亿特征、模型规模TGB级别的超大DNN，所以同样是Wide&amp;Deep模型，不同的规模下其实天壤之别。DNN相对于GBDT来说，是非常容易做出成果的，主要还是把GBDT作为基线模型有点太简单了，其实在搜索推荐这类个性化很强的场景下把GBDT换成百亿千亿级别特征的超大规模LR或者FFM也会获得很大提升，所以如果要做DNN的话，推荐用FFM来做基线，实战来看DNN相对FFM要做出成果并没有那么简单。</p></li>
+</ul>
+<h2><span id="性能">性能</span></h2>
+<ul>
+<li><p>大规模离散特征<code>Embedding</code>
+稀疏特征的id做embedding时，由于TensorFlow内部使用一个<code>shape=[id_num, embedding_size]</code>的Variable做参数，需要把id映射成[0,
+id_num)间的一个数字。如果id量非常小的话，可以在特征提取后把id排序一遍生成从0开始的连续id值，但在工业界场景下id往往是用<code>murmur hash</code>生成的<code>uint64 id</code>，量级往往是百万到千亿级别，很难做排序。TensorFlow内部有一个Hash
+Table可以将<code>uint64</code>映射成从0开始的连续id，但可能将不同的id映射到<code>embedding_variable</code>的同一行，所以建议把<code>embedding_variable</code>的行数和<code>num_oov_buckets</code>设置的大一点，减小一点冲突。当然，最优方案应该是使用Map结构来实现<code>Embedding Variable</code>，现在官方并没有人做，我已经修改TensorFlow底层代码实现了一个，支持千亿离散特征的embedding，在公司内已经应用，这一块也可以参考阿里发布的TensorFlowRS。
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">embedding_variable = tf.get_variable(<span class="string">'emb_var'</span>,</span><br><span class="line">                                     [2*id_num+2, embedding_size],</span><br><span class="line">                                     <span class="attribute">initializer</span>=...)</span><br><span class="line">hash_table = tf.contrib.lookup.index_table_from_tensor(<span class="attribute">mapping</span>=tf.constant([0]),</span><br><span class="line">                                                       <span class="attribute">num_oov_buckets</span>=2*id_num,</span><br><span class="line">                                                       <span class="attribute">dtype</span>=tf.int64)</span><br><span class="line">sparse_ids = hash_table.lookup(origin_sparse_ids)</span><br><span class="line">embedding = tf.nn.embedding_lookup_sparse(embedding_variable,</span><br><span class="line">                                          sparse_ids,</span><br><span class="line">                                          None,</span><br><span class="line">                                          <span class="attribute">partition_strategy</span>=<span class="string">"mod"</span>)</span><br></pre></td></tr></table></figure></p></li>
+<li><p><code>Sparse Embedding</code>性能 使用 <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">def embedding_lookup_sparse_with_distributed_aggregation(params,</span><br><span class="line">                                                         sp_ids,</span><br><span class="line">                                                         sp_weights,</span><br><span class="line">                                                         <span class="attribute">partition_strategy</span>=<span class="string">"mod"</span>,</span><br><span class="line">                                                         <span class="attribute">name</span>=None,</span><br><span class="line">                                                         <span class="attribute">combiner</span>=None,</span><br><span class="line">                                                         <span class="attribute">max_norm</span>=None)</span><br></pre></td></tr></table></figure> 代替
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">def embedding_lookup_sparse(params,</span><br><span class="line">                            sp_ids,</span><br><span class="line">                            sp_weights,</span><br><span class="line">                            <span class="attribute">partition_strategy</span>=<span class="string">"mod"</span>,</span><br><span class="line">                            <span class="attribute">name</span>=None,</span><br><span class="line">                            <span class="attribute">combiner</span>=None,</span><br><span class="line">                            <span class="attribute">max_norm</span>=None)</span><br></pre></td></tr></table></figure>
+。后者在ps端lookup出许多embedding后传给worker，在worker端做聚合，前者在ps端做多个embedding的聚合后传给worker，通信量会小很多。</p></li>
+<li><p>不要使用<code>TensorFlow Feature Columns</code>
+<code>TensorFlow Feature Columns</code>的性能很差，建议把特征相关的所有工作，包括离散化、组合等操作都放在单独的特征抽取工具里面，TensorFlow只包含模型部分代码。</p></li>
+<li><p><code>QueueRunner</code>批量读数据
+使用<code>read_up_to</code>接口批量读数据，性能提升非常大。
+<figure class="highlight gcode"><table><tr><td class="code"><pre><span class="line">reader = tf.TFRecordReader<span class="comment">()</span></span><br><span class="line">_, serialized_example = reader.read<span class="comment">(filename_queue)</span></span><br><span class="line">_, serialized_example = reader.read_up_to<span class="comment">(filename_queue, 1000)</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p>使用<code>DataSet</code>接口读数据
+QueueRunner读数据时不能精确一轮一轮的读，很难做worker之间的barrier，TensorFlow
+DataSet可以实现精确读取一轮，在worker精确同步时比较有用<a href="https://mathmach.com/b2f65b04/">TensorFlow实现Barrier</a>。而且DataSet的性能和QueueRunner差不多，主要是几个接口的使用顺序要注意。
+<figure class="highlight maxima"><table><tr><td class="code"><pre><span class="line">def _parse_function(examples_proto):</span><br><span class="line">    <span class="built_in">features</span> = {}</span><br><span class="line">    <span class="built_in">features</span>['<span class="built_in">label</span>'] = tf.FixedLenFeature([], tf.float32)</span><br><span class="line">    <span class="built_in">features</span>['<span class="built_in">feature</span>'] = ...</span><br><span class="line">    instance = tf.parse_example(examples_proto, <span class="built_in">features</span>)</span><br><span class="line">    <span class="built_in">label</span> = instance['<span class="built_in">label</span>']</span><br><span class="line">    <span class="built_in">feature</span> = instance['<span class="built_in">feature</span>']</span><br><span class="line">    <span class="built_in">return</span> <span class="built_in">label</span>, <span class="built_in">feature</span></span><br><span class="line"></span><br><span class="line">dataset = tf.data.TFRecordDataset(file_name_list)</span><br><span class="line">dataset = dataset.prefetch(buffer_size=batch_size*<span class="number">100</span>)</span><br><span class="line">dataset = dataset.shuffle(buffer_size=batch_size*<span class="number">10</span>)</span><br><span class="line">dataset = dataset.<span class="built_in">batch</span>(batch_size)</span><br><span class="line">dataset = dataset.<span class="built_in">map</span>(_parse_function, num_parallel_calls=<span class="number">4</span>)</span><br><span class="line">iterator = dataset.make_initializable_iterator()</span><br></pre></td></tr></table></figure></p></li>
+<li><p><code>GPU vs CPU</code>
+现在很多做算法的言必GPU，其实很多场景下并不合适。CTR模型训练场景下，主要耗时操作是<code>Embedding Lookup</code>，不适合GPU，全连接层又很小，CPU足够应付。整体来看，<code>P40</code>比<code>Intel® Xeon® Processor E5-2650 v4 (30M Cache, 2.20 GHz)</code>快5%左右，但价格贵很多。2.7GHz的CPU性能可以提升30%，所以从性价比来看，推荐主频更快的CPU。这个一定要分应用场景，在场景下去做正确的决定，而不是人云亦云。</p></li>
+</ul>
+<h2><span id="其他">其他</span></h2>
+<ul>
+<li>训练千亿特征TGB级别参数的超大模型</li>
+<li>将单机无法加载的超大模型做线上预测服务</li>
+<li>秒级在线深度学习架构</li>
+</ul>
+<h2><span id="参考">参考</span></h2>
+<ul>
+<li><a href="https://mathmach.com/b2f65b04/">TensorFlow实现多Worker同步机制</a></li>
+<li><a href="https://www.tensorflow.org/guide/feature_columns">TensorFlow
+Feature Columns</a></li>
+</ul>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/">点击率预估</a>
+            
+            <a href="/tags/Deep-Learning/">Deep-Learning</a>
+            
+            <a href="/tags/CTR/">CTR</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

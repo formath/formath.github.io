@@ -1,0 +1,414 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>tensorflow分布式任务dataset卡住问题 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="2018年，公司的分布式模型训练普遍向`TensorFlow on Yarn`迁移。在公司的Hadoop集群上，使用TensorFlow通过DataSet读数据方式进行分布式训练时，在每个Epoch的最后一个Batch会卡住，导致任务一直停在那里无法结束。集群节点都是`CentOS, linux kernel 3.10.0`。如果用老的Queue读取数据不会出现这个问题，并且这个问题不是必现，只有在分布式且节点比较多的时候发生的概率比较高。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2022-02-25">2022-02-25</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">TensorFlow分布式任务DataSet卡住问题</h2>
+            <div class="post-meta">
+                本文共计4991个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#背景">背景</a></li>
+<li><a href="#复现条件">复现条件</a></li>
+<li><a href="#解决方案">解决方案</a></li>
+</ul>
+<!-- tocstop -->
+<h2><span id="背景">背景</span></h2>
+<p>2018年，公司的分布式模型训练普遍向<code>TensorFlow on Yarn</code>迁移。在公司的Hadoop集群上，使用TensorFlow通过DataSet读数据方式进行分布式训练时，在每个Epoch的最后一个Batch会卡住，导致任务一直停在那里无法结束。集群节点都是<code>CentOS, linux kernel 3.10.0</code>。如果用老的Queue读取数据不会出现这个问题，并且这个问题不是必现，只有在分布式且节点比较多的时候发生的概率比较高。</p>
+<h2><span id="复现条件">复现条件</span></h2>
+<p>开始时我尝试将把线程数<code>inter_op_parallelism_threads</code>和<code>intra_op_parallelism_threads</code>都设为1，并且PS节点数等于1的话，一定不会出现这个问题。
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">server_config = tf.ConfigProto(<span class="attribute">inter_op_parallelism_threads</span>=1,</span><br><span class="line">                               <span class="attribute">intra_op_parallelism_threads</span>=1)</span><br><span class="line">self.server = tf.train.Server(self.cluster, <span class="attribute">job_name</span>=self.job_name,</span><br><span class="line">                              <span class="attribute">task_index</span>=self.task_index, <span class="attribute">config</span>=server_config)</span><br></pre></td></tr></table></figure>
+经过多次尝试，发现只有在<code>inter_op_parallelism_threads</code>大于1并且PS节点数大于1的情况下才会偶发，其他条件下一定不会出现，和<code>intra_op_parallelism_threads</code>的设置没有关系。</p>
+<p>出现问题的代码，是最常用的使用方式。 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">data_iter</span>(<span class="params">batch_size=<span class="number">1000</span></span>):</span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">_parse_function</span>(<span class="params">examples</span>):</span><br><span class="line">    features = {}</span><br><span class="line">    features[<span class="string">'label'</span>] = tf.FixedLenFeature([<span class="number">1</span>], tf.float32)</span><br><span class="line">    features[<span class="string">'user_id'</span>] = tf.FixedLenFeature([<span class="number">1</span>], tf.int64)</span><br><span class="line">    features[<span class="string">'item_id'</span>] = tf.FixedLenFeature([<span class="number">1</span>], tf.int64)</span><br><span class="line">    instance = tf.parse_example(examples, features)</span><br><span class="line">    <span class="keyword">return</span> instance[<span class="string">'user_id'</span>], instance[<span class="string">'item_id'</span>], instance[<span class="string">'label'</span>]</span><br><span class="line">  <span class="keyword">with</span> tf.name_scope(<span class="string">'input'</span>):</span><br><span class="line">    files = tf.data.Dataset.list_files(<span class="string">'./inputs/part-*'</span>)</span><br><span class="line">    dataset = files.apply(tf.contrib.data.parallel_interleave(</span><br><span class="line">                        <span class="keyword">lambda</span> file: tf.data.TFRecordDataset(file),</span><br><span class="line">                        cycle_length=<span class="number">4</span>, sloppy=<span class="literal">True</span>))</span><br><span class="line">    dataset = dataset.prefetch(buffer_size=batch_size*<span class="number">2</span>)</span><br><span class="line">    dataset = dataset.batch(batch_size)</span><br><span class="line">    dataset = dataset.<span class="built_in">map</span>(_parse_function, num_parallel_calls=<span class="number">4</span>)</span><br><span class="line">    iterator = dataset.make_initializable_iterator()</span><br><span class="line">    <span class="keyword">return</span> iterator</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">model</span>(<span class="params">user_id, item_id</span>):</span><br><span class="line">  ...</span><br><span class="line">  user_embedding = tf.embedding_lookup(user_id)</span><br><span class="line">  item_embedding == tf.embedding_lookup(item_id)</span><br><span class="line">  <span class="keyword">return</span> tf.reduce_sum(query_embedding * item_embedding, <span class="number">1</span>, keep_dims=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 图构造部分</span></span><br><span class="line">train_iterator = data_iter(FLAGS.batch_size)</span><br><span class="line">train_user_id, train_item_id, train_label = train_iterator.get_next()</span><br><span class="line">train_score = model(train_user_id, train_item_id)</span><br><span class="line">train_loss = some_loss_function(train_score, train_label)</span><br><span class="line">opt = tf.train.AdamOptimizer(learning_rate=<span class="number">0.001</span>)</span><br><span class="line">train_op = opt.minimize(train_loss)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行部分</span></span><br><span class="line"><span class="keyword">with</span> tf.Session(...) <span class="keyword">as</span> sess:</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">      sess.run(train_op)</span><br><span class="line">    <span class="keyword">except</span> tf.errors.OutOfRangeError:</span><br><span class="line">      <span class="keyword">break</span></span><br></pre></td></tr></table></figure></p>
+<h2><span id="解决方案">解决方案</span></h2>
+<p>从问题表象来看，是<code>DataSet</code>多线程读取数据的问题，看了一段时间TensorFlow这部分的代码，没有找到解决方案。但是，从使用层面来看，DataSet主要是解耦了数据读取和模型执行部分，因为大部分模型来说，数据部分往往是瓶颈，两部分解耦后并行执行可以大大提高训练的吞吐效率。另外，session执行时直接执行最终的<code>train_op</code>，<code>train_op</code>依赖的数据读取op会自动执行。
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">sess.<span class="built_in">run</span>(train_op)</span><br></pre></td></tr></table></figure>
+所以直觉上，我怀疑很可能是模型部分和读数据部分在线程协调上出了问题。通过将读数据和模型执行两部分强制分开，问题果然消失了。
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">feature_value = sess.<span class="built_in">run</span>([feature_dataset_next_iter])</span><br><span class="line">sess.<span class="built_in">run</span>(train_op, feed_dict={feature_placeholder: feature_value})</span><br></pre></td></tr></table></figure></p>
+<p>完整的代码如下。 <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">def data_iter(<span class="attribute">batch_size</span>=1000):</span><br><span class="line">  def _parse_function(examples):</span><br><span class="line">    features = {}</span><br><span class="line">    features[<span class="string">'label'</span>] = tf.FixedLenFeature([1], tf.float32)</span><br><span class="line">    features[<span class="string">'user_id'</span>] = tf.FixedLenFeature([1], tf.int64)</span><br><span class="line">    features[<span class="string">'item_id'</span>] = tf.FixedLenFeature([1], tf.int64)</span><br><span class="line">   <span class="built_in"> instance </span>= tf.parse_example(examples, features)</span><br><span class="line">    return instance[<span class="string">'user_id'</span>], instance[<span class="string">'item_id'</span>], instance[<span class="string">'label'</span>]</span><br><span class="line">  with tf.name_scope(<span class="string">'input'</span>):</span><br><span class="line">    files = tf.data.Dataset.list_files(<span class="string">'./inputs/part-*'</span>)</span><br><span class="line">    dataset = files.apply(tf.contrib.data.parallel_interleave(</span><br><span class="line">                        lambda file: tf.data.TFRecordDataset(file),</span><br><span class="line">                        <span class="attribute">cycle_length</span>=4, <span class="attribute">sloppy</span>=<span class="literal">True</span>))</span><br><span class="line">    dataset = dataset.prefetch(<span class="attribute">buffer_size</span>=batch_size*2)</span><br><span class="line">    dataset = dataset.batch(batch_size)</span><br><span class="line">    dataset = dataset.map(_parse_function, <span class="attribute">num_parallel_calls</span>=4)</span><br><span class="line">    iterator = dataset.make_initializable_iterator()</span><br><span class="line">    return iterator</span><br><span class="line"></span><br><span class="line">def model(user_id, item_id):</span><br><span class="line">  <span class="built_in">..</span>.</span><br><span class="line">  user_embedding = tf.embedding_lookup(user_id)</span><br><span class="line">  item_embedding == tf.embedding_lookup(item_id)</span><br><span class="line">	return tf.reduce_sum(query_embedding * item_embedding, 1, <span class="attribute">keep_dims</span>=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 图构造部分: 模型部分使用placeholder，不直接使用DataSet.iterator的输出</span></span><br><span class="line">train_iterator = data_iter(FLAGS.batch_size)</span><br><span class="line">train_user_id, train_item_id, train_label = train_iterator.get_next()</span><br><span class="line">train_user_id_placeholder = tf.placeholder(tf.int64, [None, 1], <span class="attribute">name</span>=<span class="string">"train_user_id_placeholder"</span>)</span><br><span class="line">train_item_id_placeholder = tf.placeholder(tf.int64, [None, 1], <span class="attribute">name</span>=<span class="string">"train_item_id_placeholder"</span>)</span><br><span class="line">train_label_placeholder = tf.placeholder(tf.float32, [None, 1], <span class="attribute">name</span>=<span class="string">"train_label_placeholder"</span>)</span><br><span class="line">train_score = model(train_user_id_placeholder, train_item_id_placeholder)</span><br><span class="line">train_loss = some_loss_function(train_score, train_label_placeholder)</span><br><span class="line">opt = tf.train.AdamOptimizer(<span class="attribute">learning_rate</span>=0.001)</span><br><span class="line">train_op = opt.minimize(train_loss)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行部分</span></span><br><span class="line">with tf.Session(<span class="built_in">..</span>.) as sess:</span><br><span class="line">  <span class="built_in">..</span>.</span><br><span class="line">  <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    try:</span><br><span class="line">      # 将数据读取和模型部分拆开，分别执行sess.<span class="built_in">run</span></span><br><span class="line">      train_user_id_val, train_item_id_val, train_label_val = sess.<span class="built_in">run</span>([train_user_id, train_item_id, train_label])</span><br><span class="line">      sess.<span class="built_in">run</span>(train_op,</span><br><span class="line">               feed_dict={</span><br><span class="line">                 train_user_id_placeholder: train_user_id_val,</span><br><span class="line">                 train_item_id_placeholder: train_item_id_val,</span><br><span class="line">                 train_label_placeholder: train_label_val</span><br><span class="line">               })</span><br><span class="line">    except tf.errors.OutOfRangeError:</span><br><span class="line">      break</span><br></pre></td></tr></table></figure></p>
+<p>这个问题在<code>TensorFlow-1.x</code>都存在，在2.x上就不了解了，下一步需要在核心层面解决这个问题。</p>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/TensorFlow/">TensorFlow</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

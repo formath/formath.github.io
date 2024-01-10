@@ -1,0 +1,423 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>使用tensorflow c++ api构建线上预测服务 - 篇3 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="在离线训练时，为了效率考虑，我们经常把数据转成TFRecord格式，然后直接调用TensorFlow提供的Reader来读入TFRecord数据。这样在生成的`graph.pb`中，Reader会对应多个节点，如果在c++中直接导入这个`graph.pb`我们就不能使用`std::vector&lt;std::pair&lt;std::string, tensorflow::Tensor&gt;&gt;`作为`session.Run(...)`的输入了，本文讲解一下怎样处理这种情况。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2021-10-22">2021-10-22</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">使用TensorFlow C++ API构建线上预测服务 - 篇3</h2>
+            <div class="post-meta">
+                本文共计3437个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#freeze-graph">Freeze Graph</a></li>
+<li><a href="#具体方案">具体方案</a>
+<ul>
+<li><a href="#例子">例子</a>
+<ul>
+<li><a href="#训练网络">训练网络</a></li>
+<li><a href="#预测网络">预测网络</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<!-- tocstop -->
+<p>前两篇 * <a href="https://mathmach.com/6d246b32/">使用TensorFlow C++
+API构建线上预测服务 - 篇1</a> * <a href="https://mathmach.com/f42d3a88/">使用TensorFlow C++
+API构建线上预测服务 - 篇2</a></p>
+<p>在线下训练时，为了效率考虑，我们经常把数据转成TFRecord格式，然后直接调用TensorFlow提供的Reader来读入TFRecord数据。这样在生成的<code>graph.pb</code>中，Reader会对应多个节点，如果在c++中直接导入这个<code>graph.pb</code>我们就不能使用<code>std::vector&lt;std::pair&lt;std::string, tensorflow::Tensor&gt;&gt;</code>作为<code>session.Run(...)</code>的输入了。这篇文章讲解一下怎样处理这种情况。</p>
+<h1><span id="freeze-graph">Freeze Graph</span></h1>
+<p>回顾一下上篇讲到的怎样使用freeze graph。 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">python ../../python/freeze_graph<span class="selector-class">.py</span> \</span><br><span class="line">    <span class="attr">--checkpoint_dir</span>=<span class="string">'./checkpoint'</span> \</span><br><span class="line">    <span class="attr">--output_node_names</span>=<span class="string">'predict/add'</span> \</span><br><span class="line">    <span class="attr">--output_dir</span>=<span class="string">'./model'</span></span><br></pre></td></tr></table></figure>
+其实，这里还有一个可选输入，即<code>--graph_pb</code>，如果设定这个，相当于不用meta文件里的graph，而是用这个网络去freeze。
+这个参数不一定非要用训练时保存的网络，可以指定任何网络。讲到这里你可能就明白我们的方案是什么了。
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">python ../../python/freeze_graph<span class="selector-class">.py</span> \</span><br><span class="line">    <span class="attr">--checkpoint_dir</span>=<span class="string">'./checkpoint'</span> \</span><br><span class="line">    <span class="attr">--graph_pb</span>=<span class="string">'./model/predict_graph.pb'</span> \</span><br><span class="line">    <span class="attr">--output_node_names</span>=<span class="string">'predict/add'</span> \</span><br><span class="line">    <span class="attr">--output_dir</span>=<span class="string">'./model'</span></span><br></pre></td></tr></table></figure></p>
+<h1><span id="具体方案">具体方案</span></h1>
+<p>由于<code>session.Run(...)</code>只能接受<code>std::vector&lt;std::pair&lt;std::string, tensorflow::Tensor&gt;&gt;</code>作为网络输入，那么我们可以构造一个新网络，这个网络和训练时的网络几乎一样，只不过输入部分不使用<code>Reader</code>，而是用<code>tf.Placeholder</code>代替。我们把新网络保存成<code>predict_graph.pb</code>，把它和训练产出的checkpoint进行freeze，即可得到可以用c++导入的一个新网络pb，用这个pb上线就可以了。</p>
+<h2><span id="例子">例子</span></h2>
+<h3><span id="训练网络">训练网络</span></h3>
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line"><span class="comment"># input</span></span><br><span class="line">with tf.name_scope(<span class="string">'input'</span>):</span><br><span class="line">    filename_queue = tf.train.string_input_producer(</span><br><span class="line">                tf.train.match_filenames_once(file_name), <span class="attribute">num_epochs</span>=max_epoch)</span><br><span class="line">                serialized_example = self.Decode(filename_queue)</span><br><span class="line">                capacity = thread_num * batch_size + min_after_dequeue</span><br><span class="line">                batch_serialized_example = tf.train.shuffle_batch(</span><br><span class="line">                                    [serialized_example],</span><br><span class="line">                                    <span class="attribute">batch_size</span>=batch_size,</span><br><span class="line">                                    <span class="attribute">num_threads</span>=thread_num,</span><br><span class="line">                                    <span class="attribute">capacity</span>=capacity,</span><br><span class="line">                                    <span class="attribute">min_after_dequeue</span>=min_after_dequeue)</span><br><span class="line">    features = {}</span><br><span class="line">    features[<span class="string">'label'</span>] = tf.FixedLenFeature([], tf.float32)</span><br><span class="line">    features[<span class="string">'sparse_id'</span>] = tf.VarLenFeature(tf.int64)</span><br><span class="line">    features[<span class="string">'sparse_val'</span>] = tf.VarLenFeature(tf.float32)</span><br><span class="line">   <span class="built_in"> instance </span>= tf.parse_example(batch_serialized_example, features)</span><br><span class="line">    label = instance[<span class="string">'label'</span>]</span><br><span class="line">    sparse_id = instance[<span class="string">'sparse_id'</span>]</span><br><span class="line">    sparse_val = instance[<span class="string">'sparse_val'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># network   </span></span><br><span class="line">with tf.variable_scope(<span class="string">"emb_layer"</span>):</span><br><span class="line">    embedding_variable = tf.Variable(tf.truncated_normal([100000, 50], <span class="attribute">stddev</span>=0.05), <span class="attribute">name</span>=<span class="string">'emb_var'</span>)</span><br><span class="line">    embedding = tf.nn.embedding_lookup_sparse(embedding_variable, sparse_id, sparse_val], <span class="string">"mod"</span>, <span class="attribute">combiner</span>=<span class="string">"sum"</span>)</span><br><span class="line"><span class="built_in">..</span>.</span><br></pre></td></tr></table></figure>
+<h3><span id="预测网络">预测网络</span></h3>
+<figure class="highlight scss"><table><tr><td class="code"><pre><span class="line"># <span class="selector-tag">input</span></span><br><span class="line">with tf<span class="selector-class">.name_scope</span>('input'):</span><br><span class="line">    with tf.<span class="built_in">variable_scope</span>(<span class="string">'sparse_field'</span>):</span><br><span class="line">        with tf.<span class="built_in">variable_scope</span>(<span class="string">'index'</span>):</span><br><span class="line">            sparse_index = tf.<span class="built_in">placeholder</span>(tf.int64)</span><br><span class="line">        with tf.<span class="built_in">variable_scope</span>(<span class="string">'id'</span>):</span><br><span class="line">            sparse_ids = tf.<span class="built_in">placeholder</span>(tf.int64)</span><br><span class="line">        with tf.<span class="built_in">variable_scope</span>(<span class="string">'value'</span>):</span><br><span class="line">            sparse_vals = tf.<span class="built_in">placeholder</span>(tf.float32)</span><br><span class="line">        with tf.<span class="built_in">variable_scope</span>(<span class="string">'shape'</span>):</span><br><span class="line">            sparse_shape = tf.<span class="built_in">placeholder</span>(tf.int64)</span><br><span class="line">        sparse_id = tf.<span class="built_in">SparseTensor</span>(sparse_index, sparse_ids, self.sparse_shape)</span><br><span class="line">        sparse_val = tf.<span class="built_in">SparseTensor</span>(sparse_index, sparse_vals, sparse_shape)</span><br><span class="line">    with tf.<span class="built_in">variable_scope</span>(<span class="string">'label'</span>):</span><br><span class="line">        label = tf.<span class="built_in">placeholder</span>(tf.float32)</span><br><span class="line"></span><br><span class="line"># network</span><br><span class="line">with tf.<span class="built_in">variable_scope</span>(<span class="string">"emb_layer"</span>):</span><br><span class="line">    embedding_variable = tf.<span class="built_in">Variable</span>(tf.<span class="built_in">truncated_normal</span>([<span class="number">100000</span>, <span class="number">50</span>], stddev=<span class="number">0.05</span>), name=<span class="string">'emb_var'</span>)</span><br><span class="line">    embedding = tf.nn.<span class="built_in">embedding_lookup_sparse</span>(embedding_variable, sparse_id, sparse_val], <span class="string">"mod"</span>, combiner=<span class="string">"sum"</span>)</span><br><span class="line">...   </span><br></pre></td></tr></table></figure>
+<p>使用训练网络训练后保存checkpoint，然后保存预测网络的<code>graph.pb</code>，直接调用freeze把两者生成一个新的<code>graph.pb</code>即可，c++线上预测时只需为预测网络的输入部分构造所需几个Tensor作为输入即可。</p>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/TensorFlow/">TensorFlow</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>mxnet之nnvm代码简析 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="Symbol提供了许多图的接口，便于前端访问，而Graph里面没几个接口，主要就是有个indexed_graph，便于底层训练时快速访问。Symbol非常灵活，以后有可能支持动态图，但每次动态变化后都要先转成Graph，底层不太支持动态度，因为都是vector用index来索引node，不太适合中间插入一个node。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2017-08-16">2017-08-16</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">MXNet之NNVM代码简析</h2>
+            <div class="post-meta">
+                本文共计2101个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#op">Op</a></li>
+<li><a href="#symbol">Symbol</a></li>
+<li><a href="#graph">Graph</a></li>
+<li><a href="#indexedgraph">IndexedGraph</a></li>
+<li><a href="#graphexecutor">GraphExecutor</a>
+<ul>
+<li><a href="#initfullgraph">InitFullGraph</a></li>
+<li><a href="#assigncontext">AssignContext</a></li>
+<li><a href="#infershapeinfertypeinferstoragetype">InferShape&amp;InferType&amp;InferStorageType</a></li>
+<li><a href="#initarguments">InitArguments</a></li>
+<li><a href="#finishinitgraph">FinishInitGraph</a>
+<ul>
+<li><a href="#initdataentrymemory">InitDataEntryMemory</a></li>
+<li><a href="#initcachedops">InitCachedOps</a></li>
+<li><a href="#initopsegs">InitOpSegs</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<!-- tocstop -->
+<h2><span id="op">Op</span></h2>
+<p>class Op: 每个OP都有name和desc，还有argument和attr
+attr都保存在全局的OpManager里。
+有同一个name的Op不一定是同一个Op，比如ElementWiseSum可能在不同的Node里会有不同数量的input，每个不同node里的Op都会生成一个Op实例，虽然这些Op名字一样，但attr不一样。不同的Op其实是用Op*或Op.index来区分，Op.index就是这个Op加入OpManager的序号
+静态属性是在注册Op时确定的；动态属性（输入个数等）是在创建Node时由node的attr来确定的，创建时会调用op.parse(node.attr)。</p>
+<h2><span id="symbol">Symbol</span></h2>
+<p>Symbol里只有vector<dataentry> outputs DataEntry可以把Node串起来</dataentry></p>
+<h2><span id="graph">Graph</span></h2>
+<p>Symbol提供了许多图的接口，便于前端访问，而Graph里面没几个接口，主要就是有个indexed_graph，便于底层训练时快速访问。Symbol非常灵活，以后有可能支持动态图，但每次动态变化后都要先转成Graph，底层不太支持动态度，因为都是vector用index来索引node，不太适合中间插入一个node。</p>
+<p>里面有vector<dataentry> outputs indexed_graph和attr</dataentry></p>
+<p>每个graph有以下attr： 网络结构的json string
+每个NodeEntry的TShape的vector<tshape> 每个NodeEntry的dtype的vector<int>
+每个NodeEntry的storage_id的vector<int> 每个operator的device的vector<int>
+每个operator的device的unordered_map&lt;string, int&gt;</int></int></int></tshape></p>
+<h2><span id="indexedgraph">IndexedGraph</span></h2>
+<p>里面一堆vector，把Graph里的node映射成vector的下标，方便快速访问。提供了一些类似Symbol里的接口，不过主要根据node的index来访问vector，而Symbol更像通过node组成的DAG来访问。</p>
+<h1><span id="graphexecutor">GraphExecutor</span></h1>
+<h2><span id="initfullgraph">InitFullGraph</span></h2>
+<p>做一件事，生成带backward的Graph，调用了nnvm::pass::Gradient
+copy_op，消除重复，比如<code>c=a+b</code>，<code>dc/da</code>和<code>dc/db</code>其实一样，只用一个NodeEntry表示就行了。</p>
+<h2><span id="assigncontext">AssignContext</span></h2>
+<p>只做一件事，设置graph的两个属性：g.attr["context"]和g.attr["device"]，里面会调用nnvm::pass::PlaceDevice。
+设置了in_arg、auc_arg和arg_grad的context，中间节点的context在哪里设置的？猜测可能在PlaceDevice里面</p>
+<h2><span id="infershapeampinfertypeampinferstoragetype">InferShape&amp;InferType&amp;InferStorageType</span></h2>
+<p>调用nnvm::pass::InferXXX推断，做的事情很类似，主要是设置g.attr["shape"]、g.attr["dtype"]、g.attr["storage_type"]属性</p>
+<h2><span id="initarguments">InitArguments</span></h2>
+<p>使用用户提供的参数初始化g里面的数据，g.data_entry_、g.grad_store_等
+有一个版本是带shared_buffer的</p>
+<h2><span id="finishinitgraph">FinishInitGraph</span></h2>
+<p>设置g.attrs["dispatch_stypes"]和g.attrs["storage"]等属性</p>
+<p>###AttachOpExecs&amp;AttachOpResources
+遍历g，为每个节点生成一个OpExecutor，设置g.attrs["op_execs"]属性。
+有三种类型Op：1）带状态的FStatefulCompute
+2）backward节点，使用forward的State 3）普通节点FCompute</p>
+<h3><span id="initdataentrymemory">InitDataEntryMemory</span></h3>
+<p>为data_entry_里的每个数据生成一个NDArray</p>
+<h3><span id="initcachedops">InitCachedOps</span></h3>
+<p>使用g.attrs["op_execs"],初始化op_nodes_，里面的每个元素都是一个Engine可执行的Op，包括了use_vars_vars等</p>
+<h3><span id="initopsegs">InitOpSegs</span></h3>
+<p>把上一步的op_nodes_分段隔成多个大的exec，每个大exec里其实有许多小exec，内部按序执行小exec，大exec的use_vars和mutute_vars是小exec的汇总，这样在engine里大exec作为一个执行单元</p>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/Deep-Learning/">Deep-Learning</a>
+            
+            <a href="/tags/MXNet/">MXNet</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>使用tensorflow c++ api构建线上预测服务 - 篇2 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="之前的一篇文章中[使用TensorFlow C++ API构建线上预测服务 - 第一篇](https://mathmach.com/6d246b32/)，详细讲解了怎样用TensorFlow C++ API导入模型做预测，但模型`c = a * b`比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数，本文使用一个复杂的模型继续讲解。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2021-10-11">2021-10-11</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">使用TensorFlow C++ API构建线上预测服务 - 篇2</h2>
+            <div class="post-meta">
+                本文共计6863个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#稀疏数据下的数据预处理">稀疏数据下的数据预处理</a></li>
+<li><a href="#训练中保存模型和参数">训练中保存模型和参数</a>
+<ul>
+<li><a href="#保存网络结构">保存网络结构</a></li>
+<li><a href="#保存模型参数">保存模型参数</a></li>
+</ul></li>
+<li><a href="#tensorflow-c-api导入模型和参数">TensorFlow C++
+API导入模型和参数</a>
+<ul>
+<li><a href="#分别导入网络结构和模型参数">分别导入网络结构和模型参数</a>
+<ul>
+<li><a href="#导入网络结构">导入网络结构</a></li>
+<li><a href="#导入模型参数">导入模型参数</a></li>
+</ul></li>
+<li><a href="#网络结构和模型参数整合成一个文件">网络结构和模型参数整合成一个文件</a></li>
+</ul></li>
+<li><a href="#tensorflow-c-api构造sparse-tensor">TensorFlow C++
+API构造Sparse Tensor</a></li>
+<li><a href="#参考">参考</a></li>
+</ul>
+<!-- tocstop -->
+<p>之前的一篇文章中<a href="https://mathmach.com/6d246b32/">使用TensorFlow C++
+API构建线上预测服务 - 篇1</a>，详细讲解了怎样用TensorFlow C++
+API导入模型做预测，但模型<code>c = a * b</code>比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数。本文使用一个复杂的模型讲解，包括以下几个方面：
+* 针对稀疏数据的数据预处理 * 训练中保存模型和参数 * TensorFlow C++
+API导入模型和参数 * TensorFlow C++ API构造Sparse Tensor做模型输入</p>
+<h1><span id="稀疏数据下的数据预处理">稀疏数据下的数据预处理</span></h1>
+<p>稀疏数据下，一般会调用TensorFlow的<code>embedding_lookup_sparse</code>。
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">embedding_variable = tf.Variable(tf.truncated_normal([input_size, embedding_size], stddev=<span class="number">0.05</span>), name=<span class="string">'emb'</span>)</span><br><span class="line">embedding = tf.nn.embedding_lookup_sparse(embedding_variable, sparse_id, sparse_value, <span class="string">"mod"</span>, combiner=<span class="string">"sum"</span>)</span><br></pre></td></tr></table></figure>
+上面代码中，<code>embedding_variable</code>就是需要学习的参数，其中<code>input_size</code>是矩阵的行数，<code>embedding_size</code>是矩阵的列数，比如我们有100万个稀疏id，每个id要embedding到50维向量，那么矩阵的大小是<code>[1000000, 50]</code>。sparse_id是要做向量化的一组id，用<code>SparseTensor</code>表示，<code>sparse_value</code>是每个id对用的一个value，用作权重，也用<code>SparseTensor</code>表示。
+这里要注意，如果id是用hash生成的，不保证id是<code>0,1,2,3, ...</code>这种连续表示，需要先把id排序后转成连续的，并且把<code>input_size</code>设成大于排序后最大的id，为了节省空间往往设成<code>排序后最大id+1</code>。因为用id去<code>embedding_variable</code>矩阵查询命中哪行的时候，使用<code>id mod Row(embedding_variable)</code>或其他策略作为命中的行数，如果不保证id连续，可能会出现多个id命中同一行的错误情况。另外，如果不把id排序后转成连续id，那<code>input_size</code>需要设成原始id中的最大id，如果是hash生成的那么最大id值非常大，做成矩阵非常大存不下和矩阵存在空间浪费，因为有些行肯定不会被命中。
+另外一个点，目前TensorFlow不支持sparse方式的查询和参数更新，每次查询更新都要pull&amp;push一个矩阵全量数据，造成网络的堵塞，速度过慢，所以一般来说不要使用太大的embedding矩阵。</p>
+<h1><span id="训练中保存模型和参数">训练中保存模型和参数</span></h1>
+<p>TensorFlow保存模型时分为两部分，网络结构和参数是分开保存的。 ##
+保存网络结构
+运行以下命令，成功后会看到一个名为<code>graph.pb</code>的pb二进制文件。后续如果使用TensorFlow官方提供的<code>freeze_graph.py</code>工具时必需这个文件，当然，如果对<code>freeze_graph.py</code>的代码比较熟悉，可以使用比较trick的方式，这样只需要参数文件，而不需要<code>graph.pb</code>了。
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tf.train.write_graph(sess.graph.as_graph_def(), FLAGS.model_dir, <span class="string">'graph.pb'</span>, as_text=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure> ## 保存模型参数
+运行以下命令，会在<code>FLAGS.model_dir</code>目录下保存多个前缀为<code>model.checkpoint</code>的文件。
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">saver = tf.train.Saver()</span><br><span class="line">saver.save(sess, FLAGS.model_dir + <span class="string">"/model.checkpoint"</span>)</span><br></pre></td></tr></table></figure>
+比如，成功后在<code>FLAGS.model_dir</code>目录下会看到以下几个文件。其中，<code>model.checkpoint.meta</code>包含了网络结构和一些其他信息，所以也包含了上面提到的<code>graph.pb</code>；<code>model.checkpoint.data-00000-of-00001</code>保存了模型参数，其他两个文件辅助作用。
+<figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line">-rw-r--r--  <span class="number">1</span> <span class="keyword">user</span>  <span class="title">staff</span>      <span class="number">89</span> <span class="number">10</span> <span class="number">11</span> <span class="number">11</span>:<span class="number">32</span> checkpoint</span><br><span class="line">-rw-r--r--  <span class="number">1</span> <span class="keyword">user</span>  <span class="title">staff</span>  <span class="number">225136</span> <span class="number">10</span> <span class="number">11</span> <span class="number">11</span>:<span class="number">32</span> model.checkpoint.data-<span class="number">00000</span>-of-<span class="number">00001</span></span><br><span class="line">-rw-r--r--  <span class="number">1</span> <span class="keyword">user</span>  <span class="title">staff</span>    <span class="number">1506</span> <span class="number">10</span> <span class="number">11</span> <span class="number">11</span>:<span class="number">32</span> model.checkpoint.index</span><br><span class="line">-rw-r--r--  <span class="number">1</span> <span class="keyword">user</span>  <span class="title">staff</span>  <span class="number">369379</span> <span class="number">10</span> <span class="number">11</span> <span class="number">11</span>:<span class="number">32</span> model.checkpoint.<span class="keyword">meta</span></span><br></pre></td></tr></table></figure></p>
+<h1><span id="tensorflow-capi导入模型和参数">TensorFlow C++
+API导入模型和参数</span></h1>
+<p>主要有两种方法： * 分别导入网络结构和模型参数 *
+线下先把网络结构和模型参数整合成一个文件，只用导入这个文件即可</p>
+<h2><span id="分别导入网络结构和模型参数">分别导入网络结构和模型参数</span></h2>
+<h3><span id="导入网络结构">导入网络结构</span></h3>
+<p>以上文的graph.pb为例 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 导入网络结构</span></span><br><span class="line">GraphDef graph_def;</span><br><span class="line">status = <span class="built_in">ReadBinaryProto</span>(Env::<span class="built_in">Default</span>(), std::<span class="built_in">string</span>(<span class="string">"graph.pb"</span>), &amp;graph_def);</span><br><span class="line"><span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) {</span><br><span class="line">  <span class="keyword">throw</span> <span class="built_in">runtime_error</span>(<span class="string">"Error loading graph: "</span> + status.<span class="built_in">ToString</span>());</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 把网络设置到Session里</span></span><br><span class="line">status = session-&gt;<span class="built_in">Create</span>(graph_def);</span><br><span class="line"><span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) {</span><br><span class="line">  <span class="keyword">throw</span> <span class="built_in">runtime_error</span>(<span class="string">"Error set graph to session: "</span> + status.<span class="built_in">ToString</span>());</span><br><span class="line">}</span><br></pre></td></tr></table></figure> ### 导入模型参数
+这里注意要传入模型路径，既上文的<code>FLAGS.model_dir</code>。以<code>FLAGS.model_dir="your_checkpoint_path"</code>为例
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 导入模型参数</span></span><br><span class="line"><span class="function">Tensor <span class="title">checkpointPathTensor</span><span class="params">(DT_STRING, TensorShape())</span></span>;</span><br><span class="line">checkpointPathTensor.<span class="built_in">scalar</span>&lt;std::string&gt;()() = std::<span class="built_in">string</span>(<span class="string">"your_checkpoint_path"</span>);</span><br><span class="line">status = session-&gt;<span class="built_in">Run</span>(</span><br><span class="line">          {{ graph_def.<span class="built_in">saver_def</span>().<span class="built_in">filename_tensor_name</span>(), checkpointPathTensor },},</span><br><span class="line">          {},</span><br><span class="line">          {graph_def.<span class="built_in">saver_def</span>().<span class="built_in">restore_op_name</span>()},</span><br><span class="line">          <span class="literal">nullptr</span>);</span><br><span class="line"><span class="keyword">if</span> (!status.<span class="built_in">ok</span>()) {</span><br><span class="line">  <span class="keyword">throw</span> <span class="built_in">runtime_error</span>(<span class="string">"Error loading checkpoint: "</span> + status.<span class="built_in">ToString</span>());</span><br><span class="line">}</span><br></pre></td></tr></table></figure></p>
+<h2><span id="网络结构和模型参数整合成一个文件">网络结构和模型参数整合成一个文件</span></h2>
+<blockquote>
+<p>One confusing part about this is that the weights usually aren't
+stored inside the file format during training. Instead, they're held in
+separate checkpoint files, and there are Variable ops in the graph that
+load the latest values when they're initialized. It's often not very
+convenient to have separate files when you're deploying to production,
+so there's the freeze_graph.py script that takes a graph definition and
+a set of checkpoints and freezes them together into a single file.</p>
+</blockquote>
+<p>使用多个文件部署比较麻烦，如果能整个成一个独立文件会方便很多，因此，TensorFlow官方提供了<code>freeze_graph.py</code>工具。如果已经安装了TensorFlow，则在安装目录下可以找到，否则可以直接使用源码<code>tensorflow/python/tools</code>路径下<code>freeze_graph.py</code>。运行例子为：
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python <span class="variable">${TF_HOME}</span>/tensorflow/python/tools/freeze_graph.py \</span><br><span class="line">    --input_graph=<span class="string">"graph.pb"</span> \</span><br><span class="line">    --input_checkpoint=<span class="string">"your_checkpoint_path/checkpoint_prefix"</span> \</span><br><span class="line">    --output_graph=<span class="string">"your_checkpoint_path/freeze_graph.pb"</span> \</span><br><span class="line">    --output_node_names=Softmax</span><br></pre></td></tr></table></figure>
+其中，<code>input_graph</code>为网络结构pb文件，<code>input_checkpoint</code>为模型参数文件名前缀，<code>output_graph</code>为我们的目标文件，<code>output_node_names</code>为目标网络节点名称，因为网络包括前向和后向网络，在预测时后向网络其实是多余的，指定<code>output_node_names</code>后只保存从输入节点到这个节点的部分网络。如果不清楚自己想要的节点<code>output_node_names</code>是什么，可以用下面的代码把网络里的全部节点名字列出来，然后找到自己想要的那个就行了。
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> op <span class="keyword">in</span> tf.get_default_graph().get_operations():</span><br><span class="line">    <span class="built_in">print</span>(op.name)</span><br></pre></td></tr></table></figure>
+得到<code>freeze_graph.pb</code>后，只导入网络结构即可，不再需要另外导入模型参数。
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">GraphDef graph_def;</span><br><span class="line">status = <span class="built_in">ReadBinaryProto</span>(Env::<span class="built_in">Default</span>(), std::<span class="built_in">string</span>(<span class="string">"freeze_graph.pb"</span>), &amp;graph_def);</span><br></pre></td></tr></table></figure> <code>freeze_graph.py</code>的更多参数可以看它的代码。</p>
+<p>官方的<code>freeze_graph.py</code>工具需要在训练时同时调用<code>tf.train.write_graph</code>保存网络结构和<code>tf.train.Saver()</code>保存模型参数，之前讲过<code>tf.train.Saver()</code>保存的<code>meta</code>文件里其实已经包含了网络结构，所以就不用调用<code>tf.train.write_graph</code>保存网络结构，不过这时就不能直接调用官方的<code>freeze_graph.py</code>了，需要使用一点trick的方式将网络结构从<code>meta</code>文件里提取出来，具体代码可见<code>https://github.com/formath/tensorflow-predictor-cpp/blob/master/python/freeze_graph.py</code>，使用例子如下，其中<code>checkpoint_dir</code>的即上文的<code>FLAGS.model_dir</code>目录，<code>output_node_names</code>和官方<code>freeze_graph.py</code>的意思一致。
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># this freeze_graph.py is https://github.com/formath/tensorflow-predictor-cpp/blob/master/python/freeze_graph.py</span></span><br><span class="line">python ../../python/freeze_graph.py \</span><br><span class="line">    --checkpoint_dir=<span class="string">'./checkpoint'</span> \</span><br><span class="line">    --output_node_names=<span class="string">'predict/add'</span> \</span><br><span class="line">    --output_dir=<span class="string">'./model'</span></span><br></pre></td></tr></table></figure></p>
+<h1><span id="tensorflow-c-api构造sparsetensor">TensorFlow C++ API构造Sparse
+Tensor</span></h1>
+<p>以<code>LibFM</code>格式数据为例，<code>label fieldid:featureid:value ...</code>。假如一个batch中有以下4条样本：
+<figure class="highlight basic"><table><tr><td class="code"><pre><span class="line"><span class="symbol">0 </span><span class="number">1</span>:<span class="number">384</span>:<span class="number">1</span> <span class="number">8</span>:<span class="number">734</span>:<span class="number">1</span></span><br><span class="line"><span class="symbol">0 </span><span class="number">3</span>:<span class="number">73</span>:<span class="number">1</span></span><br><span class="line"><span class="symbol">1 </span><span class="number">2</span>:<span class="number">449</span>:<span class="number">1</span> <span class="number">0</span>:<span class="number">31</span>:<span class="number">1</span></span><br><span class="line"><span class="symbol">0 </span><span class="number">5</span>:<span class="number">465</span>:<span class="number">1</span></span><br></pre></td></tr></table></figure>
+四个<code>label</code>可以表示成一个稠密<code>Tensor</code>，即
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> label_tensor = test::<span class="built_in">AsTensor</span>&lt;float32&gt;({<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>});</span><br></pre></td></tr></table></figure>
+剩余还有三个部分，分别是<code>fieldid</code>、<code>featureid</code>、<code>value</code>，每个部分都可以表示成一个<code>SparseTensor</code>，每个<code>SparseTensor</code>由3个<code>Tensor</code>组成。
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">Instance | SparseFieldId | SparseFeatureId |    SparseValue   |</span><br><span class="line"><span class="number">0</span>        |    <span class="number">1</span>, <span class="number">8</span>       |     <span class="number">384</span>, <span class="number">734</span>    |     <span class="number">1.0</span>, <span class="number">1.0</span>     |</span><br><span class="line"><span class="number">1</span>        |    <span class="number">3</span>          |     <span class="number">73</span>          |     <span class="number">1.0</span>          |</span><br><span class="line"><span class="number">2</span>        |    <span class="number">2</span>, <span class="number">0</span>       |     <span class="number">449</span>, <span class="number">31</span>     |     <span class="number">1.0</span>, <span class="number">1.0</span>     |</span><br><span class="line"><span class="number">3</span>        |    <span class="number">5</span>          |     <span class="number">465</span>         |     <span class="number">1.0</span>          |</span><br></pre></td></tr></table></figure>
+以<code>SparseFieldId</code>部分为例，<code>SparseTensor</code>中的第一个<code>Tensor</code>表示每个id的行列坐标，比如<code>Instance=0</code>的<code>FieldId=1</code>为&lt;0,
+0&gt;，<code>Instance=0</code>的<code>FieldId=8</code>为&lt;0,
+1&gt;，<code>Instance=2</code>的<code>FieldId=0</code>为&lt;2,
+1&gt;，总共6对，每对是个二元组，所以第一个<code>Tensor</code>为
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> fieldid_tensor_indices =</span><br><span class="line">      test::<span class="built_in">AsTensor</span>&lt;int64&gt;({<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">0</span>}, {<span class="number">6</span>, <span class="number">2</span>});</span><br></pre></td></tr></table></figure>
+<code>SparseTensor</code>中的第二个<code>Tensor</code>表示id值，即
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> fieldid_tensor_values = test::<span class="built_in">AsTensor</span>&lt;int64&gt;({<span class="number">1</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">5</span>});</span><br></pre></td></tr></table></figure>
+第三个<code>Tensor</code>表示样本行数和每条样本里最多有多少个id，所以是
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">auto</span> fieldid_tensor_shape = <span class="built_in">TensorShape</span>({<span class="number">4</span>, <span class="number">2</span>});</span><br></pre></td></tr></table></figure>
+最后，<code>fieldid</code>部分的<code>SparseTensor</code>表示为
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">sparse::SparseTensor <span class="title">fieldid_sparse_tensor</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">      fieldid_tensor_indices, fieldid_tensor_values, fieldid_tensor_shape)</span></span>;</span><br></pre></td></tr></table></figure>
+其他两个部分，<code>featureid</code>和<code>value</code>同样可以用<code>SparseTensor</code>表示。最后，一个batch的libfm数据可以由4份数据来表示，这4份数据作为网络的<code>input</code>，运行<code>Session.run</code>即可得到输出。当然，线上预测时就没有<code>label</code>这一部分输入了。
+* label的<code>Tensor</code> * fieldid的<code>SparseTensor</code> *
+featureid的<code>SparseTensor</code> *
+value的<code>SparseTensor</code></p>
+<h1><span id="参考">参考</span></h1>
+<ul>
+<li><a href="https://medium.com/@hamedmp/exporting-trained-tensorflow-models-to-c-the-right-way-cf24b609d183">Exporting
+trained TensorFlow models to C++ the RIGHT way!</a></li>
+<li><a href="https://www.tensorflow.org/extend/tool_developers">Freeze
+Graph</a></li>
+<li><a href="https://blog.metaflow.fr/tensorflow-how-to-freeze-a-model-and-serve-it-with-a-python-api-d4f3596b3adc">TensorFlow:
+How to freeze a model and serve it with a python API</a></li>
+</ul>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/TensorFlow/">TensorFlow</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

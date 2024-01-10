@@ -1,0 +1,435 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>cmake管理第三方依赖 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="最近在一个C++项目中尝试`Bazel`编译，编译依赖方式确实写着比较舒服和直观，但最后链接出来的二进制文件在执行时报`Segment error`，但用`CMake`编译出来的二进制文件就可以成功执行，Bazel编译的问题无从下手。另外，Bazel无法从系统目录查找头文件，这就不能忍了，有人建议从`cc_toolchain_config.bzl`查找问题，但toolchain实在是有点麻烦，就暂时放弃Bazel，继续使用CMake了。Bazel里提供的`git_repositry`等从外部源自动下载编译依赖的方式很好用，所以就思考在CMake里是不是也有类似的东西呢。之前使用CMake时，第三方依赖都是手动先在本地安装好，后来查找到了CMake里提供了类似Bazel的命令，那就是`ExternalProject`，不过这个命令只管下载编译等操作，但`git_repositry`更好使一些，它可以根据依赖自动判断是不是下载，而`ExternalProject`就没这么丝滑了，所以本文记录下在CMake怎样基于`ExternalProject`打造`git_repositry`那种丝滑的体验。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2020-01-19">2020-01-19</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">CMake管理第三方依赖</h2>
+            <div class="post-meta">
+                本文共计5112个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#背景">背景</a></li>
+<li><a href="#findpackagehandlestandardargs">FindPackageHandleStandardArgs</a></li>
+<li><a href="#具体方案">具体方案</a></li>
+<li><a href="#回顾">回顾</a></li>
+</ul>
+<!-- tocstop -->
+<h2><span id="背景">背景</span></h2>
+<p>最近在一个C++项目中尝试<code>Bazel</code>编译，编译依赖方式确实写着比较舒服和直观，但最后链接出来的二进制文件在执行时报<code>Segment error</code>，但用<code>CMake</code>编译出来的二进制文件就可以成功执行，Bazel编译的问题无从下手。另外，Bazel无法从系统目录查找头文件，这就不能忍了，有人建议从<code>cc_toolchain_config.bzl</code>查找问题，但toolchain实在是有点麻烦，就暂时放弃Bazel，继续使用CMake了。Bazel里提供的<code>git_repositry</code>等从外部源自动下载编译依赖的方式很好用，所以就思考在CMake里是不是也有类似的东西呢。之前使用CMake时，第三方依赖都是手动先在本地安装好，后来查找到了CMake里提供了类似Bazel的命令，那就是<code>ExternalProject</code>，不过这个命令只管下载编译等操作，但<code>git_repositry</code>更好使一些，它可以根据依赖自动判断是不是下载，而<code>ExternalProject</code>就没这么丝滑了，所以本文记录下在CMake怎样基于<code>ExternalProject</code>打造<code>git_repositry</code>那种丝滑的体验。</p>
+<h2><span id="findpackagehandlestandardargs">FindPackageHandleStandardArgs</span></h2>
+<p>在具体方案之前，先看一下CMake里提供的这个函数，在后面的实现中它可是非常重要哦。
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">This module provides a <span class="keyword">function</span> intended <span class="keyword">to</span> be used <span class="keyword">in</span> Find Modules implementing find_package(&lt;PackageName&gt;) calls. It handles the REQUIRED, QUIET <span class="keyword">and</span> <span class="keyword">version</span>-related arguments <span class="keyword">of</span> find_package. It <span class="keyword">also</span> sets the &lt;PackageName&gt;_FOUND variable. The package <span class="keyword">is</span> considered <span class="built_in">found</span> <span class="keyword">if</span> <span class="keyword">all</span> variables listed contain <span class="keyword">valid</span> results, e.g. <span class="keyword">valid</span> filepaths.</span><br></pre></td></tr></table></figure>
+我们在CMake里查找包时使用<code>find_package(&lt;PackageName&gt;)</code>，它判断一个包是否找到就是利用了<code>FindPackageHandleStandardArgs</code>。这个函数会判断几个关键变量是否有正确的值，如果都经过了验证，就设置<code>&lt;PackageName&gt;_FOUND</code>，既找到了包，否则就没找到。它有两个函数定义，一个简单的是这样滴：
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">find_package_handle_standard_args(<span class="tag">&lt;<span class="name">PackageName</span>&gt;</span></span><br><span class="line">  (DEFAULT_MSG|<span class="tag">&lt;<span class="name">custom-failure-message</span>&gt;</span>)</span><br><span class="line">  <span class="tag">&lt;<span class="name">required-var</span>&gt;</span>...</span><br><span class="line">  )</span><br></pre></td></tr></table></figure> 简单的例子， <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">FIND_PACKAGE_HANDLE_STANDARD_ARGS</span><span class="params">(Gflags DEFAULT_MSG GFLAGS_INCLUDE_DIR GFLAGS_LIBRARY)</span></span></span><br></pre></td></tr></table></figure>
+通过判断<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>是否有正确值来断定<code>GFlags</code>是否找到，这里的<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>当然是我们自己设定喽，比如我们这么设定它们，如果搜到了头文件和库文件，就设置正确路径，否则就没值嘛。注意，这里我们最好不要用<code>GFLAGS_LIBIARIES</code>这种变量，这种我们是用来作为链接依赖库的变量的呀，同理，头文件那个变量也一样哦。
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">find_path</span><span class="params">(GFLAGS_INCLUDE_DIR gflags/gflags.h /usr/local/include)</span></span></span><br><span class="line"><span class="function"><span class="title">find_library</span><span class="params">(GFLAGS_LIBRARY gflags HINTS /usr/local/lib)</span></span></span><br></pre></td></tr></table></figure></p>
+<h2><span id="具体方案">具体方案</span></h2>
+<p>我们比较常用的一种第三方库依赖的方式是这样嘛，先在本地系统目录搜下，如果找到就用，如果找不到就自动去下载编译。所以这里我们还是以<code>GFlags</code>为例，分两步：
+*
+从系统目录查找GFlags，如果找到则设置<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>
+*
+如果上一步没找到，那么从某个地方下载Gflags，本地编译安装后，再设置<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code></p>
+<p>我们把这两步定义成两个宏<code>DO_FIND_GFLAGS_SYSTEM</code>和<code>DO_FIND_GFLAGS_DOWNLOAD</code>，然后条件判断调用就行啦，像这样：
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">if</span><span class="params">(NOT GFLAGS_FOUND)</span></span></span><br><span class="line">	<span class="built_in">DO_FIND_GFLAGS_SYSTEM</span>()</span><br><span class="line"><span class="function"><span class="title">endif</span><span class="params">()</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">if</span><span class="params">(NOT GFLAGS_FOUND)</span></span></span><br><span class="line">	<span class="built_in">DO_FIND_GFLAGS_DOWNLOAD</span>()</span><br><span class="line"><span class="function"><span class="title">endif</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></p>
+<p><code>DO_FIND_GFLAGS_SYSTEM</code>比较简单哦，我们直接给出代码：
+<figure class="highlight scss"><table><tr><td class="code"><pre><span class="line"><span class="built_in">macro</span>(DO_FIND_GFLAGS_SYSTEM)</span><br><span class="line">	<span class="built_in">find_path</span>(GFLAGS_INCLUDE_DIR gflags/gflags.h</span><br><span class="line">		PATHS /usr/local/include /usr/include</span><br><span class="line">		)</span><br><span class="line">	<span class="built_in">message</span>("GFLAGS_INCLUDE_DIR: " ${GFLAGS_INCLUDE_DIR})</span><br><span class="line">	<span class="built_in">find_library</span>(GFLAGS_LIBRARY</span><br><span class="line">		NAMES gflags</span><br><span class="line">		PATHS /usr/local/lib /usr/local/lib64 /usr/lib /usr/lib64</span><br><span class="line">		)</span><br><span class="line">	<span class="built_in">message</span>("GFLAGS_LIBRARY: " ${GFLAGS_LIBRARY})</span><br><span class="line">	<span class="built_in">FIND_PACKAGE_HANDLE_STANDARD_ARGS</span>(Gflags DEFAULT_MSG</span><br><span class="line">		GFLAGS_INCLUDE_DIR GFLAGS_LIBRARY</span><br><span class="line">		)</span><br><span class="line">	<span class="built_in">set</span>(GFLAGS_LIBRARIES ${GFLAGS_LIBRARY})</span><br><span class="line">	<span class="built_in">set</span>(GFLAGS_INCLUDE_DIRS ${GFLAGS_INCLUDE_DIR})</span><br><span class="line">	<span class="built_in">mark_as_advanced</span>(GFLAGS_LIBRARIES GFLAGS_INCLUDE_DIRS)</span><br><span class="line"><span class="built_in">endmacro</span>()</span><br></pre></td></tr></table></figure>
+先从系统目录查找头文件和库文件，如果找到就设置<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>，然后调用<code>FIND_PACKAGE_HANDLE_STANDARD_ARGS</code>来通过我们设置的两个变量来断定GFlags到底找没找到，如果找到它会自动设置<code>GFLAGS_FOUND</code>为<code>True</code>，那第二个宏，就是先下载再编译的那个，就不用执行喽。最后，我们设定<code>GFLAGS_INCLUDE_DIRS</code>和<code>GFLAGS_LIBRARIES</code>供我们的主程序作为头文件路径和库依赖路径使用呗。</p>
+<p>第二个宏，我们终于用到开头提到的<code>ExternalProject</code>这个牛逼玩意了^_^
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">The ExternalProject_Add() <span class="keyword">function</span> creates a custom <span class="keyword">target</span> to drive download, update/patch, configure, build, <span class="keyword">install</span> <span class="keyword">and</span> <span class="keyword">test</span> steps of an external <span class="keyword">project</span>.</span><br></pre></td></tr></table></figure> 太多内容，咱就直接贴用法再讲解吧。 <figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">macro</span>(DO_FIND_GFLAGS_DOWNLOAD)</span><br><span class="line">	<span class="keyword">include</span>(ExternalProject)</span><br><span class="line">	ExternalProject_Add(</span><br><span class="line">		Gflags</span><br><span class="line">		URL https://github.com/gflags/gflags/archive/v2.<span class="number">2.1</span>.zip</span><br><span class="line">		URL_HASH SHA256=<span class="number">4</span>e44b69e709c826734dbbbd5208f61888a2faf63f239d73d8ba0011b2dccc97a</span><br><span class="line">		UPDATE_COMMAND <span class="string">""</span></span><br><span class="line">		CONFIGURE_COMMAND cmake -DCMAKE_INSTALL_PREFIX=<span class="variable">${GFLAGS_ROOT_DIR}</span> -DBUILD_SHARED_LIBS=<span class="keyword">ON</span> -DBUILD_STATIC_LIBS=<span class="keyword">ON</span> -DGFLAGS_NAMESPACE=google .</span><br><span class="line">		<span class="keyword">BUILD_COMMAND</span> make</span><br><span class="line">		BUILD_IN_SOURCE <span class="keyword">true</span></span><br><span class="line">		INSTALL_COMMAND make <span class="keyword">install</span></span><br><span class="line">		INSTALL_DIR <span class="variable">${GFLAGS_ROOT_DIR}</span></span><br><span class="line">		)</span><br><span class="line"></span><br><span class="line">	ExternalProject_Get_Property(Gflags INSTALL_DIR)</span><br><span class="line">	<span class="keyword">set</span>(GFLAGS_INCLUDE_DIR <span class="variable">${INSTALL_DIR}</span>/<span class="keyword">include</span>)</span><br><span class="line">	<span class="keyword">message</span>(<span class="string">"GFLAGS_INCLUDE_DIR: "</span> <span class="variable">${GFLAGS_INCLUDE_DIR}</span>)</span><br><span class="line">	<span class="keyword">set</span>(GFLAGS_LIBRARY <span class="variable">${INSTALL_DIR}</span>/lib/<span class="variable">${LIBRARY_PREFIX}</span>gflags<span class="variable">${LIBRARY_SUFFIX}</span>)</span><br><span class="line">	<span class="keyword">message</span>(<span class="string">"GFLAGS_LIBRARY: "</span> <span class="variable">${GFLAGS_LIBRARY}</span>)</span><br><span class="line"></span><br><span class="line">	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gflags DEFAULT_MSG</span><br><span class="line">		GFLAGS_INCLUDE_DIR GFLAGS_LIBRARY</span><br><span class="line">		)</span><br><span class="line">	<span class="keyword">set</span>(GFLAGS_LIBRARIES <span class="variable">${GFLAGS_LIBRARY}</span>)</span><br><span class="line">	<span class="keyword">set</span>(GFLAGS_INCLUDE_DIRS <span class="variable">${GFLAGS_INCLUDE_DIR}</span>)</span><br><span class="line">	<span class="keyword">mark_as_advanced</span>(GFLAGS_LIBRARIES GFLAGS_INCLUDE_DIRS)</span><br><span class="line"><span class="keyword">endmacro</span>()</span><br></pre></td></tr></table></figure>
+<code>ExternalProject_Add</code>从<code>gayhub</code>上下载gflags源码，然后通过一系列编译安装操作，本地某临时目录就安装好GFlags了。里面几个参数<code>CONFIGURE_COMMAND</code>、<code>BUILD_COMMAND</code>、<code>INSTALL_COMMAND</code>都是项目常用的流程，还是比较舒服滴。安装好后，我们通过<code>ExternalProject_Get_Property</code>获取到真实安装路径，就可以像上面第一步那样设置<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>啦，后面都一样一样的。</p>
+<h2><span id="回顾">回顾</span></h2>
+<p>是不是很简单？那咱总结下里面的关键点吧。 1.
+先使用<code>find_path</code>、<code>find_library</code>查找系统头文件和库，找到了设置<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>变量
+2.
+本地没找到，就用<code>ExternalProject_Add</code>从某地下载安装，然后设置<code>GFLAGS_INCLUDE_DIR</code>和<code>GFLAGS_LIBRARY</code>变量
+3.
+使用<code>FIND_PACKAGE_HANDLE_STANDARD_ARGS</code>来验证上面两个变量，验证没问题则<code>GFLAGS_FOUND</code>为<code>True</code></p>
+<p>那主程序那边怎么用呢？上面那些东西都保存为<code>third_party/FindGflags.cmake</code>文件，在我们的<code>CMakeLists.txt</code>里把它导入就行啦。
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 导入FindGflags.cmake</span></span><br><span class="line"><span class="keyword">list</span>(APPEND CMAKE_MODULE_PATH <span class="variable">${CMAKE_SOURCE_DIR}</span>/third_party)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找gflags</span></span><br><span class="line"><span class="keyword">find_package</span>(Gflags)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主程序头文件搜索路径</span></span><br><span class="line"><span class="keyword">include_directories</span>(</span><br><span class="line">  <span class="variable">${CMAKE_CURRENT_SOURCE_DIR}</span></span><br><span class="line">  <span class="variable">${GFLAGS_INCLUDE_DIRS}</span></span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line"><span class="comment"># 主目标</span></span><br><span class="line"><span class="keyword">add_executable</span>(hello hello.cc)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(</span><br><span class="line">  hello </span><br><span class="line">  <span class="variable">${GFLAGS_LIBRARIES}</span></span><br><span class="line">  )</span><br></pre></td></tr></table></figure></p>
+<p>最后，几个常用的第三方库都用这种方式实现了下，主要是我自己用的哦。</p>
+<p><a href="https://github.com/formath/cmake_third_party" target="_blank">https://github.com/formath/cmake_third_party</a></p>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/CMake/">CMake</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

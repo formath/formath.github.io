@@ -1,0 +1,477 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>同步模式模型训练中存在的一个简单但普遍的问题 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="点击率预估模型训练，在早期阶段由于模型结构比较简单，稀疏Embedding占比非常大而稠密参数较少，因此异步训练存在的参数更新冲突和延迟问题并不严重，异步训练是普遍采用的方式。随着Attention等复杂结构在稠密网络部分的应用，稠密参数的影响力变大，异步训练带来的参数更新问题越来越严重，制约着模型训练效果，另外随着GPU的应用，同步训练的性能问题也有缓解，所以同步训练渐渐成为主流。同步训练有两种方式，一种是基于Parameter Server的同步训练，一种是基于AllReduce方式的训练。以目前推荐系统领域依然重度使用的TensorFlow为例，第一种经常采用TensorFlow SyncReplicasOptimizer，第二种经常采用Horovod TensorFlow。但这两种方式都存在一个简单却多年无人去解决的问题，对于用户群体这么大的框架来说，有点匪夷所思。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2023-09-19">2023-09-19</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">同步模式模型训练中存在的一个简单但普遍的问题</h2>
+            <div class="post-meta">
+                本文共计4210个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#背景">背景</a>
+<ul>
+<li><a href="#问题描述">问题描述</a></li>
+</ul></li>
+<li><a href="#不完美的解决方案">不完美的解决方案</a></li>
+<li><a href="#完美的解决方案">完美的解决方案</a></li>
+</ul>
+<!-- tocstop -->
+<h1><span id="背景">背景</span></h1>
+<p>点击率预估模型训练，在早期阶段由于模型结构比较简单，稀疏Embedding占比非常大而稠密参数较少，因此异步训练存在的参数更新冲突和延迟问题并不严重，异步训练是普遍采用的方式。随着Attention等复杂结构在稠密网络部分的应用，稠密参数的影响力变大，异步训练带来的参数更新问题越来越严重，制约着模型训练效果，另外随着GPU的应用，同步训练的性能问题也有缓解，所以同步训练渐渐成为主流。
+同步训练有两种方式，一种是基于Parameter
+Server的同步训练，一种是基于AllReduce方式的训练。以目前推荐系统领域依然重度使用的TensorFlow为例，第一种经常采用TensorFlow
+SyncReplicasOptimizer，第二种经常采用Horovod
+TensorFlow。但这两种方式都存在一个简单却多年无人去解决的问题，对于用户群体这么大的框架来说，有点匪夷所思。</p>
+<h2><span id="问题描述">问题描述</span></h2>
+<p>同步训练的逻辑如下： <figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line">epoch = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> epoch &lt; max_epoch:</span><br><span class="line">  <span class="keyword">try</span>: <span class="keyword">read</span> batch_data <span class="keyword">from</span> data_iterator:</span><br><span class="line">    <span class="number">1</span>）前向计算；</span><br><span class="line">    <span class="number">2</span>）后向计算获得梯度；</span><br><span class="line">    <span class="number">3</span>）所有worker同步梯度；</span><br><span class="line">    <span class="number">4</span>）参数更新；</span><br><span class="line">  <span class="keyword">except</span> OutOfRange:</span><br><span class="line">    save_checkpoint</span><br><span class="line">    epoch++</span><br></pre></td></tr></table></figure>
+第3步需要收集所有worker的梯度，这里会存在一个问题：
+数据并行并不能保证每个worker的数据量一模一样，导致worker的<code>batch_num = all_data_num / worker_num / batch_size</code>可能稍有不同。在收集梯度时，可能有些worker上的数据已经消耗完，这样就永远无法集齐<code>work_num</code>个梯度，导致训练任务卡住。
+这个问题在PS模式或AllReduce都存在：</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/43747200/on-a-distributed-tensorflow-1-0-1-chief-worker-hangs-at-end-of-training-when-u">TensorFlow
+SyncReplicasOptimizer问题</a></li>
+<li><a href="https://github.com/horovod/horovod/discussions/3887">Horovod
+TensorFlow AllReduce问题</a></li>
+</ul>
+<h1><span id="不完美的解决方案">不完美的解决方案</span></h1>
+<p>由于每个worker的<code>batch_num</code>都不一样，那就不用它了，用一个全局的<code>max_step</code>做停止条件。
+具体的方式为： <figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line">step = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> step &lt; max_step:</span><br><span class="line">  <span class="number">1</span>）前向计算；</span><br><span class="line">  <span class="number">2</span>）后向计算获得梯度；</span><br><span class="line">  <span class="number">3</span>）所有worker同步梯度；</span><br><span class="line">  <span class="number">4</span>）参数更新；</span><br><span class="line">  <span class="number">5</span>）step++;</span><br><span class="line">  <span class="number">6</span>）每n_step保存checkpoint；</span><br></pre></td></tr></table></figure>
+这种方式是业界比较常见的方式，但还是有几个问题： *
+由于每个worker都运行相同的步数，但每个worker的数据量不一致，就会有少量的数据多训练或少训练了一定次数。
+*
+<code>max_step</code>要提前算好，对于大数据集可能比较浪费时间，人工拍一个值的话又不准。
+* 对于特征准入，只需要在第一轮进行判断，按轮次训练更优。</p>
+<p>这里还有需要注意的几个点：</p>
+<p>1）SyncReplicaOptimizer奇葩的同步机制设计问题： &gt;
+https://github.com/tensorflow/tensorflow/issues/11753 &gt;
+https://stackoverflow.com/questions/36762872/distributed-tensorflow-tf-train-syncreplicasoptimizer-seems-not-synchronized
+&gt; &gt; SyncReplicaOptimizer does not really care if the
+<code>replicas_to_aggregate</code> gradients come from the different
+workers or not. Even if other workers are waiting or not initialized,
+the chief starts training immediately. And if you print the global_steps
+you will see same global_steps for <code>replicas_to_aggregate</code>
+times. This means that the chief pushes enough gradients for
+<code>tf.train.SyncReplicaOptimizer</code> to average and apply the
+gradients. So, start the chief worker process only after starting all
+other workers.</p>
+<p>原因是： &gt;
+https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/train/SyncReplicasOptimizer
+&gt; &gt; Only after all variables have been updated, increment the
+global step. &gt; Only after step 4, pushes global_step in the
+token_queue, once for each worker replica. The workers can now fetch the
+global step, use it to update its local_step variable and start the next
+batch. Please note that some workers can consume multiple minibatches,
+while some may not consume even one. This is because each worker fetches
+minibatches as long as a token exists. If one worker is stuck for some
+reason and does not consume a token, another worker can use it.</p>
+<p>为了解决这个问题，不要用： <figure class="highlight abnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">hook</span> <span class="operator">=</span> optimizer.make_session_run_hook(is_chief)</span><br></pre></td></tr></table></figure> 要用： <figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">hook</span> = optimizer.make_session_run_hook(is_chief, num_tokens=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>2）Exception in thread
+QueueRunnerThread-dummy_queue-sync_token_q_EnqueueMany &gt;
+https://github.com/tensorflow/tensorflow/issues/20833</p>
+<p>因为每个worker的数据量不一致，在最后一个step的时候，有些worker已经结束了，但梯度收集器还在等待梯度入队列，等不到就会超时报异常。
+为了解决这个问题，dataset不要只repeat
+N轮，需要设成无限，通过<code>max_step</code>进行停止。</p>
+<p>不要用： <figure class="highlight haskell"><table><tr><td class="code"><pre><span class="line"><span class="title">tf</span>.<span class="class"><span class="keyword">data</span>.<span class="type">SomeDataset</span>(...).repeat(<span class="title">epoch</span>=<span class="type">N</span>).batch(<span class="title">batch_size</span>)</span></span><br></pre></td></tr></table></figure> 要用： <figure class="highlight haskell"><table><tr><td class="code"><pre><span class="line"><span class="title">tf</span>.<span class="class"><span class="keyword">data</span>.<span class="type">SomeDataset</span>(...).repeat(<span class="title">epoch</span>=-1).batch(<span class="title">batch_size</span>)</span></span><br></pre></td></tr></table></figure></p>
+<p>3）根据样本量计算出来的<code>max_step</code>，实际运行的step数比这个少就退出了。</p>
+<p>原因是丢弃了一些过时梯度。 &gt;
+https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/train/SyncReplicasOptimizer
+&gt; &gt; In a typical asynchronous training environment, it's common to
+have some stale gradients. For example, with a N-replica asynchronous
+training, gradients will be applied to the variables N times
+independently. Depending on each replica's training speed, some
+gradients might be calculated from copies of the variable from several
+steps back (N-1 steps on average). This optimizer avoids stale gradients
+by collecting gradients from all replicas, averaging them, then applying
+them to the variables in one shot, after which replicas can fetch the
+new variables and continue.</p>
+<p>解决方案：同2，给数据多留一些buffer。</p>
+<h1><span id="完美的解决方案">完美的解决方案</span></h1>
+<p>在TensorFlow/DNN时代之前，为了训练大规模离散LR、FFM类模型，我在公司内部开发了一个基于PS的分布式训练框架，其支持BSP、ASP、SSP三种同步方式，其中的BSP训练方式当时也面临着同样问题。我的解法是：
+当有worker已经读完一轮数据后，它向ps节点发送一个<code>worker_done</code>信号，ps侧每轮会从0开始累加这个信号，记为<code>worker_done_num</code>，每次进行梯度收集时，只收集<code>worker_num - worker_done_num</code>个梯度就进行参数更新，这样就能完美的保证每条数据都训练<code>max_epoch</code>次并且不会卡住。</p>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/Deep-Learning/">Deep-Learning</a>
+            
+            <a href="/tags/TensorFlow/">TensorFlow</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>
