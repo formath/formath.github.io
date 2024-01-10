@@ -317,7 +317,7 @@ sum和内积更好的方程。根据我的经验，w、v和后面的mlp，驴唇
 <p>论文<a href="#refer-anchor-2"><sup>2</sup></a>算是对FM的一个扩展，两个向量内积后，后面接mlp，而不是直接reduce
 sum。除了内积，也可以使用外积或内外积同时使用。内积PNN相比于FNN，不同的是向量端到端训练，可以适应mlp，而不像FNN那样驴唇不对马嘴。内积和外积算是比较基础的交互方法了，在其他模型比如NLP里应用也比较广泛，可以作为最基础的特征交互方法。</p>
 <h2><span id="nfm">NFM</span></h2>
-<p>论文<a href="#refer-anchor-12"><sup>12</sup></a>和PNN优点像，不同的是两个向量做哈达玛积，后面接mlp。有个AFM类似的工作，两个向量哈达玛积的基础上，再乘个attention，感觉有点多余。</p>
+<p>论文<a href="#refer-anchor-12"><sup>12</sup></a>和PNN有点像，不同的是两个向量做哈达玛积，后面接mlp。有个AFM类似的工作，两个向量哈达玛积的基础上，再乘个attention，感觉有点多余。</p>
 <h2><span id="deepfm">DeepFM</span></h2>
 <p>论文<a href="#refer-anchor-3"><sup>3</sup></a>和Wide&amp;Deep差不多，叫FM&amp;Deep更合适，论文把Wide侧换成FM模型，并且FM侧的emb和Deep侧的emb是共享的。这个结构在工业界用的挺多，不过和论文有一些不同点，比如FM侧和Deep侧的emb不共享、FM侧用FFM。</p>
 <h2><span id="deep-crossing">Deep Crossing</span></h2>
@@ -339,12 +339,12 @@ pooling起来过mlp。与DCN不同，xDeepFM关注slot-wise的交互，并且每
 </div>
 <p>难点：nn参数和计算量有点大，不太清楚有哪些工业界落地。</p>
 <h2><span id="fibinet">FiBiNET</span></h2>
-<p><a href="#refer-anchor-14"><sup>14</sup></a>内积和哈马德积太简单，FiNiNET里它俩结合了一下，叫做Bi-Linear
+<p><a href="#refer-anchor-14"><sup>14</sup></a>内积和哈达玛积太简单，FiNiNET里它俩结合了一下，叫做Bi-Linear
 Interaction，如下图。</p>
 <div style="text-align: center">
 <p><img src="/images/fibinet_interaction.png" width="640"></p>
 </div>
-<p>论文另一个主要贡献是引入了SENet，学习特征的权重，权重作用的原始emb后得到新emb。然后，在原始emb和新emb上分别使用Bi-Linear
+<p>论文另一个主要贡献是引入了SENet，学习特征的权重，权重作用到原始emb后得到新emb。然后，在原始emb和新emb上分别使用Bi-Linear
 Interaction进行二阶交互，然后全拼起来过mlp。</p>
 <div style="text-align: center">
 <p><img src="/images/fibinet_model.png" width="720"></p>

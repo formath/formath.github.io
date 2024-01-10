@@ -74,15 +74,6 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/2a29fbbd/</loc>
-    
-    <lastmod>2023-09-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.mathmach.com/4e7f3af5/</loc>
     
     <lastmod>2023-09-19</lastmod>
@@ -93,6 +84,15 @@
   
   <url>
     <loc>https://www.mathmach.com/b3deb998/</loc>
+    
+    <lastmod>2023-09-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/2a29fbbd/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -155,15 +155,6 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/ddd6f979/</loc>
-    
-    <lastmod>2023-09-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.mathmach.com/ee26f93c/</loc>
     
     <lastmod>2023-09-19</lastmod>
@@ -173,7 +164,7 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/b5ec3256/</loc>
+    <loc>https://www.mathmach.com/ddd6f979/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -183,6 +174,15 @@
   
   <url>
     <loc>https://www.mathmach.com/91c8dd96/</loc>
+    
+    <lastmod>2023-09-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/b5ec3256/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -254,6 +254,13 @@
 
   
   <url>
+    <loc>https://www.mathmach.com/tags/CMake/</loc>
+    <lastmod>2024-01-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://www.mathmach.com/tags/Numerical-Optimization/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
@@ -262,13 +269,6 @@
   
   <url>
     <loc>https://www.mathmach.com/tags/Machine-Learning/</loc>
-    <lastmod>2024-01-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/tags/CMake/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -359,14 +359,14 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/tags/Latex/</loc>
+    <loc>https://www.mathmach.com/tags/GFlags/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/tags/Markdown/</loc>
+    <loc>https://www.mathmach.com/tags/GLog/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -394,14 +394,14 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/tags/GFlags/</loc>
+    <loc>https://www.mathmach.com/tags/Latex/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/tags/GLog/</loc>
+    <loc>https://www.mathmach.com/tags/Markdown/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -424,14 +424,14 @@
 
   
   <url>
-    <loc>https://www.mathmach.com/categories/tech/</loc>
+    <loc>https://www.mathmach.com/categories/author/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/categories/author/</loc>
+    <loc>https://www.mathmach.com/categories/tech/</loc>
     <lastmod>2024-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
