@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">同步模式模型训练中存在的一个简单但普遍的问题</h2>
             <div class="post-meta">
-                本文共计4154个字 |
+                本文共计4184个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -277,7 +277,7 @@ Server的同步训练，一种是基于AllReduce方式的训练。以目前推�
 SyncReplicasOptimizer，第二种经常采用Horovod
 TensorFlow。但这两种方式都存在一个简单却多年无人去解决的问题，对于用户群体这么大的框架来说，有点匪夷所思。</p>
 <h2><span id="问题描述">问题描述</span></h2>
-<p>同步训练的逻辑如下： <figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line">epoch = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> epoch &lt; max_epoch:</span><br><span class="line">  <span class="keyword">try</span>: <span class="keyword">read</span> batch_data <span class="keyword">from</span> data_iterator:</span><br><span class="line">    <span class="number">1</span>）前向计算；</span><br><span class="line">    <span class="number">2</span>）后向计算获得梯度；</span><br><span class="line">    <span class="number">3</span>）所有worker同步梯度；</span><br><span class="line">    <span class="number">4</span>）参数更新；</span><br><span class="line">  <span class="keyword">except</span> OutOfRange:</span><br><span class="line">    save_checkpoint</span><br><span class="line">    epoch++</span><br></pre></td></tr></table></figure>
+<p>同步训练的逻辑如下： <figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line">epoch = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> epoch &lt; max_epoch:</span><br><span class="line">  <span class="keyword">try</span> <span class="keyword">read</span> batch_data <span class="keyword">from</span> data_iterator:</span><br><span class="line">    <span class="number">1</span>）前向计算；</span><br><span class="line">    <span class="number">2</span>）后向计算获得梯度；</span><br><span class="line">    <span class="number">3</span>）所有worker同步梯度；</span><br><span class="line">    <span class="number">4</span>）参数更新；</span><br><span class="line">  <span class="keyword">except</span> OutOfRange:</span><br><span class="line">    save_checkpoint</span><br><span class="line">    epoch++</span><br></pre></td></tr></table></figure>
 第3步需要收集所有worker的梯度，这里会存在一个问题：
 数据并行并不能保证每个worker的数据量一模一样，导致worker的<code>batch_num = all_data_num / worker_num / batch_size</code>可能稍有不同。在收集梯度时，可能有些worker上的数据已经消耗完，这样就永远无法集齐<code>work_num</code>个梯度，导致训练任务卡住。
 这个问题在PS模式或AllReduce都存在：</p>
@@ -294,7 +294,7 @@ TensorFlow AllReduce问题</a></li>
 <ul>
 <li>由于每个worker都运行相同的步数，但每个worker的数据量不一致，就会有少量的数据多训练或少训练了一定次数。</li>
 <li><code>max_step</code>要提前算好，对于大数据集可能比较浪费时间，人工拍一个值的话又不准。</li>
-<li>对于特征准入，只需要在第一轮进行判断，按轮次训练更优。</li>
+<li>对于稀疏特征的频次准入，只需要在第一轮进行累计和判断，第二轮起就不能再累计了，否则会严重过拟合，所以按轮次训练更优。</li>
 </ul>
 <p>这里还有需要注意的几个点：</p>
 <p>1）SyncReplicaOptimizer奇葩的同步机制设计问题：</p>
