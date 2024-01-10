@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">同步模式模型训练中存在的一个简单但普遍的问题</h2>
             <div class="post-meta">
-                本文共计4210个字 |
+                本文共计4154个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -290,16 +290,18 @@ TensorFlow AllReduce问题</a></li>
 <h1><span id="不完美的解决方案">不完美的解决方案</span></h1>
 <p>由于每个worker的<code>batch_num</code>都不一样，那就不用它了，用一个全局的<code>max_step</code>做停止条件。
 具体的方式为： <figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line">step = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> step &lt; max_step:</span><br><span class="line">  <span class="number">1</span>）前向计算；</span><br><span class="line">  <span class="number">2</span>）后向计算获得梯度；</span><br><span class="line">  <span class="number">3</span>）所有worker同步梯度；</span><br><span class="line">  <span class="number">4</span>）参数更新；</span><br><span class="line">  <span class="number">5</span>）step++;</span><br><span class="line">  <span class="number">6</span>）每n_step保存checkpoint；</span><br></pre></td></tr></table></figure>
-这种方式是业界比较常见的方式，但还是有几个问题： *
-由于每个worker都运行相同的步数，但每个worker的数据量不一致，就会有少量的数据多训练或少训练了一定次数。
-*
-<code>max_step</code>要提前算好，对于大数据集可能比较浪费时间，人工拍一个值的话又不准。
-* 对于特征准入，只需要在第一轮进行判断，按轮次训练更优。</p>
+这种方式是业界比较常见的方式，但还是有几个问题：</p>
+<ul>
+<li>由于每个worker都运行相同的步数，但每个worker的数据量不一致，就会有少量的数据多训练或少训练了一定次数。</li>
+<li><code>max_step</code>要提前算好，对于大数据集可能比较浪费时间，人工拍一个值的话又不准。</li>
+<li>对于特征准入，只需要在第一轮进行判断，按轮次训练更优。</li>
+</ul>
 <p>这里还有需要注意的几个点：</p>
-<p>1）SyncReplicaOptimizer奇葩的同步机制设计问题： &gt;
-https://github.com/tensorflow/tensorflow/issues/11753 &gt;
-https://stackoverflow.com/questions/36762872/distributed-tensorflow-tf-train-syncreplicasoptimizer-seems-not-synchronized
-&gt; &gt; SyncReplicaOptimizer does not really care if the
+<p>1）SyncReplicaOptimizer奇葩的同步机制设计问题：</p>
+<blockquote>
+<p>https://github.com/tensorflow/tensorflow/issues/11753
+https://stackoverflow.com/questions/36762872/distributed-tensorflow-tf-train-syncreplicasoptimizer-seems-not-synchronized</p>
+<p>SyncReplicaOptimizer does not really care if the
 <code>replicas_to_aggregate</code> gradients come from the different
 workers or not. Even if other workers are waiting or not initialized,
 the chief starts training immediately. And if you print the global_steps
@@ -308,29 +310,35 @@ times. This means that the chief pushes enough gradients for
 <code>tf.train.SyncReplicaOptimizer</code> to average and apply the
 gradients. So, start the chief worker process only after starting all
 other workers.</p>
-<p>原因是： &gt;
-https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/train/SyncReplicasOptimizer
-&gt; &gt; Only after all variables have been updated, increment the
-global step. &gt; Only after step 4, pushes global_step in the
-token_queue, once for each worker replica. The workers can now fetch the
-global step, use it to update its local_step variable and start the next
-batch. Please note that some workers can consume multiple minibatches,
-while some may not consume even one. This is because each worker fetches
-minibatches as long as a token exists. If one worker is stuck for some
-reason and does not consume a token, another worker can use it.</p>
+</blockquote>
+<p>原因是：</p>
+<blockquote>
+<p>https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/train/SyncReplicasOptimizer</p>
+<p>Only after all variables have been updated, increment the global
+step. Only after step 4, pushes global_step in the token_queue, once for
+each worker replica. The workers can now fetch the global step, use it
+to update its local_step variable and start the next batch. Please note
+that some workers can consume multiple minibatches, while some may not
+consume even one. This is because each worker fetches minibatches as
+long as a token exists. If one worker is stuck for some reason and does
+not consume a token, another worker can use it.</p>
+</blockquote>
 <p>为了解决这个问题，不要用： <figure class="highlight abnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">hook</span> <span class="operator">=</span> optimizer.make_session_run_hook(is_chief)</span><br></pre></td></tr></table></figure> 要用： <figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">hook</span> = optimizer.make_session_run_hook(is_chief, num_tokens=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
 <p>2）Exception in thread
-QueueRunnerThread-dummy_queue-sync_token_q_EnqueueMany &gt;
-https://github.com/tensorflow/tensorflow/issues/20833</p>
+QueueRunnerThread-dummy_queue-sync_token_q_EnqueueMany</p>
+<blockquote>
+<p>https://github.com/tensorflow/tensorflow/issues/20833</p>
+</blockquote>
 <p>因为每个worker的数据量不一致，在最后一个step的时候，有些worker已经结束了，但梯度收集器还在等待梯度入队列，等不到就会超时报异常。
 为了解决这个问题，dataset不要只repeat
 N轮，需要设成无限，通过<code>max_step</code>进行停止。</p>
 <p>不要用： <figure class="highlight haskell"><table><tr><td class="code"><pre><span class="line"><span class="title">tf</span>.<span class="class"><span class="keyword">data</span>.<span class="type">SomeDataset</span>(...).repeat(<span class="title">epoch</span>=<span class="type">N</span>).batch(<span class="title">batch_size</span>)</span></span><br></pre></td></tr></table></figure> 要用： <figure class="highlight haskell"><table><tr><td class="code"><pre><span class="line"><span class="title">tf</span>.<span class="class"><span class="keyword">data</span>.<span class="type">SomeDataset</span>(...).repeat(<span class="title">epoch</span>=-1).batch(<span class="title">batch_size</span>)</span></span><br></pre></td></tr></table></figure></p>
 <p>3）根据样本量计算出来的<code>max_step</code>，实际运行的step数比这个少就退出了。</p>
-<p>原因是丢弃了一些过时梯度。 &gt;
-https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/train/SyncReplicasOptimizer
-&gt; &gt; In a typical asynchronous training environment, it's common to
-have some stale gradients. For example, with a N-replica asynchronous
+<p>原因是丢弃了一些过时梯度。</p>
+<blockquote>
+<p>https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/train/SyncReplicasOptimizer</p>
+<p>In a typical asynchronous training environment, it's common to have
+some stale gradients. For example, with a N-replica asynchronous
 training, gradients will be applied to the variables N times
 independently. Depending on each replica's training speed, some
 gradients might be calculated from copies of the variable from several
@@ -338,6 +346,7 @@ steps back (N-1 steps on average). This optimizer avoids stale gradients
 by collecting gradients from all replicas, averaging them, then applying
 them to the variables in one shot, after which replicas can fetch the
 new variables and continue.</p>
+</blockquote>
 <p>解决方案：同2，给数据多留一些buffer。</p>
 <h1><span id="完美的解决方案">完美的解决方案</span></h1>
 <p>在TensorFlow/DNN时代之前，为了训练大规模离散LR、FFM类模型，我在公司内部开发了一个基于PS的分布式训练框架，其支持BSP、ASP、SSP三种同步方式，其中的BSP训练方式当时也面临着同样问题。我的解法是：
