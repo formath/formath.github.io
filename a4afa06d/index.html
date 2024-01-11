@@ -48,7 +48,7 @@
 
     
 
-<meta name="generator" content="Hexo 7.0.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --><style>mjx-container[jax="SVG"] {
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
 
@@ -160,7 +160,7 @@ mjx-container[display="true"] {
 mjx-container[display="true"] + br {
   display: none;
 }
-</style></head>
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
 <body>
 <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
     <nav class="nav-menu">
@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">模型召回如何打压热门内容</h2>
             <div class="post-meta">
-                本文共计2637个字 |
+                本文共计2702个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -290,12 +290,12 @@ K近似检索。</p>
 Contrastive Estimation（NCE）、Negative Sampling（NEG）、Sampled
 Softmax（SSM）等方法近似估计，这些方法都使用了负采样。大规模Softmax近似估计方法在之前的几篇博客中已经介绍，可以参考：</p>
 <ul>
-<li><a href="https://mathmach.com/b5ec3256/">Noise Contrastive
-Estimation - 理论篇</a></li>
-<li><a href="https://mathmach.com/b5ec3256/">Sampled Softmax -
-理论篇</a></li>
-<li><a href="https://mathmach.com/a817e3bf/">Softmax近似方法之NCE、NEG、Sampled
-Softmax对比</a></li>
+<li><a href="https://mathmach.com/b5ec3256/">Softmax近似方法[一] - Noise
+Contrastive Estimation理论详解</a></li>
+<li><a href="https://mathmach.com/b5ec3256/">Softmax近似方法[二] -
+Sampled Softmax理论详解</a></li>
+<li><a href="https://mathmach.com/a817e3bf/">Softmax近似方法[三] -
+NCE、NEG、Sampled Softmax对比</a></li>
 </ul>
 <p>为了离线训练时的样本空间尽量和线上对齐，负采样要保证覆盖到全部item。另外，正样本中热门item的占比往往非常大，为了降低整体训练loss，最终得到的用户向量和热门item的向量往往分数更高，这样就导致线上召回时top
 K也被热门item占领，和业务目标偏离。</p>
@@ -334,12 +334,13 @@ K也被热门item占领，和业务目标偏离。</p>
 
 </div>
 <ul>
-<li>[1][Noise Contrastive Estimation -
-理论篇](https://mathmach.com/b5ec3256/)
+<li>[1][Softmax近似方法[一] - Noise Contrastive
+Estimation理论详解](https://mathmach.com/b5ec3256/)
 <div id="refer-anchor-2">
 
 </div></li>
-<li>[2][Sampled Softmax - 理论篇](https://mathmach.com/b5ec3256/)
+<li>[2][Softmax近似方法[二] - Sampled
+Softmax理论详解](https://mathmach.com/b5ec3256/)
 <div id="refer-anchor-3">
 
 </div></li>
