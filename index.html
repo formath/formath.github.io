@@ -249,6 +249,37 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
+            <em>·</em>2024-01-23
+            
+        </div>
+        <a class="post-title" href="/8d9c775e/" target="_self" title="点击率预估中的用户行为序列建模">点击率预估中的用户行为序列建模</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/" target="_self">点击率预估</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/CTR/" target="_self">CTR</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        特征工程是CTR建模中最重要的问题。DNN时代之前，主要是人工构造组合特征和FM类自动交叉。迁移DNN初期，主要是FNN、PNN、DeppFM、Wide&amp;Deep这类模型，特点是特征交互基本沿用了浅层模型的方法，区别是后接了MLP。此后，DNN在CTR领域站稳脚跟后，才开始真正的面向DNN，思考怎样进行特征交互建模，比如吸收了Attention等NLP领域的技术，这一阶段主要思考通用的特征交互方法。近几年，又开始面向某类特征，设计专用的特征交互方法，值得一提的是一系列用户行为序列建模的方法在工业界取得了非常大的收益。本文对用户行为序列建模做个概要的思路整理。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
             <em>·</em>2024-01-02
             
         </div>
@@ -271,7 +302,7 @@ mjx-container[display="true"] + br {
         </div>
     </div>
     <div class="post-desc">
-        我从事广告算法多年了，经历过点击率模型从XGBoost、大规模离散逻辑回归、FFM到后来DNN的演进。2017年从FFM迁移DNN时，主要考察的是FNN、PNN、DeppFM、Wide&amp;Deep这类模型，特点是特征交互基本沿用了浅层模型的方法，区别是后接了MLP。此后，DNN在CTR领域站稳脚跟后，才开始真正的面向DNN，思考怎样进行特征交互建模，比如吸收了Attention等NLP领域的技术，这一阶段主要思考通用的特征交互方法。近几年，又开始面向某类特征，设计专用的特征交互方法，值得一提的是一系列用户序列建模的方法在工业界取得了非常大的收益。本文记录一下对前两个阶段的一些工作的理解，第三阶段以后单独开一篇。
+        我从事广告算法多年了，经历过点击率模型从XGBoost、大规模离散逻辑回归、FFM到后来DNN的演进。2017年从FFM迁移DNN时，主要考察的是FNN、PNN、DeppFM、Wide&amp;Deep这类模型，特点是特征交互基本沿用了浅层模型的方法，区别是后接了MLP。此后，DNN在CTR领域站稳脚跟后，才开始真正的面向DNN，思考怎样进行特征交互建模，比如吸收了Attention等NLP领域的技术，这一阶段主要思考通用的特征交互方法。近几年，又开始面向某类特征，设计专用的特征交互方法，值得一提的是一系列用户行为序列建模的方法在工业界取得了非常大的收益。本文记录一下对前两个阶段的一些工作的理解，第三阶段以后单独开一篇。
     </div>
 </article>
 
@@ -541,40 +572,6 @@ mjx-container[display="true"] + br {
     </div>
     <div class="post-desc">
         在文章[TensorFlow Candidate Sampling](https://www.tensorflow.org/extras/candidate_sampling.pdf)中，很多地方直接使用了$u(x;\,\theta)=\log \frac{p(x^c)}{q(x^c)}$，缺乏理论支持，笔者认为不太正确，所以在本文记录下个人理解。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2023-04-07
-            
-        </div>
-        <a class="post-title" href="/fa54b17/" target="_self" title="Softmax近似方法（二） - Sampled Softmax理论详解">Softmax近似方法（二） - Sampled Softmax理论详解</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        超大规模多分类问题Softmax分母的Partition Function难以计算。比如，在推荐系统领域，预测用户下一次点击某个item的概率，需要累加全部item上的exp值，而item数量可能为千万甚至亿级。Sampled Softmax通过概率模型和优化目标的改变，巧妙的解决了这个问题，本文详细介绍Sampled Softmax的核心思想。
     </div>
 </article>
 

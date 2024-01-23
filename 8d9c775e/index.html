@@ -1,0 +1,552 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="zh-CN">
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!--[if lte IE 9]>
+<meta http-equiv="refresh" content="0;url=https://www.mathmach.com/warn.html">
+<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-DNS-Prefetch-Control" content="on">
+<link rel="dns-prefetch" href="https://www.mathmach.com">
+<link rel="dns-prefetch" href="//www.google-analytics.com">
+<link rel="prefetch" href="https://www.mathmach.com">
+<link rel="prefetch" href="//www.google-analytics.com">
+
+
+<link rel="prerender" href="https://www.mathmach.com">
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+<meta http-equiv="mobile-agent" content="format=html5; url=https://www.mathmach.com">
+<meta name="author" content="formath(https://www.mathmach.com)">
+
+<link rel="stylesheet" href="/css/JSimple.css">
+
+
+<link rel="shortcut icon" href="/images/6040127.jpeg">
+
+
+<title>点击率预估中的用户行为序列建模 - J.P.Liu&#39;s Blog</title>
+
+<meta name="keywords" content="IT博客">
+
+<meta name="description " content="特征工程是CTR建模中最重要的问题。DNN时代之前，主要是人工构造组合特征和FM类自动交叉。迁移DNN初期，主要是FNN、PNN、DeppFM、Wide&amp;Deep这类模型，特点是特征交互基本沿用了浅层模型的方法，区别是后接了MLP。此后，DNN在CTR领域站稳脚跟后，才开始真正的面向DNN，思考怎样进行特征交互建模，比如吸收了Attention等NLP领域的技术，这一阶段主要思考通用的特征交互方法。近几年，又开始面向某类特征，设计专用的特征交互方法，值得一提的是一系列用户行为序列建模的方法在工业界取得了非常大的收益。本文对用户行为序列建模做个概要的思路整理。">
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+    </script>
+
+
+    
+
+    
+
+<meta name="generator" content="Hexo 7.0.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="nav">
+    <nav class="nav-menu">
+        <a class="site-name current" href="/" title="J.P.Liu">J.P.Liu</a>
+        <a class="site-index current" href="/"><i class="fa fa-home"></i><span>首页</span></a>
+        <a href="/archives" title="归档"><i class="fa fa-archives"></i><span>归档</span></a>
+        <a href="/tags" title="标签"><i class="fa fa-tags"></i><span>标签</span></a>
+        <!-- custom single page of menus -->
+        
+        
+        <a href="/help" title="帮助">
+            <i class="fa fa-question-circle"></i>
+            <span>帮助</span>
+        </a>
+        
+    </nav>
+</div>
+
+<div class="nav-user">
+    <a class="btn-search" href="#"><i class="fa fa-search"></i></a>
+    <a class="btn-read-mode" href="#"><i class="fa fa-sun-o"></i></a>
+    <a class="btn-sns-qr" href="javascript:"><i class="fa fa-telegram"></i></a>
+</div>
+
+<div id="wrapper" class="clearfix">
+    <div id="body">
+        <div class="main" id="main">
+            <div id="cover">
+    <div class="cover-img"></div>
+    <div class="cover-info">
+        
+        <h1 class="cover-siteName">J.P.Liu</h1>
+        <h3 class="cover-siteTitle"></h3>
+        <p class="cover-siteDesc">机器学习从业者</p>
+        <div class="cover-sns">
+            
+    &nbsp;&nbsp;<div class="btn btn-github">
+        <a href="https://github.com/formath" target="_blank" title="github" ref="friend">
+            <i class="fa fa-github"></i>
+        </a>
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="page-title">
+    <ul>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
+        <li class="page-search">
+    <form id="search" class="search-form">
+        <input type="text"
+               readonly="readonly"
+               id="local-search-input-tip"
+               placeholder="读物检索~" />
+        <button type="button" disabled="disabled" class="search-form-submit"><i class="fa fa-search"></i></button>
+    </form>
+</li>
+
+    </ul>
+</div>
+<div class="main-inner">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="post-header">
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2024-01-23">2024-01-23</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">点击率预估中的用户行为序列建模</h2>
+            <div class="post-meta">
+                本文共计4345个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#背景">背景</a></li>
+<li><a href="#用户行为序列建模">用户行为序列建模</a>
+<ul>
+<li><a href="#element-wise-interaction">Element-Wise Interaction</a>
+<ul>
+<li><a href="#din">DIN</a></li>
+<li><a href="#dien">DIEN</a></li>
+<li><a href="#sim">SIM</a></li>
+<li><a href="#eta">ETA</a></li>
+<li><a href="#sdim">SDIM</a></li>
+</ul></li>
+<li><a href="#group-wise-interaction">Group-Wise Interaction</a>
+<ul>
+<li><a href="#dsin">DSIN</a></li>
+</ul></li>
+<li><a href="#interest-wise-interaction">Interest-Wise Interaction</a>
+<ul>
+<li><a href="#mimn">MIMN</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#其他改进">其他改进</a>
+<ul>
+<li><a href="#序列拆分">序列拆分</a></li>
+<li><a href="#行为序列类型">行为序列类型</a></li>
+</ul></li>
+<li><a href="#参考">参考</a></li>
+</ul>
+<!-- tocstop -->
+<h1><span id="背景">背景</span></h1>
+<p>特征工程是CTR建模中最重要的问题。DNN时代之前，主要是人工构造组合特征和FM类自动交叉。迁移DNN初期，主要是FNN、PNN、DeppFM、Wide&amp;Deep这类模型，特点是特征交互基本沿用了浅层模型的方法，区别是后接了MLP。此后，DNN在CTR领域站稳脚跟后，才开始真正的面向DNN，思考怎样进行特征交互建模，比如吸收了Attention等NLP领域的技术，这一阶段主要思考通用的特征交互方法。近几年，又开始面向某类特征，设计专用的特征交互方法，值得一提的是一系列用户行为序列建模的方法在工业界取得了非常大的收益。本文对用户行为序列建模做个概要的思路整理。</p>
+<h1><span id="用户行为序列建模">用户行为序列建模</span></h1>
+<p>从用户行为序列和Target
+Item做交互的粒度这个角度考虑，我把方案划分为以下几种：Element-Wise
+Interaction、Group-Wise Interaction、Interest-Wise
+Interaction。当然，也可以按其他维度划分。</p>
+<h2><span id="element-wise-interaction">Element-Wise Interaction</span></h2>
+<p>每个序列中的元素与Target
+Item进行交互，对序列中元素赋予不同权重然后根据权重进行Weighted
+Sum-Pooling，或者像RNN一样按时间顺序交互。</p>
+<h3><span id="din">DIN</span></h3>
+<p>此前在DNN内使用序列特征大都是直接Pooling，阿里妈妈发的这篇Deep
+Interest Network<a href="#refer-anchor-1"><sup>1</sup></a>可以算是引领用户序列建模潮流的开山之作。论文出发点是序列里不同元素的权重不应该一样，与Target
+Item关系更近的应该赋予更大权重。权重通过外积接MLP得到，然后对序列进行Weighted
+Sum-Pooling。</p>
+<div style="text-align: center">
+<p><img src="/images/din_model.png" width="900"></p>
+</div>
+<h3><span id="dien">DIEN</span></h3>
+<p>DIN论文里提到对序列直接使用LSTM效果不好，因为用户行为随机性太强，没有NLP里那种词之间的语法关系模式。阿里妈妈的Deep
+Interest Evolution Network<a href="#refer-anchor-2"><sup>2</sup></a>，考虑了兴趣随时间的演变，设计了一个类似LSTM的复杂兴趣提取结构AUGRU，可以解决LSTM的问题，取时间序列最后一个Embeedding作为交互结果。不过这种按顺序的兴趣提取模型，在长序列上性能会是瓶颈，网络结构也比较复杂，在业界不太流行。在我看来，DNN的大部分结构还是比较符合直觉的，比如Attention甚至更复杂Transformer。但我第一次看LSTM结构时，就被那巧妙设计震惊了，一直很想了解这么复杂的玩意背后的设计过程，它不是那么符合直觉，需要细细的去理解各个门的设计以及电路图似的组合。不太符合直觉的东西，就不太想去用，DIEN文章里提出的AUGRU结构就是这种。</p>
+<div style="text-align: center">
+<p><img src="/images/dien_model.png" width="900"></p>
+</div>
+<h3><span id="sim">SIM</span></h3>
+<p>Element-Wise
+Interaction的主要问题是，如果序列非常大，每个元素都与Target
+Item交互的话，性能是个瓶颈，比如DIN只能处理一两百的序列长度。阿里妈妈的Search-based
+Interest Model<a href="#refer-anchor-3"><sup>3</sup></a>提出了两阶段方法，第一阶段根据Target
+Item信息从超长序列中检索出一个短的子序列，第二阶段使用短序列与Target
+Item做交互。
+主要创新点在第一阶段，提出了Hard-Search和Soft-Search，前者根据Target
+Item的类目或其他属性作为Query去检索子序列，后者使用Embedding做ANN近似检索。论文中指出，Soft-Search的Embedding不可以使用短序列训练出来的，因为短序列和长序列的分布不一致，论文是通过长序列训练了一个辅助CTR模型得到的。截止目前SIM仍然是支持序列最长的方案，根据业界交流，Hard-Search使用更广泛，效果已经非常好了。</p>
+<div style="text-align: center">
+<p><img src="/images/sim_model.png" width="900"></p>
+</div>
+<h3><span id="eta">ETA</span></h3>
+<p>SIM的问题是第一阶段，检索逻辑和CTR主目标并不一致，会带来效果损失。阿里妈妈提出的Ene-to-End
+Target Attention<a href="#refer-anchor-4"><sup>4</sup></a>使端到端建模长序列成为可能，可以支持一两千的长序列（虽然还不如SIM长）。主要创新点是引入了SimHash，将Item
+Embedding映射成一个很小的Binary向量，Binary向量通过Hamming距离可以非常快的计算两个Item的相似度，按SimHash相似度取topK得到的子序列用于后续计算。这个过程相当于SIM第一阶段，不过检索速度更快，可以支持End-to-End训练了，Serving时Item的SimHash可以离线算好，线上直接按Hamming距离检索。</p>
+<div style="text-align: center">
+<p><img src="/images/eta_model.png" width="900"></p>
+</div>
+<div style="text-align: center">
+<p><img src="/images/sim_hash.png" width="900"></p>
+</div>
+<h3><span id="sdim">SDIM</span></h3>
+<p>美团搜索提出的Sampling-based Deep Interest Modeling<a href="#refer-anchor-5"><sup>5</sup></a>进一步优化了ETA的性能。ETA检索出topK
+Item之后，然后做Pooling（不考虑Target
+Attention的话）。SDIM在离线得到Item
+SimHash后，把SimHash分成多片，每片把相应的全部Item
+Embedding做Pooling，然后写到Tair共线上查询，Tair里的key是分片Binary，value是Pooling结果，所以存储大小和Item的数量没关系了。检索时把Target
+Item的SimHash也分成多片，每片从Tair里检索Pooling后的Embedding，然后把检索结果再Pooling一次即可，检索量也和Item数量没关系了，检索和Pooling耗时基本可以忽略。</p>
+<div style="text-align: center">
+<p><img src="/images/sdim_model.png" width="900"></p>
+</div>
+<h2><span id="group-wise-interaction">Group-Wise Interaction</span></h2>
+<p>将Element进一步聚合成Group，Group与Target Item进行交互。</p>
+<h3><span id="dsin">DSIN</span></h3>
+<p>Session是按时间划分用户会话的方式，比如一般连续行为未超过30分钟算同一个Session。在搜索场景，Session内部行为很近似，Session间差异很大。根据这一特点，阿里妈妈提出的Deep
+Session Interest Network<a href="#refer-anchor-6"><sup>6</sup></a>，将序列划分成多个Session，每个Session内部先聚合形成一个Embedding，多个Session
+Embedding与Target Item进行交互。论文提取的Session
+Embeding生成方法比较复杂，据我了解，Session内简单Pooling就效果非常好。好像推荐用DSIN的不太多，可能Session这个特点在推荐不是太符合。</p>
+<div style="text-align: center">
+<p><img src="/images/dsin_model.png" width="900"></p>
+</div>
+<h2><span id="interest-wise-interaction">Interest-Wise Interaction</span></h2>
+<p>先根据用户行为序列提取出Interest Embedding，再使用Interest
+Embedding与Target Item交互。</p>
+<h3><span id="mimn">MIMN</span></h3>
+<p>阿里妈妈提出的Multi-channel user Interest Memory Network<a href="#refer-anchor-7"><sup>7</sup></a>，也是针对长序列设计的。不过与SIM的两阶段不同，MIMN针对长序列是端到端训练，但Serving时把长序列相关的部分单独拿出去部署。长序列兴趣提取部分与Target
+Item无关，根据长序列自身提取用户多个Interest Embedding，Interest
+Embedding预计算存入Tair供CTR模块使用。论文中长序列独立部署模块是实时接收用户行为，实时更新Tair里的向量。因为CTR主模块和长序列兴趣提取一起训练，但分开部署，所以模型更新时会有不一致，论文说即使长达一天的不一致对效果影响也不大，因为长序列的兴趣比较稳定，不会剧烈变化。美团广告其实也采用的这种长序列建模方法，不过兴趣向量是天级更新，时效性通过实时行为序列建模能弥补回来。对于兴趣怎么提取，Multi-Head
+Self Attention、Capsule都有广泛应用。另外，这个方法在抽取兴趣时和Target
+Item无关，所以在召回的双塔模型中用的也很普遍。</p>
+<div style="text-align: center">
+<p><img src="/images/mimn_model.png" width="900"></p>
+</div>
+<h1><span id="其他改进">其他改进</span></h1>
+<h2><span id="序列拆分">序列拆分</span></h2>
+<p>拆成多个序列，每个序列可以应用不同的交互方式。</p>
+<ul>
+<li>按时间拆分序列，比如分成Life-Long长序列和实时行为序列，甚至长序列再按周期拆分成多个子序列。</li>
+<li>按场景拆分序列，比如拆分搜索行为和推荐行为序列、拆分图文推荐和视频推荐行为序列。</li>
+</ul>
+<h2><span id="行为序列类型">行为序列类型</span></h2>
+<p>业界对点击、收藏、转化这类行为序列建模比较普遍了，后续可以对更多序列数据进行建模，比如曝光序列、负反馈序列等。</p>
+<h1><span id="参考">参考</span></h1>
+<div id="refer-anchor-1">
+
+</div>
+<ul>
+<li>[1][Deep Interest Network for Click-Through Rate
+Prediction](http://arxiv.org/abs/1706.06978)
+<div id="refer-anchor-2">
+
+</div></li>
+<li>[2][Deep Interest Evolution Network for Click-Through Rate
+Prediction](http://arxiv.org/abs/1809.03672)
+<div id="refer-anchor-3">
+
+</div></li>
+<li>[3][Search-based User Interest Modeling with Lifelong Sequential
+Behavior Data for Click-Through Rate
+Prediction](http://arxiv.org/abs/2006.05639)
+<div id="refer-anchor-4">
+
+</div></li>
+<li>[4][End-to-End User Behavior Retrieval in Click-Through
+RatePrediction Model](http://arxiv.org/abs/2108.04468)
+<div id="refer-anchor-5">
+
+</div></li>
+<li>[5][Sampling Is All You Need on Modeling Long-Term User Behaviors
+for CTR Prediction](http://arxiv.org/abs/2205.10249)
+<div id="refer-anchor-6">
+
+</div></li>
+<li>[6][Deep Session Interest Network for Click-Through Rate
+Prediction](http://arxiv.org/abs/1905.06482)
+<div id="refer-anchor-7">
+
+</div></li>
+<li>[7][Practice on Long Sequential User Behavior Modeling for
+Click-Through Rate Prediction](http://arxiv.org/abs/1905.09248)</li>
+</ul>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
+        </div>
+        
+        <div class="post-tags">标签：
+            
+            <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/">点击率预估</a>
+            
+            <a href="/tags/CTR/">CTR</a>
+            
+        </div>
+        
+    </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
+</div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
+
+        </div><!-- end #main-->
+    </div><!-- end #body -->
+    <footer class="footer">
+    <div class="footer-inner" style="text-align: center">
+        <p>
+            <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <!-- 自定义链接 -->
+            <a href="/help" title="帮助" >帮助</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/links" title="友链">友链</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
+            <a href="/sitemap.xml" title="地图">地图</a>
+        </p>
+        <p>
+            本站已建立&nbsp<a href="/timeline" id="siteBuildingTime"></a>&nbsp天，<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="licence">采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议创作</a><br/>
+            ©2017-<span id="cpYear"></span> 基于&nbsp<a href="http://hexo.io" target="_blank" rel="nofollow">Hexo</a>
+            ，主题采用&nbsp&nbsp<a href="https://github.com/tangkunyin/hexo-theme-jsimple" target="_blank" rel="bookmark">JSimple</a>
+            ，作者&nbsp<a href="https://www.mathmach.com" target="_blank" rel="friend">formath</a>
+            ，Hosted by <a href="https://pages.github.com/" target="_blank" rel="nofollow">GitHub Pages</a>
+        </p>
+    </div>
+</footer>
+
+<script src="/js/SimpleCore.js"></script>
+
+
+</div>
+<!-- search pop -->
+<div class="popup search-popup local-search-popup">
+    <div class="local-search-header clearfix">
+        <span class="search-icon">
+            <i class="fa fa-search"></i>
+        </span>
+        <span class="popup-btn-close">
+            <i class="fa fa-times-circle"></i>
+        </span>
+        <div class="local-search-input-wrapper">
+            <input id="local-search-input"
+                   spellcheck="false"
+                   type="text"
+                   autocomplete="off"
+                   placeholder="请输入查询关键词"/>
+        </div>
+    </div>
+    <div id="local-search-result"></div>
+</div>
+<div class="fixed-btn">
+    <a class="btn-gotop" href="javascript:"> <i class="fa fa-angle-up"></i></a>
+</div>
+<script>
+    $(function () {
+        var jsi_config = {
+            buildingTime: '01/20/2018',
+            current: $('.post-tags').length > 0 ? 'post' : 'archive',
+            snsQRCode: '/images/sns-qrcode.png',
+            donateImg: '/images/donate-qr.png',
+            localSearch: { dbPath: '' },
+            readMode: 'day'
+        };
+        
+            jsi_config.localSearch = {
+                dbPath: '/search.json',
+                trigger: 'manual',
+                topN: '1',
+                unescape: 'false'
+            }
+        
+        SimpleCore.init(jsi_config);
+        
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+        
+    });
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

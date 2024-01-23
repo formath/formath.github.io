@@ -249,6 +249,40 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
+            <em>·</em>2019-08-15
+            
+        </div>
+        <a class="post-title" href="/f4f9dedd/" target="_self" title="SGD优化算法的各种变体">SGD优化算法的各种变体</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        2017年前，公司内部的算法团队还都是使用`XGBoost`来训练模型，手动构造的特征已经几百个，特征迭代效果微弱，但在搜索推荐场景下，有大规模的离散特征，这类特征记忆效果非常好，如果加入模型训练会获得不错的效果提升，但树模型并不适合大规模离散特征，所以我开发了一个基于`Parameter Server`架构的分布式机器学习框架，主要支持大规模离散的浅层模型，比如`Logistic Regression`、`Factorization Machine`、`Field-aware Factorization Machine`分类模型以及对应的回归模型和`SVD分解`。这个机器学习框架使用`Yarn`调度在公司的大数据集群上，在线上取得了非常不错的收益，框架后续又开始朝着深度模型和在线学习演化，目前公司算法团队已经基本往大规模离散DNN迁移完毕。这里主要记录一下训练框架支持的一些优化算法，公式脑子只能记个大概，还是写下来方便以后查阅。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
             <em>·</em>2019-08-13
             
         </div>
