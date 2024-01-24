@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">点击率预估中的用户行为序列建模</h2>
             <div class="post-meta">
-                本文共计5194个字 |
+                本文共计5542个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -276,6 +276,7 @@ mjx-container[display="true"] + br {
 <li><a href="#group-wise-interaction">Group-Wise Interaction</a>
 <ul>
 <li><a href="#dsin">DSIN</a></li>
+<li><a href="#racp">RACP</a></li>
 </ul></li>
 <li><a href="#interest-wise-interaction">Interest-Wise Interaction</a>
 <ul>
@@ -372,6 +373,13 @@ Embeding生成方法比较复杂，据我了解，Session内简单Pooling就效�
 <div style="text-align: center">
 <p><img src="/images/dsin_model.png" width="900"></p>
 </div>
+<h3><span id="racp">RACP</span></h3>
+<p>阿里提出的Recurrent Attention over Contextualized Page Sequence<a href="#refer-anchor-9"><sup>9</sup></a>，将序列元素按浏览页面Page进行聚合，每个Page内既有点击的也有曝光未点击item。Page先提取Embedding，然后Page
+Embedding通过类似DIEN的方式与Target
+Item做交互。Page考虑了元素的上下文信息，对行为刻画更充分。</p>
+<div style="text-align: center">
+<p><img src="/images/racp_model.png" width="900"></p>
+</div>
 <h2><span id="interest-wise-interaction">Interest-Wise Interaction</span></h2>
 <p>先根据用户行为序列提取出Interest Embedding，再使用Interest
 Embedding与Target Item交互。</p>
@@ -441,7 +449,13 @@ Click-Through Rate Prediction](http://arxiv.org/abs/1905.09248)
 
 </div></li>
 <li>[8][Behavior Sequence Transformer for E-commerce Recommendation in
-Alibaba](http://arxiv.org/abs/1905.06874)</li>
+Alibaba](http://arxiv.org/abs/1905.06874)
+<div id="refer-anchor-9">
+
+</div></li>
+<li>[9][Modeling Users' Contextualized Page-wise Feedback for
+Click-Through Rate Prediction in E-commerce
+Search](http://arxiv.org/abs/2203.15542)</li>
 </ul>
 
             
