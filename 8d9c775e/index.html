@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">点击率预估中的用户行为序列建模</h2>
             <div class="post-meta">
-                本文共计4383个字 |
+                本文共计4593个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -323,14 +323,19 @@ Interest Model<a href="#refer-anchor-3"><sup>3</sup></a>提出了两阶段方法
 Item信息从超长序列中检索出一个短的子序列，第二阶段使用短序列与Target
 Item做交互。
 主要创新点在第一阶段，提出了Hard-Search和Soft-Search，前者根据Target
-Item的类目或其他属性作为Query去检索子序列，后者使用Embedding做ANN近似检索。论文中指出，Soft-Search的Embedding不可以使用短序列训练出来的，因为短序列和长序列的分布不一致，论文是通过长序列训练了一个辅助CTR模型得到的。截止目前SIM仍然是支持序列最长的方案，根据业界交流，Hard-Search使用更广泛，效果已经非常好了。</p>
+Item的类目或其他属性作为Query去检索子序列，后者使用Embedding做ANN近似检索。论文中指出，Soft-Search的Embedding不可以使用短序列训练出来的，因为短序列和长序列的分布不一致，论文是通过长序列训练了一个辅助CTR模型得到的。截止目前SIM仍然是支持序列最长的方案，根据业界交流，Hard-Search使用更广泛，效果已经非常好了。第二阶段使用Multi-head
+Target
+Attention，计算Attention时，把序列Item发生时间与当前的时间差也离散化生成Embeeding拼接到了Item
+Embeeding上，相当于增加了时间bias，业界应用也会增加一些其他类型的bias特征。</p>
 <div style="text-align: center">
 <p><img src="/images/sim_model.png" width="900"></p>
 </div>
 <h3><span id="eta">ETA</span></h3>
 <p>SIM的问题是第一阶段，检索逻辑和CTR主目标并不一致，会带来效果损失。阿里妈妈提出的Ene-to-End
 Target Attention<a href="#refer-anchor-4"><sup>4</sup></a>使端到端建模长序列成为可能，可以支持一两千的长序列（虽然还不如SIM长）。主要创新点是引入了SimHash，将Item
-Embedding映射成一个很小的Binary向量，Binary向量通过Hamming距离可以非常快的计算两个Item的相似度，按SimHash相似度取topK得到的子序列用于后续计算。这个过程相当于SIM第一阶段，不过检索速度更快，可以支持End-to-End训练了，Serving时Item的SimHash可以离线算好，线上直接按Hamming距离检索。</p>
+Embedding映射成一个很小的Binary向量，Binary向量通过Hamming距离可以非常快的计算两个Item的相似度，按SimHash相似度取topK得到的子序列用于后续Multi-head
+Target
+Attention。SimHash过程相当于SIM第一阶段，不过检索速度更快，可以支持End-to-End训练了。Serving时Item的SimHash可以离线算好，线上直接按Hamming距离检索。</p>
 <div style="text-align: center">
 <p><img src="/images/eta_model.png" width="900"></p>
 </div>
@@ -364,7 +369,8 @@ Embedding与Target Item交互。</p>
 <p>阿里妈妈提出的Multi-channel user Interest Memory Network<a href="#refer-anchor-7"><sup>7</sup></a>，也是针对长序列设计的。不过与SIM的两阶段不同，MIMN针对长序列是端到端训练，但Serving时把长序列相关的部分单独拿出去部署。一般端到端训练也只能支持一两千的序列长度，所以比SIM还是短一些。MIMN的长序列兴趣提取部分与Target
 Item无关，根据长序列自身提取用户多个Interest Embedding，Interest
 Embedding预计算存入Tair供CTR模块使用。论文中长序列独立部署模块是实时接收用户行为，实时更新Tair里的向量。因为CTR主模块和长序列兴趣提取一起训练，但分开部署，所以模型更新时会有不一致，论文说即使长达一天的不一致对效果影响也不大，因为长序列的兴趣比较稳定，不会剧烈变化。美团广告其实也采用的这种长序列建模方法，不过兴趣向量是天级更新，时效性通过实时行为序列建模能弥补回来。对于兴趣怎么提取，Multi-Head
-Self Attention、Capsule都有广泛应用。另外，这个方法在抽取兴趣时和Target
+Self Attention、Capsule都有广泛应用。MIMN里基于Neural Turing
+Machine，提出了一个更复杂的兴趣提取结构。另外，这类方法在抽取兴趣时和Target
 Item无关，所以在召回的双塔模型中用的也很普遍。</p>
 <div style="text-align: center">
 <p><img src="/images/mimn_model.png" width="900"></p>
