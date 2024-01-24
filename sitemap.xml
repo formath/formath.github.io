@@ -101,7 +101,7 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/ca93562e/</loc>
+    <loc>https://www.mathmach.com/2a29fbbd/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -110,7 +110,7 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/2a29fbbd/</loc>
+    <loc>https://www.mathmach.com/ca93562e/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -227,7 +227,7 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/2442aa9e/</loc>
+    <loc>https://www.mathmach.com/be7f3b4f/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -236,7 +236,7 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/be7f3b4f/</loc>
+    <loc>https://www.mathmach.com/2442aa9e/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -296,27 +296,6 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/</loc>
-    <lastmod>2024-01-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/tags/Deep-Learning/</loc>
-    <lastmod>2024-01-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/tags/CTR/</loc>
-    <lastmod>2024-01-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://www.mathmach.com/tags/RLHF/</loc>
     <lastmod>2024-01-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -345,6 +324,27 @@
   </url>
   
   <url>
+    <loc>https://www.mathmach.com/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/</loc>
+    <lastmod>2024-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/tags/Deep-Learning/</loc>
+    <lastmod>2024-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/tags/CTR/</loc>
+    <lastmod>2024-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://www.mathmach.com/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/</loc>
     <lastmod>2024-01-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -353,20 +353,6 @@
   
   <url>
     <loc>https://www.mathmach.com/tags/Feature-Engineering/</loc>
-    <lastmod>2024-01-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/tags/Latex/</loc>
-    <lastmod>2024-01-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/tags/Markdown/</loc>
     <lastmod>2024-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -388,6 +374,20 @@
   
   <url>
     <loc>https://www.mathmach.com/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/</loc>
+    <lastmod>2024-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/tags/Latex/</loc>
+    <lastmod>2024-01-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/tags/Markdown/</loc>
     <lastmod>2024-01-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
