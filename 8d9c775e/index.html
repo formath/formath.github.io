@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">点击率预估中的用户行为序列建模</h2>
             <div class="post-meta">
-                本文共计5823个字 |
+                本文共计6538个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -272,6 +272,7 @@ mjx-container[display="true"] + br {
 <li><a href="#sim">SIM</a></li>
 <li><a href="#eta">ETA</a></li>
 <li><a href="#sdim">SDIM</a></li>
+<li><a href="#twin">TWIN</a></li>
 </ul></li>
 <li><a href="#group-wise-interaction">Group-Wise Interaction</a>
 <ul>
@@ -363,6 +364,17 @@ Embedding做Pooling，然后写到Tair共线上查询，Tair里的key是分片Bi
 Item的SimHash也分成多片，每片从Tair里检索Pooling后的Embedding，然后把检索结果再Pooling一次即可，检索量也和Item数量没关系了，检索和Pooling耗时基本可以忽略。从近似检索topK的原理上，SDIM其实不太准确，我感觉效果有效的原因可能是因为检索的更多了，稍有有点匹配的就检索回来了，不受topK的数量限制，虽然质量没那么强但数量可以弥补。</p>
 <div style="text-align: center">
 <p><img src="/images/sdim_model.png" width="900"></p>
+</div>
+<h3><span id="twin">TWIN</span></h3>
+<p>ETA虽然做到了端到端训练，但也没解决第一阶段的检索和第二阶段Attention匹配。快手提出的Two-stage
+Interest Network<a href="#refer-anchor-12"><sup>12</sup></a>，巧妙的优化了Multi-Head Target
+Attention计算效率，提出了Efficient Target
+Attention。第一阶段和第二阶段使用同一个Target
+Attention，保证了一二阶段的匹配。优化点是这样：用户行为序列里的Item特征，包含Item自身特征、以及User&amp;Item交互特征，其中Item自身特征这部分在Attention里的中间结果可以缓存起来，放KV存储Serving时直接检索即可，而User&amp;Item交互特征部分，降维到1，实时计算效率也很高。通过这两点优化，第一阶段的MHTA权重也可以在Serving时对全量序列实时计算了，选出topK给第二阶段。既然第一阶段的权重都计算好了，为什么还要选topK，直接在全量序列上Weighted
+Sum-Pooling不行吗？我认为其实是可以的，论文没这么做的出发点是这样：第一阶段缓存的中间参数更新没有那么及时，所以对全量序列得到的权重不是最新的，而第二阶段参数实时更新，可以算更准确的权重（我理解第二阶段的Sequence
+Item Embedding也是实时算）。</p>
+<div style="text-align: center">
+<p><img src="/images/twin_model.png" width="900"></p>
 </div>
 <h2><span id="group-wise-interaction">Group-Wise Interaction</span></h2>
 <p>将Element进一步聚合成Group，Group与Target Item进行交互。</p>
@@ -466,7 +478,12 @@ Recommendation](https://www.ijcai.org/proceedings/2020/349)
 
 </div></li>
 <li>[11][Deep Context Interest Network for Click-Through Rate
-Prediction](http://arxiv.org/abs/2308.06037)</li>
+Prediction](http://arxiv.org/abs/2308.06037)
+<div id="refer-anchor-12">
+
+</div></li>
+<li>[12][TWo-stage Interest Network for Lifelong User Behavior Modeling
+in CTR Prediction at Kuaishou](http://arxiv.org/abs/2302.02352)</li>
 </ul>
 
             
