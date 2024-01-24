@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">点击率预估中的用户行为序列建模</h2>
             <div class="post-meta">
-                本文共计5766个字 |
+                本文共计5823个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -346,7 +346,8 @@ Embeeding上，相当于增加了时间bias，业界应用也会增加一些其�
 Target Attention<a href="#refer-anchor-4"><sup>4</sup></a>使端到端建模长序列成为可能，可以支持一两千的长序列（虽然还不如SIM长）。主要创新点是引入了SimHash，将Item
 Embedding映射成一个很小的Binary向量，Binary向量通过Hamming距离可以非常快的计算两个Item的相似度，按SimHash相似度取topK得到的子序列用于后续Multi-head
 Target
-Attention。SimHash过程相当于SIM第一阶段，不过检索速度更快，可以支持End-to-End训练了。Serving时Item的SimHash可以离线算好，线上直接按Hamming距离检索。</p>
+Attention。SimHash过程相当于SIM第一阶段，不过检索速度更快，可以支持End-to-End训练了。Serving时Item的SimHash可以离线算好，线上直接按Hamming距离检索。虽然端到端训练了，但第一阶段用SimHash算相似度，与第二阶段的Target
+Attention其实还是不一致。</p>
 <div style="text-align: center">
 <p><img src="/images/eta_model.png" width="900"></p>
 </div>
