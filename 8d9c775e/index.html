@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">点击率预估中的用户行为序列建模</h2>
             <div class="post-meta">
-                本文共计4596个字 |
+                本文共计5113个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -268,7 +268,7 @@ mjx-container[display="true"] + br {
 <li><a href="#element-wise-interaction">Element-Wise Interaction</a>
 <ul>
 <li><a href="#din">DIN</a></li>
-<li><a href="#dien">DIEN</a></li>
+<li><a href="#dien-bst">DIEN &amp; BST</a></li>
 <li><a href="#sim">SIM</a></li>
 <li><a href="#eta">ETA</a></li>
 <li><a href="#sdim">SDIM</a></li>
@@ -286,6 +286,7 @@ mjx-container[display="true"] + br {
 <ul>
 <li><a href="#序列拆分">序列拆分</a></li>
 <li><a href="#行为序列类型">行为序列类型</a></li>
+<li><a href="#序列元素特征">序列元素特征</a></li>
 </ul></li>
 <li><a href="#参考">参考</a></li>
 </ul>
@@ -309,11 +310,20 @@ Sum-Pooling。</p>
 <div style="text-align: center">
 <p><img src="/images/din_model.png" width="900"></p>
 </div>
-<h3><span id="dien">DIEN</span></h3>
-<p>DIN论文里提到对序列直接使用LSTM效果不好，因为用户行为随机性太强，没有NLP里那种词之间的语法关系模式。阿里妈妈的Deep
+<h3><span id="dien-amp-bst">DIEN &amp; BST</span></h3>
+<p>DIN没有考虑到行为序列内部的关系，如果考虑序列内部关系，一种是LSTM按顺序学习，另一种是使用Transformer做序列内部的Self-Attention。
+对序列直接使用LSTM效果不好，因为用户行为随机性太强，没有NLP里那种词之间的语法关系模式。阿里妈妈的Deep
 Interest Evolution Network<a href="#refer-anchor-2"><sup>2</sup></a>，考虑了兴趣随时间的演变，设计了一个类似LSTM的复杂兴趣提取结构AUGRU，可以解决LSTM的问题，取时间序列最后一个Embeedding作为交互结果。不过这种按顺序的兴趣提取模型，在长序列上性能会是瓶颈，网络结构也比较复杂，在业界不太流行。在我看来，DNN的大部分结构还是比较符合直觉的，比如Attention甚至更复杂Transformer。但我第一次看LSTM结构时，就被那巧妙设计震惊了，一直很想了解这么复杂的玩意背后的设计过程，它不是那么符合直觉，需要细细的去理解各个门的设计以及电路图似的组合。不太符合直觉的东西，就不太想去用，DIEN文章里提出的AUGRU结构就是这种。</p>
 <div style="text-align: center">
 <p><img src="/images/dien_model.png" width="900"></p>
+</div>
+<p>类似的工作还有Behavior Sequence Transformer<a href="#refer-anchor-8"><sup>8</sup></a>，使用Transformer先得到Sequence-aware的Item
+Embedding，再把Sequence Item Embedding和Target
+Embedding以及其他特征拼起来过MLP。BST发表时DIN已经提出了，所以这里应该用Sequence
+Item Embedding与Target
+Embedding做下Attention交互会更合适，感觉这个工作不是太完整。</p>
+<div style="text-align: center">
+<p><img src="/images/bst_model.png" width="900"></p>
 </div>
 <h3><span id="sim">SIM</span></h3>
 <p>Element-Wise
@@ -387,6 +397,8 @@ Item无关，所以在召回的双塔模型中用的也很普遍。</p>
 </ul>
 <h2><span id="行为序列类型">行为序列类型</span></h2>
 <p>业界对点击、收藏、转化这类行为序列建模比较普遍了，后续可以对更多序列数据进行建模，比如曝光序列、负反馈序列等。</p>
+<h2><span id="序列元素特征">序列元素特征</span></h2>
+<p>序列元素的id、类目等属性信息一般建模都使用了，序列元素发生时刻所处的Context特征用的还不是特别充分，后续可以加强。</p>
 <h1><span id="参考">参考</span></h1>
 <div id="refer-anchor-1">
 
@@ -424,7 +436,12 @@ Prediction](http://arxiv.org/abs/1905.06482)
 
 </div></li>
 <li>[7][Practice on Long Sequential User Behavior Modeling for
-Click-Through Rate Prediction](http://arxiv.org/abs/1905.09248)</li>
+Click-Through Rate Prediction](http://arxiv.org/abs/1905.09248)
+<div id="refer-anchor-8">
+
+</div></li>
+<li>[8][Behavior Sequence Transformer for E-commerce Recommendation in
+Alibaba](http://arxiv.org/abs/1905.06874)</li>
 </ul>
 
             
