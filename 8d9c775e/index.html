@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">点击率预估中的用户行为序列建模</h2>
             <div class="post-meta">
-                本文共计4345个字 |
+                本文共计4383个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -361,7 +361,7 @@ Embeding生成方法比较复杂，据我了解，Session内简单Pooling就效�
 <p>先根据用户行为序列提取出Interest Embedding，再使用Interest
 Embedding与Target Item交互。</p>
 <h3><span id="mimn">MIMN</span></h3>
-<p>阿里妈妈提出的Multi-channel user Interest Memory Network<a href="#refer-anchor-7"><sup>7</sup></a>，也是针对长序列设计的。不过与SIM的两阶段不同，MIMN针对长序列是端到端训练，但Serving时把长序列相关的部分单独拿出去部署。长序列兴趣提取部分与Target
+<p>阿里妈妈提出的Multi-channel user Interest Memory Network<a href="#refer-anchor-7"><sup>7</sup></a>，也是针对长序列设计的。不过与SIM的两阶段不同，MIMN针对长序列是端到端训练，但Serving时把长序列相关的部分单独拿出去部署。一般端到端训练也只能支持一两千的序列长度，所以比SIM还是短一些。MIMN的长序列兴趣提取部分与Target
 Item无关，根据长序列自身提取用户多个Interest Embedding，Interest
 Embedding预计算存入Tair供CTR模块使用。论文中长序列独立部署模块是实时接收用户行为，实时更新Tair里的向量。因为CTR主模块和长序列兴趣提取一起训练，但分开部署，所以模型更新时会有不一致，论文说即使长达一天的不一致对效果影响也不大，因为长序列的兴趣比较稳定，不会剧烈变化。美团广告其实也采用的这种长序列建模方法，不过兴趣向量是天级更新，时效性通过实时行为序列建模能弥补回来。对于兴趣怎么提取，Multi-Head
 Self Attention、Capsule都有广泛应用。另外，这个方法在抽取兴趣时和Target
