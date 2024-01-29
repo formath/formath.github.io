@@ -11,6 +11,15 @@
   </url>
   
   <url>
+    <loc>https://www.mathmach.com/2442aa9e/</loc>
+    
+    <lastmod>2024-01-29</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.mathmach.com/f4f9dedd/</loc>
     
     <lastmod>2024-01-29</lastmod>
@@ -164,7 +173,7 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/f42d3a88/</loc>
+    <loc>https://www.mathmach.com/832a0a1e/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -173,7 +182,7 @@
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/832a0a1e/</loc>
+    <loc>https://www.mathmach.com/f42d3a88/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -228,15 +237,6 @@
   
   <url>
     <loc>https://www.mathmach.com/be7f3b4f/</loc>
-    
-    <lastmod>2023-09-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/2442aa9e/</loc>
     
     <lastmod>2023-09-19</lastmod>
     
@@ -345,6 +345,20 @@
   </url>
   
   <url>
+    <loc>https://www.mathmach.com/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/</loc>
+    <lastmod>2024-01-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/tags/Feature-Engineering/</loc>
+    <lastmod>2024-01-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://www.mathmach.com/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/</loc>
     <lastmod>2024-01-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -360,20 +374,6 @@
   
   <url>
     <loc>https://www.mathmach.com/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/</loc>
-    <lastmod>2024-01-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/</loc>
-    <lastmod>2024-01-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/tags/Feature-Engineering/</loc>
     <lastmod>2024-01-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
