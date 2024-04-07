@@ -28,11 +28,11 @@
 <link rel="shortcut icon" href="/images/6040127.jpeg">
 
 
-<title>标签 - J.P.Liu&#39;s Blog</title>
+<title>精排gauc与业务指标不一致问题 - J.P.Liu&#39;s Blog</title>
 
 <meta name="keywords" content="IT博客">
 
-<meta name="description " content="https://www.mathmach.com">
+<meta name="description " content="在精排模型迭代时，经常会遇到在离线指标不一致的问题，这里根据过往经验总结下遇到的问题及原因。">
 
     <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
@@ -210,8 +210,22 @@ mjx-container[display="true"] + br {
 
             <div class="page-title">
     <ul>
-        <li><a href="/" data-name="首页" title="Back Home">首页</a></li>
-        <li><a href="/archives" data-name="归档" title="归档">归档</a></li>
+        <li><a href="/">最近</a></li>
+        
+            
+                <li class="">
+                    <a href="/categories/tech" data-name="技术">技术</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/life" data-name="生活">生活</a>
+                </li>
+            
+                <li class="">
+                    <a href="/categories/author" data-name="作者">作者</a>
+                </li>
+            
+        
         <li class="page-search">
     <form id="search" class="search-form">
         <input type="text"
@@ -227,69 +241,122 @@ mjx-container[display="true"] + br {
 <div class="main-inner">
     <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
         <div class="post-header">
-            <h3 class="post-title">总的来说，本站目前涉及23个领域 😄️</h3>
+            <div class="post-author clearfix">
+                <a class="avatar fleft" href="https://www.mathmach.com"
+                   target="_blank">
+                    <img width="48" src="/images/6040127.jpeg" alt="avatar"/>
+                </a>
+                <p><span class="label">作者</span>
+                    <a href="https://www.mathmach.com"
+                       target="_blank">formath</a>
+                    <span title="最后编辑于&nbsp;2024-04-07">2024-04-07</span>
+                </p>
+                <p></p>
+            </div>
+            <h2 class="post-title">精排GAUC与业务指标不一致问题</h2>
+            <div class="post-meta">
+                本文共计1377个字 |
+                您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
+            </div>
+        </div>
+        <div class="post-content markdown-body">
+            <!-- toc -->
+<ul>
+<li><a href="#背景">背景</a></li>
+<li><a href="#离线gauc和在线gauc不一致">离线GAUC和在线GAUC不一致</a>
+<ul>
+<li><a href="#场景一离线gauc涨在线gauc降">场景一：离线GAUC涨，在线GAUC降</a></li>
+<li><a href="#场景二离线gauc降在线gauc涨">场景二：离线GAUC降，在线GAUC涨</a></li>
+</ul></li>
+<li><a href="#在线gauc和业务效果指标不一致">在线GAUC和业务效果指标不一致</a>
+<ul>
+<li><a href="#场景一在线gauc涨业务效果指标降">场景一：在线GAUC涨，业务效果指标降</a></li>
+<li><a href="#场景二在线gauc降业务效果指标涨">场景二：在线GAUC降，业务效果指标涨</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul>
+<!-- tocstop -->
+<h1><span id="背景">背景</span></h1>
+<p>在精排模型迭代时，经常会遇到在离线指标不一致的问题，这里根据过往经验总结下遇到的问题及原因。</p>
+<h1><span id="离线gauc和在线gauc不一致">离线GAUC和在线GAUC不一致</span></h1>
+<h2><span id="场景一离线gauc涨在线gauc降">场景一：离线GAUC涨，在线GAUC降</span></h2>
+<p>原因一：模型主场效应
+训练样本一般是曝光空间，而线上预估时打分空间比曝光集合要大几个数量级，模型在不一致的空间上泛化性多多少少会有些问题。在这部分未曝光样本空间里，有些候选会被高估进而得到曝光机会，这些曝光就会获得用户的反馈，进而进入训练集通过模型学习来修正。实验模型只有很少的流量，所以获得的反馈很少，而基线模型流量大，获得的反馈更多，所以实验学习一直打不过基线。</p>
+<p>解决办法： 1）增大实验流量； 2）增大实验模型训练周期</p>
+<p>这种情况经常发生在模型打分分布变化较大时，比如框架迁移、模型重大升级这类动作，因为打分分布变化大会导致曝光差异变大。</p>
+<h2><span id="场景二离线gauc降在线gauc涨">场景二：离线GAUC降，在线GAUC涨</span></h2>
+<p>打分靠前的曝光机会更多，更易获得用户反馈，所以模型在自身的流量上的评估结果可能会更好。</p>
+<p>比如以下案例： 基线：A模型，在线90%流量。 实验：B模型，在线10%流量。
+精排排序候选1000个，[I1, I2, ..., I1000]，打分排序后吐出10个展示给用户。
+A展示了[I1, I3, I4, I6, I38, I194, I285, I396, I823,
+I956]，其中获得点击的是[I1, I38]。 B展示了[I3, I5, I194, I38, I396,
+I285, I1, I733, I823, I956]，其中获得点击的是[I3, I94]。
+那么A模型的在线GAUC是0.8125，B模型的在线GAUC是0.9375，既实验模型在线GAUC更高。</p>
+<p>离线的话，A在实验流量上的GAUC是0.8125，B在基线流量上的GAUC是0.625。因为离线测试集由90%基线样本和10%实验样本组成，所以A在测试集上的GAUC是0.8125<em>0.9+0.8125</em>0.1=0.8125，B在测试集上的GAUC是0.625<em>0.9+0.9375</em>0.1=0.65625，既实验模型离线GAUC更低。</p>
+<p>解决办法：可以构建无偏的离线测试集（不经过精排，直接由粗排给出排序结果），如果在无偏测试集上GAUC涨的话就上实验。如果无偏测试集不好构造，并且你对实验模型比较有信仰时，可以直接上实验看效果。</p>
+<h1><span id="在线gauc和业务效果指标不一致">在线GAUC和业务效果指标不一致</span></h1>
+<h2><span id="场景一在线gauc涨业务效果指标降">场景一：在线GAUC涨，业务效果指标降</span></h2>
+<p>业务指标，比如电商类的GMV、广告类的ECPM、社区类的用户时长/点击率之类。曝光集合的分布漂移，比如类目分布漂移、价格分布漂移之类，往往会导致AUC和业务指标效果不一致。举个例子，社区场景下视频比图文GAUC高，但视频点击率低，视频比例提升会带动整体在线GAUC涨，但整体点击率下降。</p>
+<h2><span id="场景二在线gauc降业务效果指标涨">场景二：在线GAUC降，业务效果指标涨</span></h2>
+<p>与上面相反。</p>
+<h1><span id="总结">总结</span></h1>
+<p>离线和在线GAUC都是中间指标，和最终的业务效果指标并不一定强一致，如果遇到不一致问题，可以从多维度进行下钻分析。</p>
+
+            
+                
+
+            
+        </div>
+        <div class="post-tool">
+            <a class="btn-thumbs-up" href="javascript:void(0);" data-cid="52" title="95">
+                <i class="fa fa-thumbs-up" aria-hidden="true"></i> 打赏
+            </a>
         </div>
         
-
-        <div class="post-content markdown-body" itemprop="articleBody">
-            <ul class="tag-list">
-                
-                <li><a href="/tags/Actor-Critic/">Actor-Critic(1)</a></li>
-                
-                <li><a href="/tags/CMake/">CMake(1)</a></li>
-                
-                <li><a href="/tags/CTR/">CTR(4)</a></li>
-                
-                <li><a href="/tags/ChatGPT/">ChatGPT(2)</a></li>
-                
-                <li><a href="/tags/Deep-Learning/">Deep-Learning(9)</a></li>
-                
-                <li><a href="/tags/DeepSpeed/">DeepSpeed(2)</a></li>
-                
-                <li><a href="/tags/DeepSpeed-Chat/">DeepSpeed-Chat(2)</a></li>
-                
-                <li><a href="/tags/Feature-Engineering/">Feature-Engineering(1)</a></li>
-                
-                <li><a href="/tags/Latex/">Latex(1)</a></li>
-                
-                <li><a href="/tags/MXNet/">MXNet(1)</a></li>
-                
-                <li><a href="/tags/Machine-Learning/">Machine-Learning(8)</a></li>
-                
-                <li><a href="/tags/Markdown/">Markdown(1)</a></li>
-                
-                <li><a href="/tags/Numerical-Optimization/">Numerical-Optimization(4)</a></li>
-                
-                <li><a href="/tags/PPO/">PPO(1)</a></li>
-                
-                <li><a href="/tags/RLHF/">RLHF(1)</a></li>
-                
-                <li><a href="/tags/TensorFlow/">TensorFlow(7)</a></li>
-                
-                <li><a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习(1)</a></li>
-                
-                <li><a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统(1)</a></li>
-                
-                <li><a href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎(1)</a></li>
-                
-                <li><a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/">点击率预估(5)</a></li>
-                
-                <li><a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/">特征工程(1)</a></li>
-                
-                <li><a href="/tags/%E7%B2%BE%E6%8E%92/">精排(1)</a></li>
-                
-                <li><a href="/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/">计算广告(1)</a></li>
-                
-            </ul>
+        <div class="post-tags">标签：
+            
+            <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/">点击率预估</a>
+            
+            <a href="/tags/%E7%B2%BE%E6%8E%92/">精排</a>
+            
         </div>
-        <p style="width: 100%; text-align: center"><img src="/images/tags-bg.png" alt="tags-bg"></p>
+        
     </article>
+    
+        <p style="text-align: center">本文代表个人观点，内容仅供参考。若有不恰当之处，望不吝赐教！</p>
+    
+    
+    
+    
+        <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+        <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"> </script>
+        <script src="/js/md5.min.js""></script>
+        <div id="gitalk-container"></div>
+        <script type="text/javascript">
+            var gitalk = new Gitalk({
+                clientID: '53e23f9aa5f30e835d03',
+                clientSecret: '7d93970c80bd5d7c92d8e60d6c9a0c4792419f3a',
+                id: md5(window.location.pathname),
+                repo: 'formath.github.io',
+                owner: 'formath',
+                admin: 'formath',
+                distractionFreeMode: 'true'
+            })
+            gitalk.render('gitalk-container')
+        </script>
+    
+
+
 </div>
+
+<script src="/js/busuanzi.pure.mini.js"></script>
+
+
 
         </div><!-- end #main-->
     </div><!-- end #body -->
     <footer class="footer">
-    <div class="footer-inner" style="text-align: left">
+    <div class="footer-inner" style="text-align: center">
         <p>
             <a href="/about"  title="关于">关于</a>&nbsp;&nbsp<em>·</em>&nbsp;&nbsp
             <!-- 自定义链接 -->
