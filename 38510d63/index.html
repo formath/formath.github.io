@@ -255,7 +255,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">点击率模型负采样后校准方法</h2>
             <div class="post-meta">
-                本文共计508个字 |
+                本文共计500个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -289,7 +289,7 @@ mjx-container[display="true"] + br {
 <h1><span id="对比">对比</span></h1>
 <ul>
 <li>三个方法校准后评估集PCOC应该都可以接近1.0，但方法一只作用于负样本，通过打压负样本的预估值将PCOC校准到1.0，而方法二和三作用于所有样本，对正样本和负样本的预估值进行了不同程度的打压，使得PCOC接近1.0。</li>
-<li>方法二和三在理论推导上是一样的，如果模型参数一样的话校准后的预估值应该一样，但是方法二在训练时生效，最终训练出的模型和方法三肯定不一样。</li>
+<li>方法二和三在理论推导上是一样的，如果模型参数一样的话校准后的预估值应该一样，两者既可以在训练时采用也可以只在预估时采用。</li>
 <li>三个方法在评估集GAUC上应该差别不大，具体哪个最好可以在具体业务上尝试一下。</li>
 </ul>
 
