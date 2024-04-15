@@ -249,6 +249,37 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
+            <em>·</em>2023-06-01
+            
+        </div>
+        <a class="post-title" href="/4e7f3af5/" target="_self" title="ChatGPT量化分析（二） - 存储占用分析">ChatGPT量化分析（二） - 存储占用分析</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        ChatGPT出现后，惊人的效果完全颠覆了业界人员包括笔者的认知，抛开其模型细节层面的因素，已公开的训练方法，需要巨量的数据和计算资源，门槛非常高。本文基于公开资料，希望以量化方式分多篇介绍ChatGPT的分析结论，本文为存储占用分析篇。ChatGPT模型结构为Transformer，Transformer模型运行时存储可以分成两部分，其一是模型参数，这部分规模是固定的，其二是中间激活，这部分和batch size、sequence length有线性关系，下面对两者分别分析。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
             <em>·</em>2023-05-31
             
         </div>
@@ -505,40 +536,6 @@ mjx-container[display="true"] + br {
     </div>
     <div class="post-desc">
         目前，TensorFlow官方推荐使用Bazel编译源码和安装，但许多公司常用的构建工具是CMake。TensorFlow官方并没有提供CMake的编译示例，但提供了MakeFile文件，所以可以直接使用make进行编译安装。另一方面，模型训练成功后，官方提供了TensorFlow Servering进行预测的托管，但这个方案过于复杂。对于许多机器学习团队来说，一般都有自己的一套模型托管和预测服务，如果使用TensorFlow Servering对现存业务的侵入性太大，使用TensorFlow C++ API来导入模型并提供预测服务能方便的嵌入大部分已有业务方案，对这些团队来说比较合适。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2021-09-06
-            
-        </div>
-        <a class="post-title" href="/2442aa9e/" target="_self" title="广告CTR预估场景下的DNN调优实战">广告CTR预估场景下的DNN调优实战</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/" target="_self">点击率预估</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/CTR/" target="_self">CTR</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        DNN模型的特征构造，性能优化，以及训练TGB级别的超大模型及在线托管大模型服务，秒级在线更新的DNN模型...
     </div>
 </article>
 
