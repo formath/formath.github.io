@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.mathmach.com/about/index.html</loc>
+    
+    <lastmod>2024-04-29</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.mathmach.com/5c3de5e6/</loc>
     
     <lastmod>2024-04-29</lastmod>
@@ -86,15 +95,6 @@
     <loc>https://www.mathmach.com/f4f9dedd/</loc>
     
     <lastmod>2024-01-29</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.mathmach.com/about/index.html</loc>
-    
-    <lastmod>2024-01-23</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
