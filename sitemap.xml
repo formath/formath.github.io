@@ -478,6 +478,20 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://www.mathmach.com/tags/Time/</loc>
+    <lastmod>2024-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.mathmach.com/tags/Time-Prediction/</loc>
+    <lastmod>2024-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
