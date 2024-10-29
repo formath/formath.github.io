@@ -249,6 +249,37 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
+            <em>·</em>2023-06-05
+            
+        </div>
+        <a class="post-title" href="/b3deb998/" target="_self" title="ChatGPT量化分析（三） - 计算量分析">ChatGPT量化分析（三） - 计算量分析</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        ChatGPT出现后，惊人的效果完全颠覆了业界人员包括笔者的认知，抛开其模型细节层面的因素，已公开的训练方法，需要巨量的数据和计算资源，门槛非常高。本文基于公开资料，希望以量化方式分多篇介绍ChatGPT的分析结论，本文为计算量分析篇。ChatGPT模型结构为Transformer，下面对计算细节拆解分析。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
             <em>·</em>2023-06-01
             
         </div>
@@ -508,34 +539,6 @@ mjx-container[display="true"] + br {
     </div>
     <div class="post-desc">
         之前的一篇文章中[使用TensorFlow C++ API构建线上预测服务 - 第一篇](https://mathmach.com/6d246b32/)，详细讲解了怎样用TensorFlow C++ API导入模型做预测，但模型`c = a * b`比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数，本文使用一个复杂的模型继续讲解。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2021-10-09
-            
-        </div>
-        <a class="post-title" href="/6d246b32/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇1">使用TensorFlow C++ API构建线上预测服务 - 篇1</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        目前，TensorFlow官方推荐使用Bazel编译源码和安装，但许多公司常用的构建工具是CMake。TensorFlow官方并没有提供CMake的编译示例，但提供了MakeFile文件，所以可以直接使用make进行编译安装。另一方面，模型训练成功后，官方提供了TensorFlow Servering进行预测的托管，但这个方案过于复杂。对于许多机器学习团队来说，一般都有自己的一套模型托管和预测服务，如果使用TensorFlow Servering对现存业务的侵入性太大，使用TensorFlow C++ API来导入模型并提供预测服务能方便的嵌入大部分已有业务方案，对这些团队来说比较合适。
     </div>
 </article>
 
