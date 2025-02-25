@@ -215,11 +215,19 @@ mjx-container[display="true"] + br {
         </li>
         
         <li class="">
-            <a href="/categories/tech" data-name="技术">技术</a>
+            <a href="/categories/llm" data-name="大模型技术">大模型技术</a>
         </li>
         
         <li class="">
-            <a href="/categories/life" data-name="生活">生活</a>
+            <a href="/categories/search" data-name="搜广推技术">搜广推技术</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/system" data-name="机器学习框架">机器学习框架</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/other" data-name="杂七杂八">杂七杂八</a>
         </li>
         
         <li class="">
@@ -249,7 +257,47 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
-            <em>·</em>2024-10-29
+            <em>·</em>2025-02-24
+            
+        </div>
+        <a class="post-title" href="/8b428574/" target="_self" title="细说DeepSeek MLA矩阵消融">细说DeepSeek MLA矩阵消融</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/DeepSeek/" target="_self">DeepSeek</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/LLM/" target="_self">LLM</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/MLA/" target="_self">MLA</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Attention/" target="_self">Attention</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Multi-Head-Attention/" target="_self">Multi-Head Attention</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        DeepSeek-V2论文中提出了新的Attention模块Multi-head Latent Attention（MLA），通过Lora和矩阵消融的方式将KV Cache大幅缩小，但矩阵消融只是一笔带过，本文细说一下过程。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2025-01-12
             
         </div>
         <a class="post-title" href="/f5a7a06e/" target="_self" title="推荐系统时长建模的常用方案">推荐系统时长建模的常用方案</a>
@@ -538,40 +586,6 @@ mjx-container[display="true"] + br {
     </div>
     <div class="post-desc">
         ChatGPT出现后，已经有许多开源项目尝试复现其效果，包括LLaMa、DeepSpeed-Chat、ColossalChat、ChatGLM等。其中DeepSpeed-Chat是微软Deep Speed团队的开源项目，其完整的提供了Supervised Fine-tuning、Reward Model Training、RLHF PPO Traing三阶段的代码，逻辑简单，模块划分清晰，另外也由于Deep Speed在大模型训练中的使用非常普遍，所以笔者近期正在研究DeepSpeed-Chat的代码。本文介绍下在13b模型上运行SFT、RW、RLHF全部三阶段的实战情况。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2023-06-30
-            
-        </div>
-        <a class="post-title" href="/a4afa06d/" target="_self" title="模型召回如何打压热门内容">模型召回如何打压热门内容</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" target="_self">搜索引擎</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" target="_self">推荐系统</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/" target="_self">计算广告</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        搜广推召回建模中，正样本中热门item的占比往往非常大，为了降低整体训练loss，最终得到的用户向量和热门item的向量往往分数更高，这样就导致线上召回时top K也被热门item占领，和业务目标偏离。本文讨论热门item打压的几种办法。
     </div>
 </article>
 

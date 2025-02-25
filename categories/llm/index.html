@@ -28,7 +28,7 @@
 <link rel="shortcut icon" href="/images/6040127.jpeg">
 
 
-<title>分类 - tech - Blog</title>
+<title>分类 - llm - Blog</title>
 
 <meta name="keywords" content="IT博客">
 
@@ -215,11 +215,19 @@ mjx-container[display="true"] + br {
         </li>
         
         <li class="">
-            <a href="/categories/tech" data-name="技术">技术</a>
+            <a href="/categories/llm" data-name="大模型技术">大模型技术</a>
         </li>
         
         <li class="">
-            <a href="/categories/life" data-name="生活">生活</a>
+            <a href="/categories/search" data-name="搜广推技术">搜广推技术</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/system" data-name="机器学习框架">机器学习框架</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/other" data-name="杂七杂八">杂七杂八</a>
         </li>
         
         <li class="">
@@ -240,6 +248,126 @@ mjx-container[display="true"] + br {
 </div>
 <div class="main-inner">
     
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2025-02-24
+            
+        </div>
+        <a class="post-title" href="/8b428574/" target="_self" title="细说DeepSeek MLA矩阵消融">细说DeepSeek MLA矩阵消融</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/DeepSeek/" target="_self">DeepSeek</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/LLM/" target="_self">LLM</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/MLA/" target="_self">MLA</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Attention/" target="_self">Attention</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Multi-Head-Attention/" target="_self">Multi-Head Attention</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        DeepSeek-V2论文中提出了新的Attention模块Multi-head Latent Attention（MLA），通过Lora和矩阵消融的方式将KV Cache大幅缩小，但矩阵消融只是一笔带过，本文细说一下过程。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2023-07-10
+            
+        </div>
+        <a class="post-title" href="/be7f3b4f/" target="_self" title="DeepSpeed-Chat强化学习策略">DeepSpeed-Chat强化学习策略</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/ChatGPT/" target="_self">ChatGPT</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/DeepSpeed/" target="_self">DeepSpeed</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/DeepSpeed-Chat/" target="_self">DeepSpeed-Chat</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/RLHF/" target="_self">RLHF</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/PPO/" target="_self">PPO</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Actor-Critic/" target="_self">Actor-Critic</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" target="_self">强化学习</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        ChatGPT出现后，已经有许多开源项目尝试复现其效果，包括LLaMa、DeepSpeed-Chat、ColossalChat、ChatGLM等。其中DeepSpeed-Chat是微软Deep Speed团队的开源项目，其完整的提供了Supervised Fine-tuning、Reward Model Training、RLHF PPO Traing三阶段的代码，逻辑简单，模块划分清晰，另外也由于Deep Speed在大模型训练中的使用非常普遍，所以笔者近期正在研究DeepSpeed-Chat的代码。本文以DeepSpeed-Chat的实现为例，详细介绍下RLHF——基于人类反馈的强化学习策略，并与经典Off-Policy Actor-Critic策略做对比。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2023-07-07
+            
+        </div>
+        <a class="post-title" href="/ff7e0546/" target="_self" title="DeepSpeed-Chat全流程训练实战">DeepSpeed-Chat全流程训练实战</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/ChatGPT/" target="_self">ChatGPT</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/DeepSpeed/" target="_self">DeepSpeed</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/DeepSpeed-Chat/" target="_self">DeepSpeed-Chat</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        ChatGPT出现后，已经有许多开源项目尝试复现其效果，包括LLaMa、DeepSpeed-Chat、ColossalChat、ChatGLM等。其中DeepSpeed-Chat是微软Deep Speed团队的开源项目，其完整的提供了Supervised Fine-tuning、Reward Model Training、RLHF PPO Traing三阶段的代码，逻辑简单，模块划分清晰，另外也由于Deep Speed在大模型训练中的使用非常普遍，所以笔者近期正在研究DeepSpeed-Chat的代码。本文介绍下在13b模型上运行SFT、RW、RLHF全部三阶段的实战情况。
+    </div>
+</article>
+
+
+
         
             
 <article class="post">
@@ -334,223 +462,7 @@ mjx-container[display="true"] + br {
 
 
         
-            
-<article class="post">
     
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2023-05-08
-            
-        </div>
-        <a class="post-title" href="/a817e3bf/" target="_self" title="Softmax近似方法（三） - NCE、NEG、Sampled Softmax对比">Softmax近似方法（三） - NCE、NEG、Sampled Softmax对比</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        在文章[TensorFlow Candidate Sampling](https://www.tensorflow.org/extras/candidate_sampling.pdf)中，很多地方直接使用了$u(x;\,\theta)=\log \frac{p(x^c)}{q(x^c)}$，缺乏理论支持，笔者认为不太正确，所以在本文记录下个人理解。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2023-04-07
-            
-        </div>
-        <a class="post-title" href="/fa54b17/" target="_self" title="Softmax近似方法（二） - Sampled Softmax理论详解">Softmax近似方法（二） - Sampled Softmax理论详解</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        超大规模多分类问题Softmax分母的Partition Function难以计算。比如，在推荐系统领域，预测用户下一次点击某个item的概率，需要累加全部item上的exp值，而item数量可能为千万甚至亿级。Sampled Softmax通过概率模型和优化目标的改变，巧妙的解决了这个问题，本文详细介绍Sampled Softmax的核心思想。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2023-03-15
-            
-        </div>
-        <a class="post-title" href="/b5ec3256/" target="_self" title="Softmax近似方法（一） - Noise Contrastive Estimation理论详解">Softmax近似方法（一） - Noise Contrastive Estimation理论详解</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        超大规模多分类问题Softmax分母的Partition Function难以计算。比如，在推荐系统领域，预测用户下一次点击某个item的概率，需要累加全部item上的exp值，而item数量可能为千万甚至亿级。NCE通过概率模型和优化目标的改变，巧妙的解决了这个问题，本文详细介绍NCE的核心思想。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2022-09-25
-            
-        </div>
-        <a class="post-title" href="/b2f65b04/" target="_self" title="TensorFlow多Worker Barrier同步实现">TensorFlow多Worker Barrier同步实现</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        同步机制在TensorFlow等分布式机器学习框架中非常重要，比如TensorFlow有以下场景需要做同步：1) 当chief worker训练完一轮后，保存模型前需要等所有worker都完成再保存模型。 2) BSP方式的SGD训练，需要每个batch做同步。 如果不做同步可能会出现如下问题： 1) TensorFlow大部分使用方案都是异步SGD，而且使用global_step做停止条件，不能保证所有worker负责的数据训练相同的轮数，速度快的worker所负责的数据将会获得更多step。 2) chief worker结束时会保存模型参数，但还存在其他worker没结束，所以模型没有完全训练完整。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2022-02-25
-            
-        </div>
-        <a class="post-title" href="/97b8f613/" target="_self" title="TensorFlow分布式任务DataSet卡住问题">TensorFlow分布式任务DataSet卡住问题</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        2018年，公司的分布式模型训练普遍向`TensorFlow on Yarn`迁移。在公司的Hadoop集群上，使用TensorFlow通过DataSet读数据方式进行分布式训练时，在每个Epoch的最后一个Batch会卡住，导致任务一直停在那里无法结束。集群节点都是`CentOS, linux kernel 3.10.0`。如果用老的Queue读取数据不会出现这个问题，并且这个问题不是必现，只有在分布式且节点比较多的时候发生的概率比较高。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2021-10-22
-            
-        </div>
-        <a class="post-title" href="/832a0a1e/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇3">使用TensorFlow C++ API构建线上预测服务 - 篇3</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        在离线训练时，为了效率考虑，我们经常把数据转成TFRecord格式，然后直接调用TensorFlow提供的Reader来读入TFRecord数据。这样在生成的`graph.pb`中，Reader会对应多个节点，如果在c++中直接导入这个`graph.pb`我们就不能使用`std::vector&lt;std::pair&lt;std::string, tensorflow::Tensor&gt;&gt;`作为`session.Run(...)`的输入了，本文讲解一下怎样处理这种情况。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2021-10-11
-            
-        </div>
-        <a class="post-title" href="/f42d3a88/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇2">使用TensorFlow C++ API构建线上预测服务 - 篇2</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        之前的一篇文章中[使用TensorFlow C++ API构建线上预测服务 - 第一篇](https://mathmach.com/6d246b32/)，详细讲解了怎样用TensorFlow C++ API导入模型做预测，但模型`c = a * b`比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数，本文使用一个复杂的模型继续讲解。
-    </div>
-</article>
-
-
-
-        
-    
-</div>
-
-<div id="btn-pager">
-    
-    <a class="extend prev" rel="prev" href="/categories/tech/">上一页</a><a class="page-number" href="/categories/tech/">1</a><span class="page-number current">2</span><a class="page-number" href="/categories/tech/page/3/">3</a><a class="extend next" rel="next" href="/categories/tech/page/3/">下一页</a>
 </div>
 
 

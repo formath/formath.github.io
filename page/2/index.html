@@ -215,11 +215,19 @@ mjx-container[display="true"] + br {
         </li>
         
         <li class="">
-            <a href="/categories/tech" data-name="技术">技术</a>
+            <a href="/categories/llm" data-name="大模型技术">大模型技术</a>
         </li>
         
         <li class="">
-            <a href="/categories/life" data-name="生活">生活</a>
+            <a href="/categories/search" data-name="搜广推技术">搜广推技术</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/system" data-name="机器学习框架">机器学习框架</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/other" data-name="杂七杂八">杂七杂八</a>
         </li>
         
         <li class="">
@@ -240,6 +248,40 @@ mjx-container[display="true"] + br {
 </div>
 <div class="main-inner">
     
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2023-06-30
+            
+        </div>
+        <a class="post-title" href="/a4afa06d/" target="_self" title="模型召回如何打压热门内容">模型召回如何打压热门内容</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" target="_self">搜索引擎</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" target="_self">推荐系统</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/" target="_self">计算广告</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        搜广推召回建模中，正样本中热门item的占比往往非常大，为了降低整体训练loss，最终得到的用户向量和热门item的向量往往分数更高，这样就导致线上召回时top K也被热门item占领，和业务目标偏离。本文讨论热门item打压的几种办法。
+    </div>
+</article>
+
+
+
         
             
 <article class="post">
@@ -511,34 +553,6 @@ mjx-container[display="true"] + br {
     </div>
     <div class="post-desc">
         在离线训练时，为了效率考虑，我们经常把数据转成TFRecord格式，然后直接调用TensorFlow提供的Reader来读入TFRecord数据。这样在生成的`graph.pb`中，Reader会对应多个节点，如果在c++中直接导入这个`graph.pb`我们就不能使用`std::vector&lt;std::pair&lt;std::string, tensorflow::Tensor&gt;&gt;`作为`session.Run(...)`的输入了，本文讲解一下怎样处理这种情况。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2021-10-11
-            
-        </div>
-        <a class="post-title" href="/f42d3a88/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇2">使用TensorFlow C++ API构建线上预测服务 - 篇2</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        之前的一篇文章中[使用TensorFlow C++ API构建线上预测服务 - 第一篇](https://mathmach.com/6d246b32/)，详细讲解了怎样用TensorFlow C++ API导入模型做预测，但模型`c = a * b`比较简单，只有模型结构，并没有参数，所以文章中并没讲到怎样导入参数，本文使用一个复杂的模型继续讲解。
     </div>
 </article>
 

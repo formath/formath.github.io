@@ -28,7 +28,7 @@
 <link rel="shortcut icon" href="/images/6040127.jpeg">
 
 
-<title>分类 - tech - Blog</title>
+<title>分类 - search - Blog</title>
 
 <meta name="keywords" content="IT博客">
 
@@ -215,11 +215,19 @@ mjx-container[display="true"] + br {
         </li>
         
         <li class="">
-            <a href="/categories/tech" data-name="技术">技术</a>
+            <a href="/categories/llm" data-name="大模型技术">大模型技术</a>
         </li>
         
         <li class="">
-            <a href="/categories/life" data-name="生活">生活</a>
+            <a href="/categories/search" data-name="搜广推技术">搜广推技术</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/system" data-name="机器学习框架">机器学习框架</a>
+        </li>
+        
+        <li class="">
+            <a href="/categories/other" data-name="杂七杂八">杂七杂八</a>
         </li>
         
         <li class="">
@@ -249,7 +257,7 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
-            <em>·</em>2024-10-29
+            <em>·</em>2025-01-12
             
         </div>
         <a class="post-title" href="/f5a7a06e/" target="_self" title="推荐系统时长建模的常用方案">推荐系统时长建模的常用方案</a>
@@ -441,117 +449,6 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
-            <em>·</em>2023-09-19
-            
-        </div>
-        <a class="post-title" href="/a6a552a7/" target="_self" title="同步模式模型训练中存在的一个简单但普遍的问题">同步模式模型训练中存在的一个简单但普遍的问题</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        点击率预估模型训练，在早期阶段由于模型结构比较简单，稀疏Embedding占比非常大而稠密参数较少，因此异步训练存在的参数更新冲突和延迟问题并不严重，异步训练是普遍采用的方式。随着Attention等复杂结构在稠密网络部分的应用，稠密参数的影响力变大，异步训练带来的参数更新问题越来越严重，制约着模型训练效果，另外随着GPU的应用，同步训练的性能问题也有缓解，所以同步训练渐渐成为主流。同步训练有两种方式，一种是基于Parameter Server的同步训练，一种是基于AllReduce方式的训练。以目前推荐系统领域依然重度使用的TensorFlow为例，第一种经常采用TensorFlow SyncReplicasOptimizer，第二种经常采用Horovod TensorFlow。但这两种方式都存在一个简单却多年无人去解决的问题，对于用户群体这么大的框架来说，有点匪夷所思。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2023-07-10
-            
-        </div>
-        <a class="post-title" href="/be7f3b4f/" target="_self" title="DeepSpeed-Chat强化学习策略">DeepSpeed-Chat强化学习策略</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/ChatGPT/" target="_self">ChatGPT</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/DeepSpeed/" target="_self">DeepSpeed</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/DeepSpeed-Chat/" target="_self">DeepSpeed-Chat</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/RLHF/" target="_self">RLHF</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/PPO/" target="_self">PPO</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Actor-Critic/" target="_self">Actor-Critic</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" target="_self">强化学习</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        ChatGPT出现后，已经有许多开源项目尝试复现其效果，包括LLaMa、DeepSpeed-Chat、ColossalChat、ChatGLM等。其中DeepSpeed-Chat是微软Deep Speed团队的开源项目，其完整的提供了Supervised Fine-tuning、Reward Model Training、RLHF PPO Traing三阶段的代码，逻辑简单，模块划分清晰，另外也由于Deep Speed在大模型训练中的使用非常普遍，所以笔者近期正在研究DeepSpeed-Chat的代码。本文以DeepSpeed-Chat的实现为例，详细介绍下RLHF——基于人类反馈的强化学习策略，并与经典Off-Policy Actor-Critic策略做对比。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2023-07-07
-            
-        </div>
-        <a class="post-title" href="/ff7e0546/" target="_self" title="DeepSpeed-Chat全流程训练实战">DeepSpeed-Chat全流程训练实战</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/ChatGPT/" target="_self">ChatGPT</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/DeepSpeed/" target="_self">DeepSpeed</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/DeepSpeed-Chat/" target="_self">DeepSpeed-Chat</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        ChatGPT出现后，已经有许多开源项目尝试复现其效果，包括LLaMa、DeepSpeed-Chat、ColossalChat、ChatGLM等。其中DeepSpeed-Chat是微软Deep Speed团队的开源项目，其完整的提供了Supervised Fine-tuning、Reward Model Training、RLHF PPO Traing三阶段的代码，逻辑简单，模块划分清晰，另外也由于Deep Speed在大模型训练中的使用非常普遍，所以笔者近期正在研究DeepSpeed-Chat的代码。本文介绍下在13b模型上运行SFT、RW、RLHF全部三阶段的实战情况。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
             <em>·</em>2023-06-30
             
         </div>
@@ -578,12 +475,111 @@ mjx-container[display="true"] + br {
 
 
         
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2023-05-08
+            
+        </div>
+        <a class="post-title" href="/a817e3bf/" target="_self" title="Softmax近似方法（三） - NCE、NEG、Sampled Softmax对比">Softmax近似方法（三） - NCE、NEG、Sampled Softmax对比</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        在文章[TensorFlow Candidate Sampling](https://www.tensorflow.org/extras/candidate_sampling.pdf)中，很多地方直接使用了$u(x;\,\theta)=\log \frac{p(x^c)}{q(x^c)}$，缺乏理论支持，笔者认为不太正确，所以在本文记录下个人理解。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2023-04-07
+            
+        </div>
+        <a class="post-title" href="/fa54b17/" target="_self" title="Softmax近似方法（二） - Sampled Softmax理论详解">Softmax近似方法（二） - Sampled Softmax理论详解</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        超大规模多分类问题Softmax分母的Partition Function难以计算。比如，在推荐系统领域，预测用户下一次点击某个item的概率，需要累加全部item上的exp值，而item数量可能为千万甚至亿级。Sampled Softmax通过概率模型和优化目标的改变，巧妙的解决了这个问题，本文详细介绍Sampled Softmax的核心思想。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2023-03-15
+            
+        </div>
+        <a class="post-title" href="/b5ec3256/" target="_self" title="Softmax近似方法（一） - Noise Contrastive Estimation理论详解">Softmax近似方法（一） - Noise Contrastive Estimation理论详解</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        超大规模多分类问题Softmax分母的Partition Function难以计算。比如，在推荐系统领域，预测用户下一次点击某个item的概率，需要累加全部item上的exp值，而item数量可能为千万甚至亿级。NCE通过概率模型和优化目标的改变，巧妙的解决了这个问题，本文详细介绍NCE的核心思想。
+    </div>
+</article>
+
+
+
+        
     
 </div>
 
 <div id="btn-pager">
     
-    <span class="page-number current">1</span><a class="page-number" href="/categories/tech/page/2/">2</a><a class="page-number" href="/categories/tech/page/3/">3</a><a class="extend next" rel="next" href="/categories/tech/page/2/">下一页</a>
+    <span class="page-number current">1</span><a class="page-number" href="/categories/search/page/2/">2</a><a class="extend next" rel="next" href="/categories/search/page/2/">下一页</a>
 </div>
 
 
