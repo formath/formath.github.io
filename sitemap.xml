@@ -525,14 +525,14 @@
 
   
   <url>
-    <loc>https://www.mathmach.com/categories/search/</loc>
+    <loc>https://www.mathmach.com/categories/author/</loc>
     <lastmod>2025-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.mathmach.com/categories/author/</loc>
+    <loc>https://www.mathmach.com/categories/search/</loc>
     <lastmod>2025-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
