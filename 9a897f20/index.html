@@ -263,7 +263,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">调研一下排序模型的Scaling Law</h2>
             <div class="post-meta">
-                本文共计6248个字 |
+                本文共计6250个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -360,7 +360,7 @@ attention来控制token间的交互关系。</p>
 <p>模型层面，没有采用经典transformer结构，而是设计了全新的HSTU，其中attention方式和mha差别较大。多层交叉后，使用曝光item的token
 hidden emb，后接一个多目标网络进行打分。</p>
 <p>数据按请求粒度进行了聚合，降低用户序列部分的重复计算。</p>
-<p>对长序列里的token进行了dropout，最长训到8192长度。</p>
+<p>对用户行为序列的token进行了dropout，最长训到8192长度。</p>
 <div style="text-align: center">
 <p><img src="/images/hstu_model.png" width="840"></p>
 </div>
