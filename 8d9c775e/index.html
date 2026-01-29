@@ -368,7 +368,7 @@ Attention其实还是不一致。</p>
 Item之后，然后做Pooling（不考虑Target
 Attention的话）。SDIM在离线得到Item
 SimHash后，把SimHash分成多片，每片把相应的全部Item
-Embedding做Pooling，然后写到Tair共线上查询，Tair里的key是分片Binary，value是Pooling结果，所以存储大小和Item的数量没关系了。检索时把Target
+Embedding做Pooling，然后写到Tair供线上查询，Tair里的key是分片Binary，value是Pooling结果，所以存储大小和Item的数量没关系了。检索时把Target
 Item的SimHash也分成多片，每片从Tair里检索Pooling后的Embedding，然后把检索结果再Pooling一次即可，检索量也和Item数量没关系了，检索和Pooling耗时基本可以忽略。从近似检索topK的原理上，SDIM其实不太准确，我感觉效果有效的原因可能是因为检索的更多了，稍有有点匹配的就检索回来了，不受topK的数量限制，虽然质量没那么强但数量可以弥补。</p>
 <div style="text-align: center">
 <p><img src="/images/sdim_model.png" width="900"></p>

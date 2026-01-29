@@ -257,6 +257,124 @@ mjx-container[display="true"] + br {
             <a href="https://www.mathmach.com" target="_self">
                 <strong>formath</strong>
             </a>
+            <em>·</em>2023-03-15
+            
+        </div>
+        <a class="post-title" href="/b5ec3256/" target="_self" title="Softmax近似方法（一） - Noise Contrastive Estimation理论详解">Softmax近似方法（一） - Noise Contrastive Estimation理论详解</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Numerical-Optimization/" target="_self">Numerical-Optimization</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        超大规模多分类问题Softmax分母的Partition Function难以计算。比如，在推荐系统领域，预测用户下一次点击某个item的概率，需要累加全部item上的exp值，而item数量可能为千万甚至亿级。NCE通过概率模型和优化目标的改变，巧妙的解决了这个问题，本文详细介绍NCE的核心思想。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2022-09-25
+            
+        </div>
+        <a class="post-title" href="/b2f65b04/" target="_self" title="TensorFlow多Worker Barrier同步实现">TensorFlow多Worker Barrier同步实现</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        同步机制在TensorFlow等分布式机器学习框架中非常重要，比如TensorFlow有以下场景需要做同步：1) 当chief worker训练完一轮后，保存模型前需要等所有worker都完成再保存模型。 2) BSP方式的SGD训练，需要每个batch做同步。 如果不做同步可能会出现如下问题： 1) TensorFlow大部分使用方案都是异步SGD，而且使用global_step做停止条件，不能保证所有worker负责的数据训练相同的轮数，速度快的worker所负责的数据将会获得更多step。 2) chief worker结束时会保存模型参数，但还存在其他worker没结束，所以模型没有完全训练完整。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2022-02-25
+            
+        </div>
+        <a class="post-title" href="/97b8f613/" target="_self" title="TensorFlow分布式任务DataSet卡住问题">TensorFlow分布式任务DataSet卡住问题</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        2018年，公司的分布式模型训练普遍向`TensorFlow on Yarn`迁移。在公司的Hadoop集群上，使用TensorFlow通过DataSet读数据方式进行分布式训练时，在每个Epoch的最后一个Batch会卡住，导致任务一直停在那里无法结束。集群节点都是`CentOS, linux kernel 3.10.0`。如果用老的Queue读取数据不会出现这个问题，并且这个问题不是必现，只有在分布式且节点比较多的时候发生的概率比较高。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
+            <em>·</em>2021-10-22
+            
+        </div>
+        <a class="post-title" href="/832a0a1e/" target="_self" title="使用TensorFlow C++ API构建线上预测服务 - 篇3">使用TensorFlow C++ API构建线上预测服务 - 篇3</a>
+        <div class="post-meta">
+            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
+            
+                <em>·</em>
+                <a href="https://www.mathmach.com/tags/TensorFlow/" target="_self">TensorFlow</a>
+            
+        </div>
+    </div>
+    <div class="post-desc">
+        在离线训练时，为了效率考虑，我们经常把数据转成TFRecord格式，然后直接调用TensorFlow提供的Reader来读入TFRecord数据。这样在生成的`graph.pb`中，Reader会对应多个节点，如果在c++中直接导入这个`graph.pb`我们就不能使用`std::vector&lt;std::pair&lt;std::string, tensorflow::Tensor&gt;&gt;`作为`session.Run(...)`的输入了，本文讲解一下怎样处理这种情况。
+    </div>
+</article>
+
+
+
+        
+            
+<article class="post">
+    
+    <div class="post-header">
+        <div class="post-meta">
+            <a href="https://www.mathmach.com" target="_self">
+                <strong>formath</strong>
+            </a>
             <em>·</em>2021-10-11
             
         </div>
@@ -321,10 +439,10 @@ mjx-container[display="true"] + br {
             <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
             
                 <em>·</em>
-                <a href="https://www.mathmach.com/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/" target="_self">点击率预估</a>
+                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
             
                 <em>·</em>
-                <a href="https://www.mathmach.com/tags/Machine-Learning/" target="_self">Machine-Learning</a>
+                <a href="https://www.mathmach.com/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/" target="_self">点击率预估</a>
             
                 <em>·</em>
                 <a href="https://www.mathmach.com/tags/CTR/" target="_self">CTR</a>
@@ -429,133 +547,12 @@ mjx-container[display="true"] + br {
 
 
         
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2019-01-14
-            
-        </div>
-        <a class="post-title" href="/ddd6f979/" target="_self" title="VSCode下Markdown和LaTex混合编辑环境配置">VSCode下Markdown和LaTex混合编辑环境配置</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Latex/" target="_self">Latex</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Markdown/" target="_self">Markdown</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        最近在公司用Markdown写技术博客时，需要插入伪代码块，而Markdown里没有找到比较美观的实现方案，想到之前在学校写论文时一直用LaTex，里面的伪代码非常漂亮，所以就想在Markdown里混合使用LaTex，下面是从网上找到的解决方案汇总，方便自己以后查阅。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2017-09-06
-            
-        </div>
-        <a class="post-title" href="/2442aa9e/" target="_self" title="广告CTR预估场景下的DNN调优实战">广告CTR预估场景下的DNN调优实战</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0/" target="_self">点击率预估</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/CTR/" target="_self">CTR</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        DNN模型的特征构造，性能优化，以及训练TGB级别的超大模型及在线托管大模型服务，秒级在线更新的DNN模型...
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2017-08-16
-            
-        </div>
-        <a class="post-title" href="/91c8dd96/" target="_self" title="MXNet之NNVM代码简析">MXNet之NNVM代码简析</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/Deep-Learning/" target="_self">Deep-Learning</a>
-            
-                <em>·</em>
-                <a href="https://www.mathmach.com/tags/MXNet/" target="_self">MXNet</a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        Symbol提供了许多图的接口，便于前端访问，而Graph里面没几个接口，主要就是有个indexed_graph，便于底层训练时快速访问。Symbol非常灵活，以后有可能支持动态图，但每次动态变化后都要先转成Graph，底层不太支持动态度，因为都是vector用index来索引node，不太适合中间插入一个node。
-    </div>
-</article>
-
-
-
-        
-            
-<article class="post">
-    
-    <div class="post-header">
-        <div class="post-meta">
-            <a href="https://www.mathmach.com" target="_self">
-                <strong>formath</strong>
-            </a>
-            <em>·</em>2017-01-14
-            
-        </div>
-        <a class="post-title" href="/5c3de5e6/" target="_self" title="联系博主">联系博主</a>
-        <div class="post-meta">
-            <a href="/tags" target="_self"><i class="fa fa-tags"></i></a>
-            
-        </div>
-    </div>
-    <div class="post-desc">
-        联系博主
-    </div>
-</article>
-
-
-
-        
     
 </div>
 
 <div id="btn-pager">
     
-    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
 </div>
 
 
