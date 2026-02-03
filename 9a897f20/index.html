@@ -263,7 +263,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">调研一下排序模型的Scaling Law</h2>
             <div class="post-meta">
-                本文共计6844个字 |
+                本文共计6876个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -462,10 +462,10 @@ token：第一层的是根据序列token和非序列token生成的，之后是�
 token。</p>
 <p>每一层包含两步：</p>
 <ul>
-<li>第一步：使用Global
+<li>第一步（Query Decoding）：使用Global
 token做query，在序列token上做attention，将序列信息聚合到Gloabl token
 hidden emb上。</li>
-<li>第二步：Gloabl token
+<li>第二步（Query Boosting）：Gloabl token
 hidden和非序列token，使用RankMixer方式进行交叉，进一步融合了非序列信息。</li>
 </ul>
 <p>有多种序列的话，每个序列有独立参数，单独做此类融合。</p>
