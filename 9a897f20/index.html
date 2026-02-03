@@ -263,7 +263,7 @@ mjx-container[display="true"] + br {
             </div>
             <h2 class="post-title">调研一下排序模型的Scaling Law</h2>
             <div class="post-meta">
-                本文共计6920个字 |
+                本文共计6844个字 |
                 您是第&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>位看到它们的小伙伴
             </div>
         </div>
@@ -455,13 +455,8 @@ attention差不多。</p>
 <p>抖音搜索<a href="#refer-anchor-9"><sup>9</sup></a>提出的。</p>
 <p>序列特征token化：每个行为，将item id emb和side-info emb
 concat后映射成一个token；</p>
-<p>非序列特征token化：</p>
-<ul>
-<li>方法一：将特征划分成多个group，每个group内所有特征emb
-concat后过一个group独立的单层mlp后得到一个token。</li>
-<li>方法二：所有特征emb
-concat后通过mlp映射，然后split成多个token。（论文中说这个方法好，我这边实验还是方法一更好。）</li>
-</ul>
+<p>非序列特征token化：将特征划分成多个group，每个group内所有特征emb
+concat后过一个group独立的单层mlp后得到一个token。</p>
 <p>Global
 token：第一层的是根据序列token和非序列token生成的，之后是前一层的输出。论文中生成了3个global
 token。</p>
